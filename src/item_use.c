@@ -80,6 +80,7 @@ static void UsePokevialFieldNo(u8 taskId);
 static void UsePokevialYesNo(u8);
 static void UsePokevialYes(u8);
 void ItemUseOutOfBattle_Pokevial(u8);
+static void PokevialPrintPartyHealed(bool32 isPlayerUsingRegisteredKeyItem, u8 taskId);
 //End Pokevial Branch
 
 // EWRAM variables
@@ -1173,15 +1174,33 @@ static void UsePokevialFieldYesNo(u8 taskId)
 
 static void UsePokevialYes(u8 taskId)
 {
-    gItemUseCB = ItemUseCB_UsePokevial;
-    SetUpItemUseCallback(taskId);
+    if (POKEVIAL_SKIP_CUTSCENE)
+    {
+        Pokevial_HealPlayerParty();
+        PokevialDoseDown(VIAL_STANDARD_DOSE);
+        PokevialPrintPartyHealed(FALSE,taskId);
+    }
+    else
+    {
+        gItemUseCB = ItemUseCB_UsePokevial;
+        SetUpItemUseCallback(taskId);
+    }
 }
 
 static void UsePokevialFieldYes(u8 taskId)
 {
     LockPlayerFieldControls();
+    if (POKEVIAL_SKIP_CUTSCENE)
+    {
+        Pokevial_HealPlayerParty();
+        PokevialDoseDown(VIAL_STANDARD_DOSE);
+        PokevialPrintPartyHealed(TRUE,taskId);
+    }
+    else
+    {
     FadeScreen(FADE_TO_BLACK,0);
     CreateTask(Task_UsePokevialFieldYes, 1);
+    }
 }
 
 static void Task_UsePokevialFieldYes(u8 taskId)
@@ -1199,6 +1218,16 @@ static void UsePokevialFieldNo(u8 taskId)
     ClearDialogWindowAndFrame(0, FALSE);
     DestroyTask(taskId);
     ScriptContext_Enable();
+}
+
+static void PokevialPrintPartyHealed(bool32 isPlayerUsingRegisteredKeyItem, u8 taskId)
+{
+    StringExpandPlaceholders(gStringVar4, gText_YourPkmnWereRestored);
+
+    if (isPlayerUsingRegisteredKeyItem)
+        DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseCantUseKeyItemMessage);
+    else
+        DisplayItemMessage(taskId,FONT_NORMAL,gStringVar4,CloseItemMessage);
 }
 
 void PokevialPrintDosesAndConfirmMessage(u32 currentDoses, bool32 isPlayerUsingRegisteredKeyItem, u8 taskId)
