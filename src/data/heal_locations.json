@@ -135,8 +135,8 @@
     {
       "id": "HEAL_LOCATION_CHITIN_CRAG_DALE",
       "map": "MAP_CHITIN_CRAG_DALE",
-      "x": 10,
-      "y": 10
+      "x": 6,
+      "y": 8
     },
     {
       "id": "HEAL_LOCATION_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F_2",

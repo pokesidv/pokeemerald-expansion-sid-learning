@@ -115,14 +115,14 @@
       "x": 9,
       "y": 8,
       "elevation": 0,
-      "dest_map": "MAP_LITTLEROOT_TOWN",
+      "dest_map": "MAP_CHITIN_CRAG_DALE",
       "dest_warp_id": "1"
     },
     {
       "x": 8,
       "y": 8,
       "elevation": 0,
-      "dest_map": "MAP_LITTLEROOT_TOWN",
+      "dest_map": "MAP_CHITIN_CRAG_DALE",
       "dest_warp_id": "1"
     },
     {
