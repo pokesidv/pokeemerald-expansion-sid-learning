@@ -67,6 +67,9 @@ static void MultichoiceDynamicEventDebug_OnDestroy(struct DynamicListMenuEventAr
 static void MultichoiceDynamicEventShowItem_OnInit(struct DynamicListMenuEventArgs *eventArgs);
 static void MultichoiceDynamicEventShowItem_OnSelectionChanged(struct DynamicListMenuEventArgs *eventArgs);
 static void MultichoiceDynamicEventShowItem_OnDestroy(struct DynamicListMenuEventArgs *eventArgs);
+static void MultichoiceDynamicEventShowMon_OnDestroy(struct DynamicListMenuEventArgs *eventArgs);
+static void MultichoiceDynamicEventShowMon_OnSelectionChanged(struct DynamicListMenuEventArgs *eventArgs);
+static void MultichoiceDynamicEventShowMon_OnInit(struct DynamicListMenuEventArgs *eventArgs);
 
 static const struct DynamicListMenuEventCollection sDynamicListMenuEventCollections[] =
 {
@@ -81,6 +84,12 @@ static const struct DynamicListMenuEventCollection sDynamicListMenuEventCollecti
         .OnInit = MultichoiceDynamicEventShowItem_OnInit,
         .OnSelectionChanged = MultichoiceDynamicEventShowItem_OnSelectionChanged,
         .OnDestroy = MultichoiceDynamicEventShowItem_OnDestroy
+    },
+    [DYN_MULTICHOICE_CB_SHOW_MON] =
+    {
+        .OnInit = MultichoiceDynamicEventShowMon_OnInit,
+        .OnSelectionChanged = MultichoiceDynamicEventShowMon_OnSelectionChanged,
+        .OnDestroy = MultichoiceDynamicEventShowMon_OnDestroy
     }
 };
 
@@ -155,8 +164,12 @@ static void MultichoiceDynamicEventDebug_OnDestroy(struct DynamicListMenuEventAr
 }
 
 #define sAuxWindowId sDynamicMenuEventScratchPad[0]
+
 #define sItemSpriteId sDynamicMenuEventScratchPad[1]
 #define TAG_CB_ITEM_ICON 3000
+
+#define sMonSpriteId sDynamicMenuEventScratchPad[2]
+#define TAG_CB_MON_ICON 3001
 
 static void MultichoiceDynamicEventShowItem_OnInit(struct DynamicListMenuEventArgs *eventArgs)
 {
@@ -203,8 +216,50 @@ static void MultichoiceDynamicEventShowItem_OnDestroy(struct DynamicListMenuEven
     }
 }
 
+
+static void MultichoiceDynamicEventShowMon_OnInit(struct DynamicListMenuEventArgs *eventArgs)
+{
+    struct WindowTemplate *template = &gWindows[eventArgs->windowId].window;
+    u32 baseBlock = template->baseBlock + template->width * template->height;
+    struct WindowTemplate auxTemplate = CreateWindowTemplate(0, template->tilemapLeft + template->width + 2, template->tilemapTop, 8, 8, 15, baseBlock);
+    u32 auxWindowId = AddWindow(&auxTemplate);
+    SetStandardWindowBorderStyle(auxWindowId, FALSE);
+    FillWindowPixelBuffer(auxWindowId, 0x11);
+    CopyWindowToVram(auxWindowId, COPYWIN_FULL);
+    sAuxWindowId = auxWindowId;
+    sMonSpriteId = MAX_SPRITES;
+}
+
+static void MultichoiceDynamicEventShowMon_OnSelectionChanged(struct DynamicListMenuEventArgs *eventArgs)
+{
+    struct WindowTemplate *template = &gWindows[eventArgs->windowId].window;
+    u32 x = template->tilemapLeft * 8 + template->width * 8 + 8 + 40;
+    u32 y = template->tilemapTop * 8 + 40 - 8;
+
+    if (sMonSpriteId != MAX_SPRITES)
+    {
+        FreeResourcesAndDestroySprite(&gSprites[sMonSpriteId], sMonSpriteId);
+    }
+
+    // eventArgs->selectedItem should be the species ID
+    sMonSpriteId = CreateMonSprite_PicBox(eventArgs->selectedItem, x, y, 0);
+    gSprites[sMonSpriteId].oam.priority = 0;
+}
+
+static void MultichoiceDynamicEventShowMon_OnDestroy(struct DynamicListMenuEventArgs *eventArgs)
+{
+    ClearStdWindowAndFrame(sAuxWindowId, TRUE);
+    RemoveWindow(sAuxWindowId);
+
+    if (sMonSpriteId != MAX_SPRITES)
+    {
+        FreeResourcesAndDestroySprite(&gSprites[sMonSpriteId], sMonSpriteId);
+    }
+}
+
 #undef sAuxWindowId
 #undef sItemSpriteId
+#undef TAG_CB_MON_ICON
 #undef TAG_CB_ITEM_ICON
 
 static void FreeListMenuItems(struct ListMenuItem *items, u32 count)

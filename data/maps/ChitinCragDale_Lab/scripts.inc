@@ -325,7 +325,7 @@ ChitinCragDale_Lab_EventScript_EditGrassStarter::
 # 160 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_SPRIGATITO
 # 161 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_NONE
+	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_SHOW_MON
 # 162 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setvar VAR_GRASS_SPECIES, VAR_RESULT
 # 164 "data/maps/ChitinCragDale_Lab/scripts.pory"
@@ -385,7 +385,7 @@ ChitinCragDale_Lab_EventScript_EditFireStarter::
 # 194 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_FUECOCO
 # 195 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_NONE
+	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_SHOW_MON
 # 198 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	copyvar VAR_FIRE_SPECIES, VAR_RESULT
 # 199 "data/maps/ChitinCragDale_Lab/scripts.pory"
@@ -443,7 +443,7 @@ ChitinCragDale_Lab_EventScript_EditWaterStarter::
 # 228 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_QUAXLY
 # 229 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_NONE
+	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_SHOW_MON
 # 231 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	copyvar VAR_WATER_SPECIES, VAR_RESULT
 # 232 "data/maps/ChitinCragDale_Lab/scripts.pory"

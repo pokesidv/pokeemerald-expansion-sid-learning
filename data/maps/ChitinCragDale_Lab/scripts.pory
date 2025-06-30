@@ -158,7 +158,7 @@ script ChitinCragDale_Lab_EventScript_EditGrassStarter {
     dynmultipush("{STR_VAR_1}", SPECIES_GROOKEY)
     bufferspeciesname(STR_VAR_1, SPECIES_SPRIGATITO)
     dynmultipush("{STR_VAR_1}", SPECIES_SPRIGATITO)
-    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_NONE)
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_SHOW_MON)
     setvar(VAR_GRASS_SPECIES, VAR_RESULT)
     
     copyvar(VAR_GRASS_SPECIES, VAR_RESULT)
@@ -192,7 +192,7 @@ script ChitinCragDale_Lab_EventScript_EditFireStarter {
     dynmultipush("{STR_VAR_2}", SPECIES_SCORBUNNY)
     bufferspeciesname(STR_VAR_2, SPECIES_FUECOCO)
     dynmultipush("{STR_VAR_2}", SPECIES_FUECOCO)
-    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_NONE)
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_SHOW_MON)
     
     
     copyvar(VAR_FIRE_SPECIES, VAR_RESULT)
@@ -226,7 +226,7 @@ script ChitinCragDale_Lab_EventScript_EditWaterStarter {
     dynmultipush("{STR_VAR_3}", SPECIES_SOBBLE)
     bufferspeciesname(STR_VAR_3, SPECIES_QUAXLY)
     dynmultipush("{STR_VAR_3}", SPECIES_QUAXLY)
-    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_NONE)
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_SHOW_MON)
     
     copyvar(VAR_WATER_SPECIES, VAR_RESULT)
     bufferspeciesname(STR_VAR_3, VAR_WATER_SPECIES)
