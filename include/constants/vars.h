@@ -267,11 +267,11 @@
 #define VAR_UNUSED_0x40F7                                0x40F7 // Unused Var
 #define VAR_UNUSED_0x40F8                                0x40F8 // Unused Var
 #define VAR_UNUSED_0x40F9                                0x40F9 // Unused Var
-#define VAR_UNUSED_0x40FA                                0x40FA // Unused Var
-#define VAR_UNUSED_0x40FB                                0x40FB // Unused Var
-#define VAR_UNUSED_0x40FC                                0x40FC // Unused Var
-#define VAR_UNUSED_0x40FD                                0x40FD // Unused Var
-#define VAR_UNUSED_0x40FE                                0x40FE // Unused Var
+#define VAR_SELECTED_STARTER_TYPE                        0x40FA // 0=Grass, 1=Fire, 2=Water
+#define VAR_GRASS_SPECIES                                0x40FB // 0=Bulbasaur, 1=Chikorita, 2=Treecko, 3=Turtwig, 4=Snivy, 5=Chespin, 6=Rowlet, 7=Grookey, 8=Sprigatito 
+#define VAR_FIRE_SPECIES                                 0x40FC // 0=Charmander, 1=Cyndaquil, 2=Torchic, 3=Chimchar, 4=Tepig, 5=Fennekin, 6=Litten, 7=Scorbunny, 8=Fuecoco
+#define VAR_WATER_SPECIES                                0x40FD // 0=Squirtle, 1=Totodile, 2=Mudkip, 3=Piplup, 4=Oshawott, 5=Froakie, 6=Popplio, 7=Sobble, 8=Quaxly 
+#define VAR_SELECTED_STARTER_SPECIES                     0x40FE // to store the pokemon to give the player as the starter
 #define VAR_UNUSED_0x40FF                                0x40FF // Unused Var
 
 #define VARS_END                                         0x40FF

@@ -1,0 +1,257 @@
+mapscripts ChitinCragDale_Lab_MapScripts {
+    MAP_SCRIPT_ON_TRANSITION: ChitinCragDale_Lab_EventScript_OnTransition
+}
+
+script ChitinCragDale_Lab_EventScript_OnTransition {
+    setvar(VAR_GRASS_SPECIES, SPECIES_BULBASAUR)
+    setvar(VAR_FIRE_SPECIES, SPECIES_CHARMANDER)
+    setvar(VAR_WATER_SPECIES, SPECIES_SQUIRTLE)
+}
+
+script ChitinCragDale_Lab_EventScript_ClickOnGrassBall {
+    lockall
+    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
+        msgbox(format("Don't be greedy!"))
+        waitmessage
+        releaseall
+        end
+    }
+    setvar(VAR_SELECTED_STARTER_TYPE, 0)
+    call(ChitinCragDale_Lab_EventScript_PickSelectedStarter)
+    hidemonpic
+    waitmessage
+    releaseall
+    end
+}
+script ChitinCragDale_Lab_EventScript_ClickOnFireBall {
+    lockall
+    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
+        msgbox(format("Don't be greedy!"))
+        waitmessage
+        releaseall
+        end
+    }
+    setvar(VAR_SELECTED_STARTER_TYPE, 1)
+    call(ChitinCragDale_Lab_EventScript_PickSelectedStarter)
+    hidemonpic
+    waitmessage
+    releaseall
+    end
+}
+script ChitinCragDale_Lab_EventScript_ClickOnWaterBall {
+    lockall
+    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
+        msgbox(format("Don't be greedy!"))
+        waitmessage
+        releaseall
+        end
+    }
+    setvar(VAR_SELECTED_STARTER_TYPE, 2)
+    call(ChitinCragDale_Lab_EventScript_PickSelectedStarter)
+    hidemonpic
+    waitmessage
+    releaseall
+    end
+}
+
+script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
+    switch(var(VAR_SELECTED_STARTER_TYPE)) {
+        case 0:
+            copyvar(VAR_SELECTED_STARTER_SPECIES, VAR_GRASS_SPECIES)
+        case 1:
+            copyvar(VAR_SELECTED_STARTER_SPECIES, VAR_FIRE_SPECIES)
+        case 2:
+            copyvar(VAR_SELECTED_STARTER_SPECIES, VAR_WATER_SPECIES)
+        default:
+            msgbox(format("No starter selected."))
+            waitmessage
+            releaseall
+            return
+    }
+
+    showmonpic(VAR_SELECTED_STARTER_SPECIES, 10, 3)
+    bufferspeciesname(STR_VAR_1, VAR_SELECTED_STARTER_SPECIES)
+    msgbox(format("Wanna pick {STR_VAR_1}?"), MSGBOX_YESNO)
+    if(var(VAR_RESULT) == YES) {
+        givemon(SPECIES_TREECKO, 50, ITEM_MASTER_BALL)
+        if(var(VAR_RESULT) == MON_CANT_GIVE){
+            hidemonpic
+            msgbox(format("No more room."))
+        }
+        else {
+            playfanfare(MUS_OBTAIN_ITEM)
+            msgbox(format("Received {STR_VAR_1}!"))
+            switch(var(VAR_SELECTED_STARTER_TYPE)) {
+                case 0:
+                    removeobject(2)
+                    setflag(FLAG_STARTER_GRASS)
+                case 1:
+                    removeobject(3)
+                    setflag(FLAG_STARTER_FIRE)
+                case 2:
+                    removeobject(4)
+                    setflag(FLAG_STARTER_WATER)
+            }
+            if(var(VAR_RESULT) == MON_GIVEN_TO_PARTY){
+                call(NicknamePartyMon)
+            } 
+            elif(var(VAR_RESULT) == MON_GIVEN_TO_PC) {
+                call(NicknameBoxMon)
+            }   
+        }
+    } else {
+        hidemonpic  
+        msgbox(format("{STR_VAR_1} sits there patiently."))
+    }
+
+    waitmessage
+    releaseall
+    return
+}
+
+script ChitinCragDale_Lab_EventScript_EditGeneration {
+    lockall
+    faceplayer
+    
+    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
+        msgbox(format("Enjoy your starter!"))
+        waitmessage
+        releaseall
+        end
+    }
+    msgbox(format("Want to change where a starter comes from?"))
+    dynmultichoice(0,0, FALSE, 4, 0, DYN_MULTICHOICE_CB_NONE, "Grass", "Fire", "Water")
+    switch(var(VAR_RESULT)) {
+        case 0:
+            call(ChitinCragDale_Lab_EventScript_EditGrassStarter)
+        case 1:
+            call(ChitinCragDale_Lab_EventScript_EditFireStarter)
+        case 2:
+            call(ChitinCragDale_Lab_EventScript_EditWaterStarter)
+        default:
+            msgbox(format("Ok go pick one then!"))
+    }
+    releaseall
+    end
+}
+
+script ChitinCragDale_Lab_EventScript_EditGrassStarter {
+    lockall
+    faceplayer
+    msgbox(format("Which grass starter do you want?"))
+
+    bufferspeciesname(STR_VAR_1, SPECIES_BULBASAUR)
+    dynmultipush("{STR_VAR_1}", SPECIES_BULBASAUR)
+    bufferspeciesname(STR_VAR_1, SPECIES_CHIKORITA)
+    dynmultipush("{STR_VAR_1}", SPECIES_CHIKORITA)
+    bufferspeciesname(STR_VAR_1, SPECIES_TREECKO)
+    dynmultipush("{STR_VAR_1}", SPECIES_TREECKO)
+    bufferspeciesname(STR_VAR_1, SPECIES_TURTWIG)
+    dynmultipush("{STR_VAR_1}", SPECIES_TURTWIG)
+    bufferspeciesname(STR_VAR_1, SPECIES_SNIVY)
+    dynmultipush("{STR_VAR_1}", SPECIES_SNIVY)
+    bufferspeciesname(STR_VAR_1, SPECIES_CHESPIN)
+    dynmultipush("{STR_VAR_1}", SPECIES_CHESPIN)
+    bufferspeciesname(STR_VAR_1, SPECIES_ROWLET)
+    dynmultipush("{STR_VAR_1}", SPECIES_ROWLET)
+    bufferspeciesname(STR_VAR_1, SPECIES_GROOKEY)
+    dynmultipush("{STR_VAR_1}", SPECIES_GROOKEY)
+    bufferspeciesname(STR_VAR_1, SPECIES_SPRIGATITO)
+    dynmultipush("{STR_VAR_1}", SPECIES_SPRIGATITO)
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_NONE)
+    setvar(VAR_GRASS_SPECIES, VAR_RESULT)
+    
+    copyvar(VAR_GRASS_SPECIES, VAR_RESULT)
+    bufferspeciesname(STR_VAR_3, VAR_GRASS_SPECIES)
+    msgbox(format("{STR_VAR_3} is now available as the grass starter!"))		
+    waitmessage
+    releaseall
+    return
+}
+
+script ChitinCragDale_Lab_EventScript_EditFireStarter {
+    lockall
+    faceplayer
+    msgbox(format("Which fire starter do you want?"))
+
+    bufferspeciesname(STR_VAR_2, SPECIES_CHARMANDER)
+    dynmultipush("{STR_VAR_2}", SPECIES_CHARMANDER)
+    bufferspeciesname(STR_VAR_2, SPECIES_CYNDAQUIL)
+    dynmultipush("{STR_VAR_2}", SPECIES_CYNDAQUIL)
+    bufferspeciesname(STR_VAR_2, SPECIES_TORCHIC)
+    dynmultipush("{STR_VAR_2}", SPECIES_TORCHIC)
+    bufferspeciesname(STR_VAR_2, SPECIES_CHIMCHAR)
+    dynmultipush("{STR_VAR_2}", SPECIES_CHIMCHAR)
+    bufferspeciesname(STR_VAR_2, SPECIES_TEPIG)
+    dynmultipush("{STR_VAR_2}", SPECIES_TEPIG)
+    bufferspeciesname(STR_VAR_2, SPECIES_FENNEKIN)
+    dynmultipush("{STR_VAR_2}", SPECIES_FENNEKIN)
+    bufferspeciesname(STR_VAR_2, SPECIES_LITTEN)
+    dynmultipush("{STR_VAR_2}", SPECIES_LITTEN)
+    bufferspeciesname(STR_VAR_2, SPECIES_SCORBUNNY)
+    dynmultipush("{STR_VAR_2}", SPECIES_SCORBUNNY)
+    bufferspeciesname(STR_VAR_2, SPECIES_FUECOCO)
+    dynmultipush("{STR_VAR_2}", SPECIES_FUECOCO)
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_NONE)
+    
+    
+    copyvar(VAR_FIRE_SPECIES, VAR_RESULT)
+    bufferspeciesname(STR_VAR_3, VAR_FIRE_SPECIES)
+    msgbox(format("{STR_VAR_3} is now available as the fire starter!"))		
+    waitmessage
+    releaseall
+    return
+}
+
+script ChitinCragDale_Lab_EventScript_EditWaterStarter {
+    lockall
+    faceplayer
+    msgbox(format("Which water starter do you want?"))
+    
+    bufferspeciesname(STR_VAR_3, SPECIES_SQUIRTLE)
+    dynmultipush("{STR_VAR_3}", SPECIES_SQUIRTLE)
+    bufferspeciesname(STR_VAR_3, SPECIES_TOTODILE)
+    dynmultipush("{STR_VAR_3}", SPECIES_TOTODILE)
+    bufferspeciesname(STR_VAR_3, SPECIES_MUDKIP)
+    dynmultipush("{STR_VAR_3}", SPECIES_MUDKIP)
+    bufferspeciesname(STR_VAR_3, SPECIES_PIPLUP)
+    dynmultipush("{STR_VAR_3}", SPECIES_PIPLUP)
+    bufferspeciesname(STR_VAR_3, SPECIES_OSHAWOTT)
+    dynmultipush("{STR_VAR_3}", SPECIES_OSHAWOTT)
+    bufferspeciesname(STR_VAR_3, SPECIES_FROAKIE)
+    dynmultipush("{STR_VAR_3}", SPECIES_FROAKIE)
+    bufferspeciesname(STR_VAR_3, SPECIES_POPPLIO)
+    dynmultipush("{STR_VAR_3}", SPECIES_POPPLIO)
+    bufferspeciesname(STR_VAR_3, SPECIES_SOBBLE)
+    dynmultipush("{STR_VAR_3}", SPECIES_SOBBLE)
+    bufferspeciesname(STR_VAR_3, SPECIES_QUAXLY)
+    dynmultipush("{STR_VAR_3}", SPECIES_QUAXLY)
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_NONE)
+    
+    copyvar(VAR_WATER_SPECIES, VAR_RESULT)
+    bufferspeciesname(STR_VAR_3, VAR_WATER_SPECIES)
+    msgbox(format("{STR_VAR_3} is now available as the water starter!"))	
+    waitmessage
+    releaseall
+    return
+}
+
+script NicknamePartyMon {
+    msgbox(format("Give it a nickname?"), MSGBOX_YESNO)
+    hidemonpic
+    if(var(VAR_RESULT) == YES) {
+        call(Common_EventScript_GetGiftMonPartySlot)
+        call(Common_EventScript_NameReceivedPartyMon)
+    }
+    return
+}
+
+script NicknameBoxMon {
+    msgbox(format("Give it a nickname?"), MSGBOX_YESNO)
+    hidemonpic
+    if(var(VAR_RESULT) == YES) {
+        call(Common_EventScript_NameReceivedBoxMon)
+    } 
+    call(Common_EventScript_TransferredToPC)
+    return
+}
