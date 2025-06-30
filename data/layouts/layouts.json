@@ -4410,6 +4410,26 @@
       "secondary_tileset": "gTileset_MysteryEventsHouse",
       "border_filepath": "data/layouts/SootopolisCity_MysteryEventsHouse_1F_StairsUnblocked/border.bin",
       "blockdata_filepath": "data/layouts/SootopolisCity_MysteryEventsHouse_1F_StairsUnblocked/map.bin"
+    },
+    {
+      "id": "LAYOUT_CHITIN_CRAG_DALE",
+      "name": "ChitinCragDale_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ChitinCragDale/border.bin",
+      "blockdata_filepath": "data/layouts/ChitinCragDale/map.bin"
+    },
+    {
+      "id": "LAYOUT_CHITIN_CRAG_DALE_LAB",
+      "name": "ChitinCragDale_Lab_Layout",
+      "width": 13,
+      "height": 13,
+      "primary_tileset": "gTileset_Building",
+      "secondary_tileset": "gTileset_Lab",
+      "border_filepath": "data/layouts/ChitinCragDale_Lab/border.bin",
+      "blockdata_filepath": "data/layouts/ChitinCragDale_Lab/map.bin"
     }
   ]
 }

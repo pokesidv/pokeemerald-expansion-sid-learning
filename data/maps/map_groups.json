@@ -33,7 +33,9 @@
     "gMapGroup_IndoorRoute113",
     "gMapGroup_IndoorRoute123",
     "gMapGroup_IndoorRoute119",
-    "gMapGroup_IndoorRoute124"
+    "gMapGroup_IndoorRoute124",
+    "gMapGroup_ArdorProvince",
+    "gMapGroup_Indoor_Ardor_ChitinCragDale"
   ],
   "gMapGroup_TownsAndRoutes": [
     "PetalburgCity",
@@ -620,5 +622,11 @@
   ],
   "gMapGroup_IndoorRoute124": [
     "Route124_DivingTreasureHuntersHouse"
+  ],
+  "gMapGroup_ArdorProvince": [
+    "ChitinCragDale"
+  ],
+  "gMapGroup_Indoor_Ardor_ChitinCragDale": [
+    "ChitinCragDale_Lab"
   ]
 }

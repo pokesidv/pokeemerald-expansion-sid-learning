@@ -131,6 +131,18 @@
       "map": "MAP_BATTLE_FRONTIER_OUTSIDE_EAST",
       "x": 3,
       "y": 52
+    },
+    {
+      "id": "HEAL_LOCATION_CHITIN_CRAG_DALE",
+      "map": "MAP_CHITIN_CRAG_DALE",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F_2",
+      "map": "MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F",
+      "x": 4,
+      "y": 4
     }
   ]
 }
