@@ -8,53 +8,32 @@ script ChitinCragDale_Lab_EventScript_OnTransition {
     setvar(VAR_WATER_SPECIES, SPECIES_SQUIRTLE)
 }
 
+const PROF_BIRCH_ID = 1
+const GRASS_BALL_ID = 2
+const FIRE_BALL_ID = 3
+const WATER_BALL_ID = 4
+
 script ChitinCragDale_Lab_EventScript_ClickOnGrassBall {
-    lockall
-    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
-        msgbox(format("Don't be greedy!"))
-        waitmessage
-        releaseall
-        end
-    }
     setvar(VAR_SELECTED_STARTER_TYPE, 0)
     call(ChitinCragDale_Lab_EventScript_PickSelectedStarter)
-    hidemonpic
-    waitmessage
-    releaseall
-    end
 }
 script ChitinCragDale_Lab_EventScript_ClickOnFireBall {
-    lockall
-    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
-        msgbox(format("Don't be greedy!"))
-        waitmessage
-        releaseall
-        end
-    }
     setvar(VAR_SELECTED_STARTER_TYPE, 1)
     call(ChitinCragDale_Lab_EventScript_PickSelectedStarter)
-    hidemonpic
-    waitmessage
-    releaseall
-    end
 }
 script ChitinCragDale_Lab_EventScript_ClickOnWaterBall {
-    lockall
-    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
-        msgbox(format("Don't be greedy!"))
-        waitmessage
-        releaseall
-        end
-    }
     setvar(VAR_SELECTED_STARTER_TYPE, 2)
     call(ChitinCragDale_Lab_EventScript_PickSelectedStarter)
-    hidemonpic
-    waitmessage
-    releaseall
-    end
 }
 
 script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
+    lock
+    if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
+        msgbox(format("Don't be greedy!"))
+        waitmessage
+        release
+        return
+    }
     switch(var(VAR_SELECTED_STARTER_TYPE)) {
         case 0:
             copyvar(VAR_SELECTED_STARTER_SPECIES, VAR_GRASS_SPECIES)
@@ -65,7 +44,7 @@ script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
         default:
             msgbox(format("No starter selected."))
             waitmessage
-            releaseall
+            release
             return
     }
 
@@ -73,25 +52,27 @@ script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
     bufferspeciesname(STR_VAR_1, VAR_SELECTED_STARTER_SPECIES)
     msgbox(format("Wanna pick {STR_VAR_1}?"), MSGBOX_YESNO)
     if(var(VAR_RESULT) == YES) {
-        givemon(SPECIES_TREECKO, 50, ITEM_MASTER_BALL)
+        givemon(VAR_SELECTED_STARTER_SPECIES, 50, ITEM_MASTER_BALL)
         if(var(VAR_RESULT) == MON_CANT_GIVE){
             hidemonpic
             msgbox(format("No more room."))
-        }
-        else {
+        } else {
             playfanfare(MUS_OBTAIN_ITEM)
             msgbox(format("Received {STR_VAR_1}!"))
             switch(var(VAR_SELECTED_STARTER_TYPE)) {
                 case 0:
-                    removeobject(2)
+                    removeobject(GRASS_BALL_ID)
                     setflag(FLAG_STARTER_GRASS)
                 case 1:
-                    removeobject(3)
+                    removeobject(FIRE_BALL_ID)
                     setflag(FLAG_STARTER_FIRE)
                 case 2:
-                    removeobject(4)
+                    removeobject(WATER_BALL_ID)
                     setflag(FLAG_STARTER_WATER)
             }
+
+            call(ChitinCragDale_Lab_EventScript_SetStartingFlags)
+
             if(var(VAR_RESULT) == MON_GIVEN_TO_PARTY){
                 call(NicknamePartyMon)
             } 
@@ -104,135 +85,126 @@ script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
         msgbox(format("{STR_VAR_1} sits there patiently."))
     }
 
+    hidemonpic
     waitmessage
-    releaseall
+    release
     return
 }
 
+
+script ChitinCragDale_Lab_EventScript_SetStartingFlags {
+    setflag(FLAG_SYS_POKEMON_GET)
+	setflag(FLAG_RESCUED_BIRCH)
+	setflag(FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE)
+	setflag(FLAG_ADVENTURE_STARTED)
+	clearflag(FLAG_HIDE_LITTLEROOT_TOWN_BIRCHS_LAB_BIRCH)
+	setflag(FLAG_HIDE_ROUTE_101_BIRCH_STARTERS_BAG)
+	setvar(VAR_BIRCH_LAB_STATE, 2)
+	setvar(VAR_ROUTE101_STATE, 3)
+	setflag(FLAG_SYS_POKEDEX_GET)
+	// special(SetUnlockedPokedexFlags)
+	setflag(FLAG_RECEIVED_POKEDEX_FROM_BIRCH)
+	setvar(VAR_CABLE_CLUB_TUTORIAL_STATE, 2)
+	setflag(FLAG_SYS_NATIONAL_DEX)
+	// special(EnableNationalPokedex)
+	setflag(FLAG_RECEIVED_RUNNING_SHOES)
+	setflag(FLAG_SYS_B_DASH)
+    // 4: Received Running Shoes
+	setvar(VAR_LITTLEROOT_TOWN_STATE, 4) 
+    // 7: Told to go meet rival
+	setvar(VAR_LITTLEROOT_INTRO_STATE, 7) 
+    // 2: Met Rival's Mom (and is corresponding gender)
+	setvar(VAR_LITTLEROOT_HOUSES_STATE_BRENDAN, 2) 
+    // 2: Met Rival's Mom (and is corresponding gender)
+	setvar(VAR_LITTLEROOT_HOUSES_STATE_MAY, 2) 
+    // 4: Received Pokedex
+	setvar(VAR_LITTLEROOT_RIVAL_STATE, 4) 
+}
+
 script ChitinCragDale_Lab_EventScript_EditGeneration {
-    lockall
+    lock
     faceplayer
     
     if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
         msgbox(format("Enjoy your starter!"))
         waitmessage
-        releaseall
+        release
         end
     }
-    msgbox(format("Want to change where a starter comes from?"))
-    dynmultichoice(0,0, FALSE, 4, 0, DYN_MULTICHOICE_CB_NONE, "Grass", "Fire", "Water")
-    switch(var(VAR_RESULT)) {
-        case 0:
-            call(ChitinCragDale_Lab_EventScript_EditGrassStarter)
-        case 1:
-            call(ChitinCragDale_Lab_EventScript_EditFireStarter)
-        case 2:
-            call(ChitinCragDale_Lab_EventScript_EditWaterStarter)
-        default:
-            msgbox(format("Ok go pick one then!"))
-    }
-    releaseall
+    
+    msgbox(format("Let's configure your playthrough!"))
+    waitmessage
+    call(ChitinCragDale_Lab_EventScript_EditGrassStarter)
+    waitmessage
+    call(ChitinCragDale_Lab_EventScript_EditFireStarter)
+    waitmessage
+    call(ChitinCragDale_Lab_EventScript_EditWaterStarter)
+    waitmessage
+    msgbox(format("Playthrough configured!"))
+    waitmessage
+    release
     end
 }
 
 script ChitinCragDale_Lab_EventScript_EditGrassStarter {
-    lockall
-    faceplayer
-    msgbox(format("Which grass starter do you want?"))
+    msgbox(format("Which region founded the {COLOR GREEN}{SHADOW LIGHT_GREEN}Vigor{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} province?"))
 
-    bufferspeciesname(STR_VAR_1, SPECIES_BULBASAUR)
-    dynmultipush("{STR_VAR_1}", SPECIES_BULBASAUR)
-    bufferspeciesname(STR_VAR_1, SPECIES_CHIKORITA)
-    dynmultipush("{STR_VAR_1}", SPECIES_CHIKORITA)
-    bufferspeciesname(STR_VAR_1, SPECIES_TREECKO)
-    dynmultipush("{STR_VAR_1}", SPECIES_TREECKO)
-    bufferspeciesname(STR_VAR_1, SPECIES_TURTWIG)
-    dynmultipush("{STR_VAR_1}", SPECIES_TURTWIG)
-    bufferspeciesname(STR_VAR_1, SPECIES_SNIVY)
-    dynmultipush("{STR_VAR_1}", SPECIES_SNIVY)
-    bufferspeciesname(STR_VAR_1, SPECIES_CHESPIN)
-    dynmultipush("{STR_VAR_1}", SPECIES_CHESPIN)
-    bufferspeciesname(STR_VAR_1, SPECIES_ROWLET)
-    dynmultipush("{STR_VAR_1}", SPECIES_ROWLET)
-    bufferspeciesname(STR_VAR_1, SPECIES_GROOKEY)
-    dynmultipush("{STR_VAR_1}", SPECIES_GROOKEY)
-    bufferspeciesname(STR_VAR_1, SPECIES_SPRIGATITO)
-    dynmultipush("{STR_VAR_1}", SPECIES_SPRIGATITO)
-    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_SHOW_MON)
-    setvar(VAR_GRASS_SPECIES, VAR_RESULT)
+    dynmultipush("1: Kanto", SPECIES_BULBASAUR)
+    dynmultipush("2: Johto", SPECIES_CHIKORITA)
+    dynmultipush("3: Hoenn", SPECIES_TREECKO)
+    dynmultipush("4: Sinnoh", SPECIES_TURTWIG)
+    dynmultipush("5: Unova", SPECIES_SNIVY)
+    dynmultipush("6: Kalos", SPECIES_CHESPIN)
+    dynmultipush("7: Alola", SPECIES_ROWLET)
+    dynmultipush("8: Galar", SPECIES_GROOKEY)
+    dynmultipush("9: Paldea", SPECIES_SPRIGATITO)
     
+    dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_SHOW_MON)
     copyvar(VAR_GRASS_SPECIES, VAR_RESULT)
     bufferspeciesname(STR_VAR_3, VAR_GRASS_SPECIES)
-    msgbox(format("{STR_VAR_3} is now available as the grass starter!"))		
-    waitmessage
-    releaseall
+    msgbox(format("{COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_3}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} is now available as the grass starter!"))		
     return
 }
 
 script ChitinCragDale_Lab_EventScript_EditFireStarter {
-    lockall
-    faceplayer
-    msgbox(format("Which fire starter do you want?"))
+    msgbox(format("Which region founded the {COLOR RED}{SHADOW LIGHT_RED}Ardor{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} province?"))
 
-    bufferspeciesname(STR_VAR_2, SPECIES_CHARMANDER)
-    dynmultipush("{STR_VAR_2}", SPECIES_CHARMANDER)
-    bufferspeciesname(STR_VAR_2, SPECIES_CYNDAQUIL)
-    dynmultipush("{STR_VAR_2}", SPECIES_CYNDAQUIL)
-    bufferspeciesname(STR_VAR_2, SPECIES_TORCHIC)
-    dynmultipush("{STR_VAR_2}", SPECIES_TORCHIC)
-    bufferspeciesname(STR_VAR_2, SPECIES_CHIMCHAR)
-    dynmultipush("{STR_VAR_2}", SPECIES_CHIMCHAR)
-    bufferspeciesname(STR_VAR_2, SPECIES_TEPIG)
-    dynmultipush("{STR_VAR_2}", SPECIES_TEPIG)
-    bufferspeciesname(STR_VAR_2, SPECIES_FENNEKIN)
-    dynmultipush("{STR_VAR_2}", SPECIES_FENNEKIN)
-    bufferspeciesname(STR_VAR_2, SPECIES_LITTEN)
-    dynmultipush("{STR_VAR_2}", SPECIES_LITTEN)
-    bufferspeciesname(STR_VAR_2, SPECIES_SCORBUNNY)
-    dynmultipush("{STR_VAR_2}", SPECIES_SCORBUNNY)
-    bufferspeciesname(STR_VAR_2, SPECIES_FUECOCO)
-    dynmultipush("{STR_VAR_2}", SPECIES_FUECOCO)
+    dynmultipush("1: Kanto", SPECIES_CHARMANDER)
+    dynmultipush("2: Johto", SPECIES_CYNDAQUIL)
+    dynmultipush("3: Hoenn", SPECIES_TORCHIC)
+    dynmultipush("4: Sinnoh", SPECIES_CHIMCHAR)
+    dynmultipush("5: Unova", SPECIES_TEPIG)
+    dynmultipush("6: Kalos", SPECIES_FENNEKIN)
+    dynmultipush("7: Alola", SPECIES_LITTEN)
+    dynmultipush("8: Galar", SPECIES_SCORBUNNY)
+    dynmultipush("9: Paldea", SPECIES_FUECOCO)
+
     dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_SHOW_MON)
-    
-    
     copyvar(VAR_FIRE_SPECIES, VAR_RESULT)
     bufferspeciesname(STR_VAR_3, VAR_FIRE_SPECIES)
-    msgbox(format("{STR_VAR_3} is now available as the fire starter!"))		
-    waitmessage
-    releaseall
+    msgbox(format("{COLOR RED}{SHADOW LIGHT_RED}{STR_VAR_3}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} is now available as the fire starter!"))		
     return
 }
 
+
+
 script ChitinCragDale_Lab_EventScript_EditWaterStarter {
-    lockall
-    faceplayer
-    msgbox(format("Which water starter do you want?"))
+    msgbox(format("Which region founded the {COLOR BLUE}{SHADOW LIGHT_BLUE}Guile{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} province?"))
     
-    bufferspeciesname(STR_VAR_3, SPECIES_SQUIRTLE)
-    dynmultipush("{STR_VAR_3}", SPECIES_SQUIRTLE)
-    bufferspeciesname(STR_VAR_3, SPECIES_TOTODILE)
-    dynmultipush("{STR_VAR_3}", SPECIES_TOTODILE)
-    bufferspeciesname(STR_VAR_3, SPECIES_MUDKIP)
-    dynmultipush("{STR_VAR_3}", SPECIES_MUDKIP)
-    bufferspeciesname(STR_VAR_3, SPECIES_PIPLUP)
-    dynmultipush("{STR_VAR_3}", SPECIES_PIPLUP)
-    bufferspeciesname(STR_VAR_3, SPECIES_OSHAWOTT)
-    dynmultipush("{STR_VAR_3}", SPECIES_OSHAWOTT)
-    bufferspeciesname(STR_VAR_3, SPECIES_FROAKIE)
-    dynmultipush("{STR_VAR_3}", SPECIES_FROAKIE)
-    bufferspeciesname(STR_VAR_3, SPECIES_POPPLIO)
-    dynmultipush("{STR_VAR_3}", SPECIES_POPPLIO)
-    bufferspeciesname(STR_VAR_3, SPECIES_SOBBLE)
-    dynmultipush("{STR_VAR_3}", SPECIES_SOBBLE)
-    bufferspeciesname(STR_VAR_3, SPECIES_QUAXLY)
-    dynmultipush("{STR_VAR_3}", SPECIES_QUAXLY)
+    dynmultipush("1: Kanto", SPECIES_SQUIRTLE)
+    dynmultipush("2: Johto", SPECIES_TOTODILE)
+    dynmultipush("3: Hoenn", SPECIES_MUDKIP)
+    dynmultipush("4: Sinnoh", SPECIES_PIPLUP)
+    dynmultipush("5: Unova", SPECIES_OSHAWOTT)
+    dynmultipush("6: Kalos", SPECIES_FROAKIE)
+    dynmultipush("7: Alola", SPECIES_POPPLIO)
+    dynmultipush("8: Galar", SPECIES_SOBBLE)
+    dynmultipush("9: Paldea", SPECIES_QUAXLY)
+    
     dynmultistack(0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_SHOW_MON)
-    
     copyvar(VAR_WATER_SPECIES, VAR_RESULT)
     bufferspeciesname(STR_VAR_3, VAR_WATER_SPECIES)
-    msgbox(format("{STR_VAR_3} is now available as the water starter!"))	
-    waitmessage
-    releaseall
+    msgbox(format("{COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_3}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} is now available as the water starter!"))	
     return
 }
 

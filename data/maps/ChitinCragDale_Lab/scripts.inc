@@ -15,574 +15,492 @@ ChitinCragDale_Lab_EventScript_OnTransition::
 
 
 ChitinCragDale_Lab_EventScript_ClickOnGrassBall::
-# 12 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 13 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_ClickOnGrassBall_2
-# 13 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_FIRE, ChitinCragDale_Lab_EventScript_ClickOnGrassBall_2
-# 13 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_WATER, ChitinCragDale_Lab_EventScript_ClickOnGrassBall_2
-# 19 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 17 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setvar VAR_SELECTED_STARTER_TYPE, 0
-# 20 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 18 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call ChitinCragDale_Lab_EventScript_PickSelectedStarter
-# 21 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	hidemonpic
-# 22 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 23 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
-
-ChitinCragDale_Lab_EventScript_ClickOnGrassBall_2:
-# 14 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_ClickOnGrassBall_Text_0
-# 15 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 16 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
+	return
 
 
 ChitinCragDale_Lab_EventScript_ClickOnFireBall::
-# 27 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 28 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_ClickOnFireBall_2
-# 28 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_FIRE, ChitinCragDale_Lab_EventScript_ClickOnFireBall_2
-# 28 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_WATER, ChitinCragDale_Lab_EventScript_ClickOnFireBall_2
-# 34 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 21 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setvar VAR_SELECTED_STARTER_TYPE, 1
-# 35 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 22 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call ChitinCragDale_Lab_EventScript_PickSelectedStarter
-# 36 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	hidemonpic
-# 37 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 38 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
-
-ChitinCragDale_Lab_EventScript_ClickOnFireBall_2:
-# 29 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_ClickOnGrassBall_Text_0
-# 30 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 31 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
+	return
 
 
 ChitinCragDale_Lab_EventScript_ClickOnWaterBall::
-# 42 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 43 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_ClickOnWaterBall_2
-# 43 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_FIRE, ChitinCragDale_Lab_EventScript_ClickOnWaterBall_2
-# 43 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_WATER, ChitinCragDale_Lab_EventScript_ClickOnWaterBall_2
-# 49 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 25 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setvar VAR_SELECTED_STARTER_TYPE, 2
-# 50 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 26 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call ChitinCragDale_Lab_EventScript_PickSelectedStarter
-# 51 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	hidemonpic
-# 52 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 53 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
-
-ChitinCragDale_Lab_EventScript_ClickOnWaterBall_2:
-# 44 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_ClickOnGrassBall_Text_0
-# 45 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 46 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
+	return
 
 
 ChitinCragDale_Lab_EventScript_PickSelectedStarter::
-# 58 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 30 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	lock
+# 31 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_PickSelectedStarter_2
+# 31 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	goto_if_set FLAG_STARTER_FIRE, ChitinCragDale_Lab_EventScript_PickSelectedStarter_2
+# 31 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	goto_if_set FLAG_STARTER_WATER, ChitinCragDale_Lab_EventScript_PickSelectedStarter_2
+# 37 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	switch VAR_SELECTED_STARTER_TYPE
-# 59 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 0, ChitinCragDale_Lab_EventScript_PickSelectedStarter_3
-# 61 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 1, ChitinCragDale_Lab_EventScript_PickSelectedStarter_4
-# 63 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 2, ChitinCragDale_Lab_EventScript_PickSelectedStarter_5
-# 66 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 38 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	case 0, ChitinCragDale_Lab_EventScript_PickSelectedStarter_10
+# 40 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	case 1, ChitinCragDale_Lab_EventScript_PickSelectedStarter_11
+# 42 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	case 2, ChitinCragDale_Lab_EventScript_PickSelectedStarter_12
+# 45 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_1
+# 46 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 47 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	release
+	return
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_2:
+# 32 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_0
-# 67 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 33 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	waitmessage
-# 68 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
+# 34 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	release
 	return
-
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_1:
-# 72 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	showmonpic VAR_SELECTED_STARTER_SPECIES, 10, 3
-# 73 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, VAR_SELECTED_STARTER_SPECIES
-# 74 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_1, MSGBOX_YESNO
-# 75 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	compare VAR_RESULT, YES
-	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_8
-# 103 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	hidemonpic
-# 104 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_4
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_7:
-# 107 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 108 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	return
-
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_3:
-# 60 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	copyvar VAR_SELECTED_STARTER_SPECIES, VAR_GRASS_SPECIES
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_1
-
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_4:
-# 62 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	copyvar VAR_SELECTED_STARTER_SPECIES, VAR_FIRE_SPECIES
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_1
-
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_5:
-# 64 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	copyvar VAR_SELECTED_STARTER_SPECIES, VAR_WATER_SPECIES
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_1
 
 ChitinCragDale_Lab_EventScript_PickSelectedStarter_8:
-# 76 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	givemon SPECIES_TREECKO, 50, ITEM_MASTER_BALL
-# 77 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	compare VAR_RESULT, MON_CANT_GIVE
-	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_11
-# 82 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	playfanfare MUS_OBTAIN_ITEM
-# 83 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_3
+# 51 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	showmonpic VAR_SELECTED_STARTER_SPECIES, 10, 3
+# 52 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	bufferspeciesname STR_VAR_1, VAR_SELECTED_STARTER_SPECIES
+# 53 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_2, MSGBOX_YESNO
+# 54 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	compare VAR_RESULT, YES
+	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_15
 # 84 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	switch VAR_SELECTED_STARTER_TYPE
+	hidemonpic
 # 85 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 0, ChitinCragDale_Lab_EventScript_PickSelectedStarter_16
-# 88 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 1, ChitinCragDale_Lab_EventScript_PickSelectedStarter_17
-# 91 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 2, ChitinCragDale_Lab_EventScript_PickSelectedStarter_18
+	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_5
 ChitinCragDale_Lab_EventScript_PickSelectedStarter_14:
-# 95 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	compare VAR_RESULT, MON_GIVEN_TO_PARTY
-	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_19
-# 98 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	compare VAR_RESULT, MON_GIVEN_TO_PC
-	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_20
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_7
+# 88 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	hidemonpic
+# 89 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 90 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	release
+	return
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_10:
+# 39 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	copyvar VAR_SELECTED_STARTER_SPECIES, VAR_GRASS_SPECIES
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_8
 
 ChitinCragDale_Lab_EventScript_PickSelectedStarter_11:
-# 78 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	hidemonpic
+# 41 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	copyvar VAR_SELECTED_STARTER_SPECIES, VAR_FIRE_SPECIES
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_8
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_12:
+# 43 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	copyvar VAR_SELECTED_STARTER_SPECIES, VAR_WATER_SPECIES
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_8
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_15:
+# 55 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	givemon VAR_SELECTED_STARTER_SPECIES, 50, ITEM_MASTER_BALL
+# 56 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	compare VAR_RESULT, MON_CANT_GIVE
+	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_18
+# 60 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	playfanfare MUS_OBTAIN_ITEM
+# 61 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_4
+# 62 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	switch VAR_SELECTED_STARTER_TYPE
+# 63 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	case 0, ChitinCragDale_Lab_EventScript_PickSelectedStarter_23
+# 66 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	case 1, ChitinCragDale_Lab_EventScript_PickSelectedStarter_24
+# 69 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	case 2, ChitinCragDale_Lab_EventScript_PickSelectedStarter_25
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_21:
+# 74 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	call ChitinCragDale_Lab_EventScript_SetStartingFlags
+# 76 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	compare VAR_RESULT, MON_GIVEN_TO_PARTY
+	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_26
 # 79 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_2
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_7
-
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_16:
-# 86 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	removeobject 2
-# 87 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	setflag FLAG_STARTER_GRASS
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_14
-
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_17:
-# 89 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	removeobject 3
-# 90 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	setflag FLAG_STARTER_FIRE
+	compare VAR_RESULT, MON_GIVEN_TO_PC
+	goto_if_eq ChitinCragDale_Lab_EventScript_PickSelectedStarter_27
 	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_14
 
 ChitinCragDale_Lab_EventScript_PickSelectedStarter_18:
-# 92 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	removeobject 4
-# 93 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	setflag FLAG_STARTER_WATER
+# 57 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	hidemonpic
+# 58 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_3
 	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_14
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_19:
-# 96 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	call NicknamePartyMon
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_7
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_23:
+# 64 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	removeobject 2
+# 65 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_STARTER_GRASS
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_21
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_20:
-# 99 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_24:
+# 67 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	removeobject 3
+# 68 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_STARTER_FIRE
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_21
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_25:
+# 70 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	removeobject 4
+# 71 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_STARTER_WATER
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_21
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_26:
+# 77 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	call NicknamePartyMon
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_14
+
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_27:
+# 80 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call NicknameBoxMon
-	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_7
+	goto ChitinCragDale_Lab_EventScript_PickSelectedStarter_14
+
+
+ChitinCragDale_Lab_EventScript_SetStartingFlags::
+# 96 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_SYS_POKEMON_GET
+# 97 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_RESCUED_BIRCH
+# 98 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE
+# 99 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_ADVENTURE_STARTED
+# 100 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	clearflag FLAG_HIDE_LITTLEROOT_TOWN_BIRCHS_LAB_BIRCH
+# 101 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_HIDE_ROUTE_101_BIRCH_STARTERS_BAG
+# 102 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_BIRCH_LAB_STATE, 2
+# 103 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_ROUTE101_STATE, 3
+# 104 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_SYS_POKEDEX_GET
+# 106 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_RECEIVED_POKEDEX_FROM_BIRCH
+# 107 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_CABLE_CLUB_TUTORIAL_STATE, 2
+# 108 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_SYS_NATIONAL_DEX
+# 110 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_RECEIVED_RUNNING_SHOES
+# 111 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setflag FLAG_SYS_B_DASH
+# 113 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_LITTLEROOT_TOWN_STATE, 4
+# 115 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_LITTLEROOT_INTRO_STATE, 7
+# 117 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_LITTLEROOT_HOUSES_STATE_BRENDAN, 2
+# 119 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_LITTLEROOT_HOUSES_STATE_MAY, 2
+# 121 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	setvar VAR_LITTLEROOT_RIVAL_STATE, 4
+	return
 
 
 ChitinCragDale_Lab_EventScript_EditGeneration::
-# 113 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 114 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	faceplayer
-# 116 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_EditGeneration_2
-# 116 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_FIRE, ChitinCragDale_Lab_EventScript_EditGeneration_2
-# 116 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	goto_if_set FLAG_STARTER_WATER, ChitinCragDale_Lab_EventScript_EditGeneration_2
-# 122 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_EditGeneration_Text_1
-# 123 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultichoice 0, 0, FALSE, 4, 0, DYN_MULTICHOICE_CB_NONE, ChitinCragDale_Lab_EventScript_EditGeneration_Text_2, ChitinCragDale_Lab_EventScript_EditGeneration_Text_3, ChitinCragDale_Lab_EventScript_EditGeneration_Text_4
-# 124 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	switch VAR_RESULT
 # 125 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 0, ChitinCragDale_Lab_EventScript_EditGeneration_10
-# 127 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 1, ChitinCragDale_Lab_EventScript_EditGeneration_11
-# 129 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	case 2, ChitinCragDale_Lab_EventScript_EditGeneration_12
-# 132 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_EditGeneration_Text_5
-ChitinCragDale_Lab_EventScript_EditGeneration_8:
-# 134 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
+	lock
+# 126 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	faceplayer
+# 128 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_EditGeneration_2
+# 128 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	goto_if_set FLAG_STARTER_FIRE, ChitinCragDale_Lab_EventScript_EditGeneration_2
+# 128 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	goto_if_set FLAG_STARTER_WATER, ChitinCragDale_Lab_EventScript_EditGeneration_2
+# 135 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_EditGeneration_Text_1
+# 136 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 137 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	call ChitinCragDale_Lab_EventScript_EditGrassStarter
+# 138 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 139 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	call ChitinCragDale_Lab_EventScript_EditFireStarter
+# 140 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 141 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	call ChitinCragDale_Lab_EventScript_EditWaterStarter
+# 142 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 143 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_EditGeneration_Text_2
+# 144 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	waitmessage
+# 145 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	release
 	end
 
 ChitinCragDale_Lab_EventScript_EditGeneration_2:
-# 117 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 129 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	msgbox ChitinCragDale_Lab_EventScript_EditGeneration_Text_0
-# 118 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 119 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
-	end
-
-ChitinCragDale_Lab_EventScript_EditGeneration_10:
-# 126 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	call ChitinCragDale_Lab_EventScript_EditGrassStarter
-	goto ChitinCragDale_Lab_EventScript_EditGeneration_8
-
-ChitinCragDale_Lab_EventScript_EditGeneration_11:
-# 128 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	call ChitinCragDale_Lab_EventScript_EditFireStarter
-	goto ChitinCragDale_Lab_EventScript_EditGeneration_8
-
-ChitinCragDale_Lab_EventScript_EditGeneration_12:
 # 130 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	call ChitinCragDale_Lab_EventScript_EditWaterStarter
-	goto ChitinCragDale_Lab_EventScript_EditGeneration_8
+	waitmessage
+# 131 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	release
+	end
 
 
 ChitinCragDale_Lab_EventScript_EditGrassStarter::
-# 139 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 140 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	faceplayer
-# 141 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_0
-# 143 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_BULBASAUR
-# 144 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_BULBASAUR
-# 145 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_CHIKORITA
-# 146 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_CHIKORITA
-# 147 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_TREECKO
-# 148 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_TREECKO
-# 149 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_TURTWIG
 # 150 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_TURTWIG
-# 151 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_SNIVY
+	msgbox ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_0
 # 152 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_SNIVY
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_BULBASAUR
 # 153 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_CHESPIN
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_2, SPECIES_CHIKORITA
 # 154 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_CHESPIN
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_3, SPECIES_TREECKO
 # 155 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_ROWLET
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_4, SPECIES_TURTWIG
 # 156 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_ROWLET
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_5, SPECIES_SNIVY
 # 157 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_GROOKEY
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_6, SPECIES_CHESPIN
 # 158 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_GROOKEY
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_7, SPECIES_ROWLET
 # 159 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_1, SPECIES_SPRIGATITO
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_8, SPECIES_GROOKEY
 # 160 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_SPRIGATITO
-# 161 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_SHOW_MON
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_9, SPECIES_SPRIGATITO
 # 162 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	setvar VAR_GRASS_SPECIES, VAR_RESULT
-# 164 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_BULBASAUR, DYN_MULTICHOICE_CB_SHOW_MON
+# 163 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	copyvar VAR_GRASS_SPECIES, VAR_RESULT
-# 165 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 164 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	bufferspeciesname STR_VAR_3, VAR_GRASS_SPECIES
-# 166 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_2
-# 167 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 168 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
+# 165 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_10
 	return
 
 
 ChitinCragDale_Lab_EventScript_EditFireStarter::
-# 173 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 174 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	faceplayer
-# 175 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 170 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	msgbox ChitinCragDale_Lab_EventScript_EditFireStarter_Text_0
+# 172 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_CHARMANDER
+# 173 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_2, SPECIES_CYNDAQUIL
+# 174 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_3, SPECIES_TORCHIC
+# 175 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_4, SPECIES_CHIMCHAR
+# 176 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_5, SPECIES_TEPIG
 # 177 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_CHARMANDER
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_6, SPECIES_FENNEKIN
 # 178 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_CHARMANDER
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_7, SPECIES_LITTEN
 # 179 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_CYNDAQUIL
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_8, SPECIES_SCORBUNNY
 # 180 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_CYNDAQUIL
-# 181 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_TORCHIC
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_9, SPECIES_FUECOCO
 # 182 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_TORCHIC
-# 183 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_CHIMCHAR
-# 184 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_CHIMCHAR
-# 185 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_TEPIG
-# 186 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_TEPIG
-# 187 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_FENNEKIN
-# 188 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_FENNEKIN
-# 189 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_LITTEN
-# 190 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_LITTEN
-# 191 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_SCORBUNNY
-# 192 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_SCORBUNNY
-# 193 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_2, SPECIES_FUECOCO
-# 194 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1, SPECIES_FUECOCO
-# 195 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_CHARMANDER, DYN_MULTICHOICE_CB_SHOW_MON
-# 198 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 183 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	copyvar VAR_FIRE_SPECIES, VAR_RESULT
-# 199 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 184 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	bufferspeciesname STR_VAR_3, VAR_FIRE_SPECIES
-# 200 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_EditFireStarter_Text_2
-# 201 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 202 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
+# 185 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1
 	return
 
 
 ChitinCragDale_Lab_EventScript_EditWaterStarter::
-# 207 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	lockall
-# 208 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	faceplayer
-# 209 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 192 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	msgbox ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_0
-# 211 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_SQUIRTLE
-# 212 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_SQUIRTLE
-# 213 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_TOTODILE
-# 214 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_TOTODILE
-# 215 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_MUDKIP
-# 216 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_MUDKIP
-# 217 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_PIPLUP
-# 218 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_PIPLUP
-# 219 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_OSHAWOTT
-# 220 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_OSHAWOTT
-# 221 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_FROAKIE
-# 222 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_FROAKIE
-# 223 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_POPPLIO
-# 224 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_POPPLIO
-# 225 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_SOBBLE
-# 226 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_SOBBLE
-# 227 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	bufferspeciesname STR_VAR_3, SPECIES_QUAXLY
-# 228 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	dynmultipush ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1, SPECIES_QUAXLY
-# 229 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 194 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1, SPECIES_SQUIRTLE
+# 195 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_2, SPECIES_TOTODILE
+# 196 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_3, SPECIES_MUDKIP
+# 197 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_4, SPECIES_PIPLUP
+# 198 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_5, SPECIES_OSHAWOTT
+# 199 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_6, SPECIES_FROAKIE
+# 200 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_7, SPECIES_POPPLIO
+# 201 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_8, SPECIES_SOBBLE
+# 202 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	dynmultipush ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_9, SPECIES_QUAXLY
+# 204 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	dynmultistack 0, 0, TRUE, 6, FALSE, SPECIES_SQUIRTLE, DYN_MULTICHOICE_CB_SHOW_MON
-# 231 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 205 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	copyvar VAR_WATER_SPECIES, VAR_RESULT
-# 232 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 206 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	bufferspeciesname STR_VAR_3, VAR_WATER_SPECIES
-# 233 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	msgbox ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_2
-# 234 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	waitmessage
-# 235 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	releaseall
+# 207 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	msgbox ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1
 	return
 
 
 NicknamePartyMon::
-# 240 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 212 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	msgbox NicknamePartyMon_Text_0, MSGBOX_YESNO
-# 241 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 213 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	hidemonpic
-# 242 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 214 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq NicknamePartyMon_2
 NicknamePartyMon_1:
 	return
 
 NicknamePartyMon_2:
-# 243 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 215 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call Common_EventScript_GetGiftMonPartySlot
-# 244 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 216 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call Common_EventScript_NameReceivedPartyMon
 	goto NicknamePartyMon_1
 
 
 NicknameBoxMon::
-# 250 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 222 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	msgbox NicknamePartyMon_Text_0, MSGBOX_YESNO
-# 251 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 223 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	hidemonpic
-# 252 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 224 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq NicknameBoxMon_2
 NicknameBoxMon_1:
-# 255 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 227 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call Common_EventScript_TransferredToPC
 	return
 
 NicknameBoxMon_2:
-# 253 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 225 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	call Common_EventScript_NameReceivedBoxMon
 	goto NicknameBoxMon_1
 
 
-ChitinCragDale_Lab_EventScript_ClickOnGrassBall_Text_0:
-# 14 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_0:
+# 32 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "Don't be greedy!$"
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_0:
-# 66 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_1:
+# 45 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "No starter selected.$"
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_1:
-# 74 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_2:
+# 53 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "Wanna pick {STR_VAR_1}?$"
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_2:
-# 79 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_3:
+# 58 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "No more room.$"
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_3:
-# 83 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_4:
+# 61 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "Received {STR_VAR_1}!$"
 
-ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_4:
-# 104 "data/maps/ChitinCragDale_Lab/scripts.pory"
+ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_5:
+# 85 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "{STR_VAR_1} sits there patiently.$"
 
 ChitinCragDale_Lab_EventScript_EditGeneration_Text_0:
-# 117 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 129 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "Enjoy your starter!$"
 
 ChitinCragDale_Lab_EventScript_EditGeneration_Text_1:
-# 122 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Want to change where a starter comes\n"
-	.string "from?$"
+# 135 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "Let's configure your playthrough!$"
 
 ChitinCragDale_Lab_EventScript_EditGeneration_Text_2:
-# 123 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Grass$"
-
-ChitinCragDale_Lab_EventScript_EditGeneration_Text_3:
-# 123 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Fire$"
-
-ChitinCragDale_Lab_EventScript_EditGeneration_Text_4:
-# 123 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Water$"
-
-ChitinCragDale_Lab_EventScript_EditGeneration_Text_5:
-# 132 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Ok go pick one then!$"
+# 143 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "Playthrough configured!$"
 
 ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_0:
-# 141 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Which grass starter do you want?$"
+# 150 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "Which region founded the {COLOR GREEN}{SHADOW LIGHT_GREEN}Vigor{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}\n"
+	.string "province?$"
 
 ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_1:
-# 144 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "{STR_VAR_1}$"
+# 152 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "1: Kanto$"
 
 ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_2:
-# 166 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 153 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "2: Johto$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_3:
+# 154 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "3: Hoenn$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_4:
+# 155 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "4: Sinnoh$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_5:
+# 156 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "5: Unova$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_6:
+# 157 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "6: Kalos$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_7:
+# 158 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "7: Alola$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_8:
+# 159 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "8: Galar$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_9:
+# 160 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "9: Paldea$"
+
+ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_10:
+# 165 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "{STR_VAR_3} is now available as the\n"
 	.string "grass starter!$"
 
 ChitinCragDale_Lab_EventScript_EditFireStarter_Text_0:
-# 175 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Which fire starter do you want?$"
+# 170 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "Which region founded the {COLOR RED}{SHADOW LIGHT_RED}Ardor{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}\n"
+	.string "province?$"
 
 ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1:
-# 178 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "{STR_VAR_2}$"
-
-ChitinCragDale_Lab_EventScript_EditFireStarter_Text_2:
-# 200 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 185 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "{STR_VAR_3} is now available as the\n"
 	.string "fire starter!$"
 
 ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_0:
-# 209 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Which water starter do you want?$"
+# 192 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	.string "Which region founded the {COLOR BLUE}{SHADOW LIGHT_BLUE}Guile{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}\n"
+	.string "province?$"
 
 ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1:
-# 212 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "{STR_VAR_3}$"
-
-ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_2:
-# 233 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 207 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "{STR_VAR_3} is now available as the\n"
 	.string "water starter!$"
 
 NicknamePartyMon_Text_0:
-# 240 "data/maps/ChitinCragDale_Lab/scripts.pory"
+# 212 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	.string "Give it a nickname?$"
