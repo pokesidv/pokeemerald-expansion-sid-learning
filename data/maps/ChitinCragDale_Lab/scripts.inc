@@ -197,12 +197,16 @@ ChitinCragDale_Lab_EventScript_SetStartingFlags::
 	setvar VAR_ROUTE101_STATE, 3
 # 104 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setflag FLAG_SYS_POKEDEX_GET
+# 105 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	special SetUnlockedPokedexFlags
 # 106 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setflag FLAG_RECEIVED_POKEDEX_FROM_BIRCH
 # 107 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setvar VAR_CABLE_CLUB_TUTORIAL_STATE, 2
 # 108 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setflag FLAG_SYS_NATIONAL_DEX
+# 109 "data/maps/ChitinCragDale_Lab/scripts.pory"
+	special EnableNationalPokedex
 # 110 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setflag FLAG_RECEIVED_RUNNING_SHOES
 # 111 "data/maps/ChitinCragDale_Lab/scripts.pory"
@@ -478,7 +482,7 @@ ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_9:
 
 ChitinCragDale_Lab_EventScript_EditGrassStarter_Text_10:
 # 165 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "{STR_VAR_3} is now available as the\n"
+	.string "{COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_3}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} is now available as the\n"
 	.string "grass starter!$"
 
 ChitinCragDale_Lab_EventScript_EditFireStarter_Text_0:
@@ -488,7 +492,7 @@ ChitinCragDale_Lab_EventScript_EditFireStarter_Text_0:
 
 ChitinCragDale_Lab_EventScript_EditFireStarter_Text_1:
 # 185 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "{STR_VAR_3} is now available as the\n"
+	.string "{COLOR RED}{SHADOW LIGHT_RED}{STR_VAR_3}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} is now available as the\n"
 	.string "fire starter!$"
 
 ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_0:
@@ -498,7 +502,7 @@ ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_0:
 
 ChitinCragDale_Lab_EventScript_EditWaterStarter_Text_1:
 # 207 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "{STR_VAR_3} is now available as the\n"
+	.string "{COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_3}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} is now available as the\n"
 	.string "water starter!$"
 
 NicknamePartyMon_Text_0:
