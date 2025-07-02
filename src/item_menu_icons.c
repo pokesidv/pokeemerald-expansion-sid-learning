@@ -94,11 +94,6 @@ static const union AnimCmd sSpriteAnim_Bag_MegaStones[] =
     ANIMCMD_END
 };
 
-static const union AnimCmd sSpriteAnim_Bag_ZCrystals[] =
-{
-    ANIMCMD_FRAME(64, 4),
-    ANIMCMD_END
-};
 
 static const union AnimCmd sSpriteAnim_Bag_Berries[] =
 {
@@ -134,7 +129,6 @@ static const union AnimCmd *const sBagSpriteAnimTable[] =
     [POCKET_BERRIES]      = sSpriteAnim_Bag_Berries,
     [POCKET_POWER_UP]     = sSpriteAnim_Bag_PowerUp,
     [POCKET_MEGA_STONES]  = sSpriteAnim_Bag_MegaStones,
-    [POCKET_Z_CRYSTALS]   = sSpriteAnim_Bag_ZCrystals,
     [POCKET_TM_HM]        = sSpriteAnim_Bag_TMsHMs,
     [POCKET_KEY_ITEMS]    = sSpriteAnim_Bag_KeyItems,
 };

@@ -10,9 +10,8 @@
 #define POCKET_BERRIES      5
 #define POCKET_POWER_UP     6
 #define POCKET_MEGA_STONES  7
-#define POCKET_Z_CRYSTALS   8
-#define POCKET_TM_HM        9
-#define POCKET_KEY_ITEMS    10
+#define POCKET_TM_HM        8
+#define POCKET_KEY_ITEMS    9
 
 #define ITEMS_POCKET        0
 #define MEDICINE_POCKET     1
@@ -21,10 +20,9 @@
 #define BERRIES_POCKET      4
 #define POWERUP_POCKET      5
 #define MEGASTONES_POCKET   6
-#define ZCRYSTALS_POCKET    7
-#define TMHM_POCKET         8
-#define KEYITEMS_POCKET     9
-#define POCKETS_COUNT       10
+#define TMHM_POCKET         7
+#define KEYITEMS_POCKET     8
+#define POCKETS_COUNT       9
 
 #define REPEL_LURE_MASK         (1 << 15)
 #define IS_LAST_USED_LURE(var)  (var & REPEL_LURE_MASK)

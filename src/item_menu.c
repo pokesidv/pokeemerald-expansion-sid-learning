@@ -64,11 +64,10 @@
                             max(BAG_ITEMS_COUNT,             \
                             max(BAG_BATTLEITEMS_COUNT,       \
                             max(BAG_MEGASTONES_COUNT,        \
-                            max(BAG_ZCRYSTALS_COUNT,         \
                             max(BAG_POWERUP_COUNT,           \
                             max(BAG_MEDICINE_COUNT,          \
                             max(BAG_KEYITEMS_COUNT,          \
-                                BAG_POKEBALLS_COUNT)))))))))) + 1)
+                                BAG_POKEBALLS_COUNT))))))))) + 1)
 
 // Up to 8 item slots can be visible at a time
 #define MAX_ITEMS_SHOWN 8
@@ -760,11 +759,12 @@ static bool8 SetupBagMenu(void)
     case 13:
         PrintPocketNames(gPocketNamesStringsTable[gBagPosition.pocket], 0);
         CopyPocketNameToWindow(0);
+        // TODO (vi): check this stuff
         DrawPocketIndicatorSquare(0, FALSE);
         DrawPocketIndicatorSquare(1, FALSE);
         DrawPocketIndicatorSquare(7, FALSE);
         DrawPocketIndicatorSquare(8, FALSE);
-        DrawPocketIndicatorSquare(9, FALSE);
+        // DrawPocketIndicatorSquare(9, FALSE);
         DrawPocketIndicatorSquare(gBagPosition.pocket, TRUE);
         gMain.state++;
         break;
@@ -1443,6 +1443,7 @@ static void DrawItemListBgRow(u8 y)
 
 static void DrawPocketIndicatorSquare(u8 x, bool8 isCurrentPocket)
 {
+    // TODO (vi): and this
     if (!isCurrentPocket)
         FillBgTilemapBufferRect_Palette0(2, 0x1017, x + 3, 3, 1, 1);
     else
@@ -1687,10 +1688,6 @@ static void OpenContextMenu(u8 taskId)
                 gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_ItemsPocket);
                 break;
             case MEGASTONES_POCKET:
-                gBagMenu->contextMenuItemsPtr = sContextMenuItems_ItemsPocket;
-                gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_ItemsPocket);
-                break;
-            case ZCRYSTALS_POCKET:
                 gBagMenu->contextMenuItemsPtr = sContextMenuItems_ItemsPocket;
                 gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_ItemsPocket);
                 break;

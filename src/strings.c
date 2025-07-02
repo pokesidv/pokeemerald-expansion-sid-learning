@@ -206,7 +206,6 @@ const u8 *const gPocketNamesStringsTable[] =
     [BERRIES_POCKET]     = COMPOUND_STRING("BERRIES"),
     [POWERUP_POCKET]     = COMPOUND_STRING("POWER-UP"),
     [MEGASTONES_POCKET]  = COMPOUND_STRING("MEGA STONES"),
-    [ZCRYSTALS_POCKET]   = COMPOUND_STRING("Z-CRYSTALS"),
     [TMHM_POCKET]        = COMPOUND_STRING("TMs & HMs"),
     [KEYITEMS_POCKET]    = COMPOUND_STRING("KEY ITEMS")
 };
@@ -508,7 +507,6 @@ const u8 gText_Medicine[] = _("MEDICINE");
 const u8 gText_BattleItems[] = _("BATTLE ITEM");
 const u8 gText_PowerUp[] = _("POWER-UP");
 const u8 gText_MegaStones[] = _("MEGA STONES");
-const u8 gText_ZCrystals[] = _("Z-CRYSTALS");
 const u8 gText_SomeonesPC[] = _("SOMEONE'S PC");
 const u8 gText_LanettesPC[] = _("LANETTE'S PC");
 const u8 gText_PlayersPC[] = _("{PLAYER}'s PC");
