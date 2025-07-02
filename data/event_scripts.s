@@ -1160,3 +1160,5 @@ EventScript_VsSeekerChargingDone::
 	.include "data/maps/ChitinCragDale/scripts.inc"
 
 	.include "data/maps/ChitinCragDale_Lab/scripts.inc"
+
+	.include "data/maps/ArdorProvince_Route1/scripts.inc"

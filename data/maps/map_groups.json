@@ -624,7 +624,8 @@
     "Route124_DivingTreasureHuntersHouse"
   ],
   "gMapGroup_ArdorProvince": [
-    "ChitinCragDale"
+    "ChitinCragDale",
+    "ArdorProvince_Route1"
   ],
   "gMapGroup_Indoor_Ardor_ChitinCragDale": [
     "ChitinCragDale_Lab"

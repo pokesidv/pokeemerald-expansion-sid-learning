@@ -4430,6 +4430,16 @@
       "secondary_tileset": "gTileset_Lab",
       "border_filepath": "data/layouts/ChitinCragDale_Lab/border.bin",
       "blockdata_filepath": "data/layouts/ChitinCragDale_Lab/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE1",
+      "name": "ArdorProvince_Route1_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Slateport",
+      "border_filepath": "data/layouts/ArdorProvince_Route1/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route1/map.bin"
     }
   ]
 }
