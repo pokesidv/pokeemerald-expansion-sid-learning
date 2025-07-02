@@ -102,6 +102,8 @@ script ChitinCragDale_Lab_EventScript_SetStartingFlags {
 	setvar(VAR_BIRCH_LAB_STATE, 2)
 	setvar(VAR_ROUTE101_STATE, 3)
 	setflag(FLAG_SYS_POKEDEX_GET)
+	setflag(FLAG_SYS_POKENAV_GET)
+	setflag(DN_FLAG_DEXNAV_GET)
 	special(SetUnlockedPokedexFlags)
 	setflag(FLAG_RECEIVED_POKEDEX_FROM_BIRCH)
 	setvar(VAR_CABLE_CLUB_TUTORIAL_STATE, 2)
