@@ -114,6 +114,12 @@ script ChitinCragDale_Lab_EventScript_SetStartingFlags {
 	setflag(FLAG_SYS_B_DASH)
     giveitem(ITEM_ACRO_BIKE)
     giveitem(ITEM_MASTER_BALL, 50)
+    giveitem(ITEM_TM01)
+    giveitem(ITEM_TM02)
+    giveitem(ITEM_TM03)
+    giveitem(ITEM_TM04)
+    giveitem(ITEM_TM05)
+    giveitem(ITEM_TM24)
     // 4: Received Running Shoes
 	setvar(VAR_LITTLEROOT_TOWN_STATE, 4) 
     // 7: Told to go meet rival
