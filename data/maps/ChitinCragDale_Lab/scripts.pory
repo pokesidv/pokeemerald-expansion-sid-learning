@@ -112,6 +112,8 @@ script ChitinCragDale_Lab_EventScript_SetStartingFlags {
 	special(EnableNationalPokedex)
 	setflag(FLAG_RECEIVED_RUNNING_SHOES)
 	setflag(FLAG_SYS_B_DASH)
+    giveitem(ITEM_ACRO_BIKE)
+    giveitem(ITEM_MASTER_BALL, 50)
     // 4: Received Running Shoes
 	setvar(VAR_LITTLEROOT_TOWN_STATE, 4) 
     // 7: Told to go meet rival
