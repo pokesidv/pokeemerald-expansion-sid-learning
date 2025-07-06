@@ -855,7 +855,7 @@ static const struct OamData sOamData_RelearnPrompt =
 static const struct CompressedSpriteSheet sSpriteSheet_RelearnPrompt =
 {
     .data = sRelearnPrompt_Gfx,
-    .size = 64*64*3/2,
+    .size = 64*64*4/2,
     .tag = TAG_RELEARN_PROMPT,
 };
 
@@ -879,7 +879,7 @@ static const union AnimCmd sSpriteAnim_TMRelearnPrompt[] =
 // TODO (vi): add tutor sprite
 static const union AnimCmd sSpriteAnim_TutorRelearnPrompt[] =
 {
-    ANIMCMD_FRAME(128, 0),
+    ANIMCMD_FRAME(192, 0),
     ANIMCMD_END
 };
 
