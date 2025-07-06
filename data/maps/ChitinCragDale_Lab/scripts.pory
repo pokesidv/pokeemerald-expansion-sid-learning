@@ -52,7 +52,9 @@ script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
     bufferspeciesname(STR_VAR_1, VAR_SELECTED_STARTER_SPECIES)
     msgbox(format("Wanna pick {STR_VAR_1}?"), MSGBOX_YESNO)
     if(var(VAR_RESULT) == YES) {
+        call(ChitinCragDale_Lab_EventScript_SetStartingFlags)
         givemon(VAR_SELECTED_STARTER_SPECIES, 50, ITEM_MASTER_BALL)
+        bufferspeciesname(STR_VAR_1, VAR_SELECTED_STARTER_SPECIES)
         if(var(VAR_RESULT) == MON_CANT_GIVE){
             hidemonpic
             msgbox(format("No more room."))
@@ -71,7 +73,6 @@ script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
                     setflag(FLAG_STARTER_WATER)
             }
 
-            call(ChitinCragDale_Lab_EventScript_SetStartingFlags)
 
             if(var(VAR_RESULT) == MON_GIVEN_TO_PARTY){
                 call(NicknamePartyMon)
