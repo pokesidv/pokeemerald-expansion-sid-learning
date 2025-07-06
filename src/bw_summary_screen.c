@@ -2460,7 +2460,7 @@ static void Task_HandleInput(u8 taskId)
 {
     s16 *data = gTasks[taskId].data;
     u8 defaultSkillsState = (BW_SUMMARY_IV_EV_DISPLAY == BW_IV_EV_GRADED) ? SKILL_STATE_IVS : SKILL_STATE_STATS;
-    u8 state = VarGet(VAR_MOVE_RELEARNER_STATE);
+    u8 state = VarGet(P_VAR_MOVE_RELEARNER_STATE);
 
     if (MenuHelpers_ShouldWaitForLinkRecv() != TRUE && !gPaletteFade.active)
     {
@@ -2552,7 +2552,7 @@ static void Task_HandleInput(u8 taskId)
                 u8 attempts = MOVE_RELEARNER_COUNT; // Max attempts to cycle through all options
                 do {
                     state = (state + 1) % MOVE_RELEARNER_COUNT;
-                    VarSet(VAR_MOVE_RELEARNER_STATE, state);
+                    VarSet(P_VAR_MOVE_RELEARNER_STATE, state);
 
                     switch (state)
                     {
@@ -2568,7 +2568,7 @@ static void Task_HandleInput(u8 taskId)
                     }
                 } while (sMonSummaryScreen->relearnableMovesNum == 0 && --attempts);
 
-                StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(VAR_MOVE_RELEARNER_STATE));
+                StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(P_VAR_MOVE_RELEARNER_STATE));
                 PlaySE(SE_SELECT);
             }
         }
@@ -2579,7 +2579,7 @@ static void Task_HandleInput(u8 taskId)
                 u8 attempts = MOVE_RELEARNER_COUNT; // Max attempts to cycle through all options
                 do {
                     state = (state == 0) ? MOVE_RELEARNER_COUNT - 1 : state - 1;
-                    VarSet(VAR_MOVE_RELEARNER_STATE, state);
+                    VarSet(P_VAR_MOVE_RELEARNER_STATE, state);
 
                     switch (state)
                     {
@@ -2595,7 +2595,7 @@ static void Task_HandleInput(u8 taskId)
                     }
                 } while (sMonSummaryScreen->relearnableMovesNum == 0 && --attempts);
 
-                StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(VAR_MOVE_RELEARNER_STATE));
+                StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(P_VAR_MOVE_RELEARNER_STATE));
                 PlaySE(SE_SELECT);
             }
         }
@@ -2687,11 +2687,11 @@ static void Task_ChangeSummaryMon(u8 taskId)
             if (P_SUMMARY_SCREEN_MOVE_RELEARNER
                 && (sMonSummaryScreen->currPageIndex == PSS_PAGE_BATTLE_MOVES || sMonSummaryScreen->currPageIndex == PSS_PAGE_CONTEST_MOVES))
             {
-                u8 state = VarGet(VAR_MOVE_RELEARNER_STATE);
+                u8 state = VarGet(P_VAR_MOVE_RELEARNER_STATE);
                 GetSetMoveRelearnerVar(&state);
                 if (ShouldShowMoveRelearner())
                 {
-                    VarSet(VAR_MOVE_RELEARNER_STATE, state);
+                    VarSet(P_VAR_MOVE_RELEARNER_STATE, state);
                     ShowMoveRelearner();
                 }
                 else
@@ -5608,7 +5608,7 @@ static void ShowMoveRelearner(void)
         sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT] = CreateSprite(&sSpriteTemplate_RelearnPrompt, 61, 164, 0);
     
     gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]].invisible = FALSE;
-    StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(VAR_MOVE_RELEARNER_STATE));
+    StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(P_VAR_MOVE_RELEARNER_STATE));
 }
 
 static void HideMoveRelearner(void)

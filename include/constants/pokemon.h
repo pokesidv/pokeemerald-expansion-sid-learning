@@ -366,10 +366,6 @@ enum EvoSpinDirections {
 #define LEGENDARY_PERFECT_IV_COUNT 0
 #endif
 
-// Move Relearner menu change constants
-#define MOVE_RELEARNER_LEVEL_UP_MOVES 0
-#define MOVE_RELEARNER_EGG_MOVES      1
-#define MOVE_RELEARNER_TM_MOVES       2
-#define MOVE_RELEARNER_COUNT          3
+
 
 #endif // GUARD_CONSTANTS_POKEMON_H
