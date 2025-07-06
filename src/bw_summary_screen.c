@@ -876,12 +876,19 @@ static const union AnimCmd sSpriteAnim_TMRelearnPrompt[] =
     ANIMCMD_FRAME(128, 0),
     ANIMCMD_END
 };
+// TODO (vi): add tutor sprite
+static const union AnimCmd sSpriteAnim_TutorRelearnPrompt[] =
+{
+    ANIMCMD_FRAME(128, 0),
+    ANIMCMD_END
+};
 
 static const union AnimCmd *const sSpriteAnimTable_RelearnPrompt[] =
 {
     [MOVE_RELEARNER_LEVEL_UP_MOVES] = sSpriteAnim_LevelRelearnPrompt,
     [MOVE_RELEARNER_EGG_MOVES] = sSpriteAnim_EggRelearnPrompt,
     [MOVE_RELEARNER_TM_MOVES] = sSpriteAnim_TMRelearnPrompt,
+    [MOVE_RELEARNER_TUTOR_MOVES] = sSpriteAnim_TutorRelearnPrompt,
 };
 
 static const struct SpriteTemplate sSpriteTemplate_RelearnPrompt =
@@ -2285,6 +2292,9 @@ static bool8 ExtractMonDataToSummaryStruct(struct Pokemon *mon)
                 case MOVE_RELEARNER_TM_MOVES: 
                     sMonSummaryScreen->relearnableMovesNum = GetNumberOfTMMoves(mon);
                     break;
+                case MOVE_RELEARNER_TUTOR_MOVES: 
+                    sMonSummaryScreen->relearnableMovesNum = GetNumberOfTutorMoves(mon);
+                    break;
                 default:
                     sMonSummaryScreen->relearnableMovesNum = GetNumberOfLevelUpMoves(mon);
                     break;
@@ -2552,20 +2562,8 @@ static void Task_HandleInput(u8 taskId)
                 u8 attempts = MOVE_RELEARNER_COUNT; // Max attempts to cycle through all options
                 do {
                     state = (state + 1) % MOVE_RELEARNER_COUNT;
+                    GetSetMoveRelearnerVar(&state);
                     VarSet(P_VAR_MOVE_RELEARNER_STATE, state);
-
-                    switch (state)
-                    {
-                        case MOVE_RELEARNER_EGG_MOVES:
-                            sMonSummaryScreen->relearnableMovesNum = GetNumberOfEggMoves(&sMonSummaryScreen->currentMon);
-                            break;
-                        case MOVE_RELEARNER_TM_MOVES:
-                            sMonSummaryScreen->relearnableMovesNum = GetNumberOfTMMoves(&sMonSummaryScreen->currentMon);
-                            break;
-                        default: // MOVE_RELEARNER_LEVEL_UP_MOVES
-                            sMonSummaryScreen->relearnableMovesNum = GetNumberOfLevelUpMoves(&sMonSummaryScreen->currentMon);
-                            break;
-                    }
                 } while (sMonSummaryScreen->relearnableMovesNum == 0 && --attempts);
 
                 StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(P_VAR_MOVE_RELEARNER_STATE));
@@ -2579,20 +2577,8 @@ static void Task_HandleInput(u8 taskId)
                 u8 attempts = MOVE_RELEARNER_COUNT; // Max attempts to cycle through all options
                 do {
                     state = (state == 0) ? MOVE_RELEARNER_COUNT - 1 : state - 1;
+                    GetSetMoveRelearnerVar(&state);
                     VarSet(P_VAR_MOVE_RELEARNER_STATE, state);
-
-                    switch (state)
-                    {
-                        case MOVE_RELEARNER_EGG_MOVES:
-                            sMonSummaryScreen->relearnableMovesNum = GetNumberOfEggMoves(&sMonSummaryScreen->currentMon);
-                            break;
-                        case MOVE_RELEARNER_TM_MOVES:
-                            sMonSummaryScreen->relearnableMovesNum = GetNumberOfTMMoves(&sMonSummaryScreen->currentMon);
-                            break;
-                        default: // MOVE_RELEARNER_LEVEL_UP_MOVES
-                            sMonSummaryScreen->relearnableMovesNum = GetNumberOfLevelUpMoves(&sMonSummaryScreen->currentMon);
-                            break;
-                    }
                 } while (sMonSummaryScreen->relearnableMovesNum == 0 && --attempts);
 
                 StartSpriteAnim(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELEARN_PROMPT]], VarGet(P_VAR_MOVE_RELEARNER_STATE));
@@ -2793,9 +2779,13 @@ static void GetSetMoveRelearnerVar(u8 *state)
 
     if (*state == MOVE_RELEARNER_EGG_MOVES && !GetNumberOfEggMoves(mon))
         *state = MOVE_RELEARNER_TM_MOVES;
-
+    
     if (*state == MOVE_RELEARNER_TM_MOVES && !GetNumberOfTMMoves(mon))
+        *state = MOVE_RELEARNER_TUTOR_MOVES;
+
+    if (*state == MOVE_RELEARNER_TUTOR_MOVES && !GetNumberOfTutorMoves(mon))
     {
+        *state = MOVE_RELEARNER_LEVEL_UP_MOVES;
         sMonSummaryScreen->relearnableMovesNum = 0;
         HideMoveRelearner();
         return;
@@ -2809,7 +2799,10 @@ static void GetSetMoveRelearnerVar(u8 *state)
         case MOVE_RELEARNER_TM_MOVES:
             sMonSummaryScreen->relearnableMovesNum = GetNumberOfTMMoves(mon);
             break;
-        default:
+        case MOVE_RELEARNER_TUTOR_MOVES:
+            sMonSummaryScreen->relearnableMovesNum = GetNumberOfTutorMoves(mon);
+            break;
+        default: // MOVE_RELEARNER_LEVEL_UP_MOVES
             sMonSummaryScreen->relearnableMovesNum = GetNumberOfLevelUpMoves(mon);
             break;
     }
