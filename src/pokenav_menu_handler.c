@@ -47,9 +47,9 @@ extern const u8 EventScript_PCMainMenu[];
 // Number of entries - 1 for that menu type
 static const u8 sLastCursorPositions[] =
 {
-    [POKENAV_MENU_TYPE_DEFAULT]           = 2,
+    [POKENAV_MENU_TYPE_DEFAULT]           = 3,
     [POKENAV_MENU_TYPE_UNLOCK_MC]         = 3,
-    [POKENAV_MENU_TYPE_UNLOCK_MC_RIBBONS] = 4,
+    [POKENAV_MENU_TYPE_UNLOCK_MC_RIBBONS] = 3,
     [POKENAV_MENU_TYPE_CONDITION]         = 2,
     [POKENAV_MENU_TYPE_CONDITION_SEARCH]  = 5
 };
