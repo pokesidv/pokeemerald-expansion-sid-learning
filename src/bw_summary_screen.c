@@ -385,7 +385,6 @@ static const u8 sStatsHPIVEVLayout[]                        = _("{DYNAMIC 0}");
 static const u8 sStatsNonHPLayout[]                         = _("{DYNAMIC 0}\n{DYNAMIC 1}\n{DYNAMIC 2}\n{DYNAMIC 3}\n{DYNAMIC 4}");
 static const u8 sMovesPPLayout[]                            = _("{PP}{CLEAR_TO 31}{DYNAMIC 0}/{DYNAMIC 1}");
 
-// TODO (vi) add rename here so decap works
 #if BW_SUMMARY_DECAP == TRUE
 static const u8 sText_Cancel[]                              = _("Cancel");
 static const u8 sText_Switch[]                              = _("Switch");
@@ -879,7 +878,7 @@ static const union AnimCmd sSpriteAnim_TMRelearnPrompt[] =
     ANIMCMD_FRAME(128, 0),
     ANIMCMD_END
 };
-// TODO (vi): add tutor sprite
+
 static const union AnimCmd sSpriteAnim_TutorRelearnPrompt[] =
 {
     ANIMCMD_FRAME(192, 0),
