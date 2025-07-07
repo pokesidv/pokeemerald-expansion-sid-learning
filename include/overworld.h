@@ -59,6 +59,7 @@ extern u8 gLocalLinkPlayerId;
 extern u8 gFieldLinkPlayerCount;
 extern bool8 gSysPcFromPokenav;
 extern bool8 gSysDexNavFromPokenav;
+extern bool8 gSysPokedexFromPokenav;
 extern bool8 gSysPokenavFromOverworldShortcut;
 extern bool8 gExitStairsMovementDisabled;
 extern bool8 gSkipShowMonAnim;

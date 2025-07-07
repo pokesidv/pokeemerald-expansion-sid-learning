@@ -241,7 +241,6 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->pressedLButton && FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
     {
         PlaySE(SE_WIN_OPEN);
-        // TODO (vi): open pokenav
         PlayRainStoppingSoundEffect();
         CleanupOverworldWindowsAndTilemaps();
         gSysPokenavFromOverworldShortcut = TRUE;

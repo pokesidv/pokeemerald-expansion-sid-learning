@@ -150,7 +150,12 @@ static const struct CompressedSpriteSheet sMenuLeftHeaderSpriteSheets[] =
         .size = 0x20,
         .tag = 3
     },
-    // TODO (vi): check tag here
+    [POKENAV_GFX_ACCESS_POKEDEX_MENU] = {
+        .data = gPokenavLeftHeaderMainMenu_Gfx,
+        .size = 0x20,
+        .tag = 3
+    },
+    // TODO (vi): check tag here (colors?)
     [POKENAV_GFX_CONDITION_MENU] = {
         .data = gPokenavLeftHeaderCondition_Gfx,
         .size = 0x20,

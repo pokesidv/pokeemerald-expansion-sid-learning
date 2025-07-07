@@ -207,6 +207,7 @@ const struct PokenavCallbacks PokenavMenuCallbacks[15] =
 EWRAM_DATA u8 gNextLoopedTaskId = 0;
 EWRAM_DATA bool8 gSysPcFromPokenav = 0;
 EWRAM_DATA bool8 gSysDexNavFromPokenav = 0;
+EWRAM_DATA bool8 gSysPokedexFromPokenav = 0;
 EWRAM_DATA bool8 gSysPokenavFromOverworldShortcut = 0;
 EWRAM_DATA struct PokenavResources *gPokenavResources = NULL;
 
@@ -499,7 +500,7 @@ static void Task_Pokenav(u8 taskId)
             if (calledFromScript)
                 SetMainCallback2(CB2_ReturnToFieldContinueScriptPlayMapMusic);
             else
-                if (gSysPcFromPokenav || gSysDexNavFromPokenav || gSysPokenavFromOverworldShortcut)
+                if (gSysPcFromPokenav || gSysDexNavFromPokenav || gSysPokedexFromPokenav || gSysPokenavFromOverworldShortcut)
                     SetMainCallback2(CB2_ReturnToField);
                 else
                     SetMainCallback2(CB2_ReturnToFieldWithOpenMenu);

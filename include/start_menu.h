@@ -3,6 +3,7 @@
 
 extern bool8 (*gMenuCallback)(void);
 
+bool8 StartMenuPokedexCallback(void);
 void ShowReturnToFieldStartMenu(void);
 void Task_ShowStartMenu(u8 taskId);
 void ShowStartMenu(void);

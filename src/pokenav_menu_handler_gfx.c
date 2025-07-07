@@ -161,7 +161,7 @@ static const struct CompressedSpriteSheet sPokenavOptionsSpriteSheets[] =
 {
     {
         .data = gPokenavOptions_Gfx,
-        .size = 0x3C00,
+        .size = 0x4000,
         .tag = GFXTAG_OPTIONS
     },
     {
@@ -182,22 +182,24 @@ static const struct SpritePalette sPokenavOptionsSpritePalettes[] =
     {}
 };
 
+// TODO (vi): check why colors don't appear different
 // Tile number, palette tag offset
-static const u16 sOptionsLabelGfx_RegionMap[]    = {0x000, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Condition[]    = {0x020, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_MatchCall[]    = {0x040, PALTAG_OPTIONS_RED - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Ribbons[]      = {0x060, PALTAG_OPTIONS_PINK - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_AccessPC[]     = {0x080, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_AccessDexNav[] = {0x0A0, PALTAG_OPTIONS_RED - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_SwitchOff[]    = {0x0C0, PALTAG_OPTIONS_BEIGE - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Party[]        = {0x0E0, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Search[]       = {0x100, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Cool[]         = {0x120, PALTAG_OPTIONS_RED - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Beauty[]       = {0x140, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Cute[]         = {0x160, PALTAG_OPTIONS_PINK - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Smart[]        = {0x180, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Tough[]        = {0x1A0, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
-static const u16 sOptionsLabelGfx_Cancel[]       = {0x1C0, PALTAG_OPTIONS_BEIGE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_RegionMap[]     = {0x000, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Condition[]     = {0x020, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_MatchCall[]     = {0x040, PALTAG_OPTIONS_RED - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Ribbons[]       = {0x060, PALTAG_OPTIONS_PINK - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_AccessPC[]      = {0x080, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_AccessDexNav[]  = {0x0A0, PALTAG_OPTIONS_RED - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_AccessPokedex[] = {0x0C0, PALTAG_OPTIONS_PINK - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_SwitchOff[]     = {0x0E0, PALTAG_OPTIONS_BEIGE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Party[]         = {0x100, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Search[]        = {0x120, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Cool[]          = {0x140, PALTAG_OPTIONS_RED - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Beauty[]        = {0x160, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Cute[]          = {0x180, PALTAG_OPTIONS_PINK - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Smart[]         = {0x1A0, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Tough[]         = {0x1C0, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
+static const u16 sOptionsLabelGfx_Cancel[]        = {0x1E0, PALTAG_OPTIONS_BEIGE - PALTAG_OPTIONS_START};
 
 struct
 {
@@ -214,6 +216,7 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_AccessDexNav,
+            sOptionsLabelGfx_AccessPokedex,
             sOptionsLabelGfx_SwitchOff
         }
     },
@@ -225,6 +228,7 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_AccessDexNav,
+            sOptionsLabelGfx_AccessPokedex,
             // sOptionsLabelGfx_MatchCall,
             sOptionsLabelGfx_SwitchOff
         }
@@ -237,6 +241,7 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_AccessDexNav,
+            sOptionsLabelGfx_AccessPokedex,
             // sOptionsLabelGfx_MatchCall,
             // sOptionsLabelGfx_Ribbons,
             sOptionsLabelGfx_SwitchOff
@@ -286,6 +291,7 @@ static const u8 *const sPageDescriptions[] =
     [POKENAV_MENUITEM_RIBBONS]                 = COMPOUND_STRING("Check obtained RIBBONS."),
     [POKENAV_MENUITEM_ACCESS_PC]               = COMPOUND_STRING("Access your PC."),
     [POKENAV_MENUITEM_ACCESS_DEXNAV]           = COMPOUND_STRING("See wild Pokémon in the area."),
+    [POKENAV_MENUITEM_ACCESS_POKEDEX]          = COMPOUND_STRING("View collected Pokémon data"),
     [POKENAV_MENUITEM_SWITCH_OFF]              = COMPOUND_STRING("Put away the POKéNAV."),
     [POKENAV_MENUITEM_CONDITION_PARTY]         = COMPOUND_STRING("Check party POKéMON in detail."),
     [POKENAV_MENUITEM_CONDITION_SEARCH]        = COMPOUND_STRING("Check all POKéMON in detail."),

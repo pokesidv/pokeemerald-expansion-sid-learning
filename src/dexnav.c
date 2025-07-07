@@ -2352,9 +2352,14 @@ void Task_OpenDexNavFromStartMenu(u8 taskId)
     {
         CleanupOverworldWindowsAndTilemaps();
         if (gSysDexNavFromPokenav)
+        {
+            gSysDexNavFromPokenav = FALSE;
             DexNavGuiInit(CB2_ReturnToField);
+        }
         else
+        {
             DexNavGuiInit(CB2_ReturnToFieldWithOpenMenu);
+        }
         DestroyTask(taskId);
     }
 }
