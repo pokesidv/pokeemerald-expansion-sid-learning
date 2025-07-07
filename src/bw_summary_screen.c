@@ -385,6 +385,7 @@ static const u8 sStatsHPIVEVLayout[]                        = _("{DYNAMIC 0}");
 static const u8 sStatsNonHPLayout[]                         = _("{DYNAMIC 0}\n{DYNAMIC 1}\n{DYNAMIC 2}\n{DYNAMIC 3}\n{DYNAMIC 4}");
 static const u8 sMovesPPLayout[]                            = _("{PP}{CLEAR_TO 31}{DYNAMIC 0}/{DYNAMIC 1}");
 
+// TODO (vi) add rename here so decap works
 #if BW_SUMMARY_DECAP == TRUE
 static const u8 sText_Cancel[]                              = _("Cancel");
 static const u8 sText_Switch[]                              = _("Switch");
@@ -401,6 +402,7 @@ static const u8 sText_ViewEVs_Graded[]                      = _("See Effort");
 static const u8 sText_NextLv[]                              = _("Next Lv.");
 static const u8 sText_RentalPkmn[]                          = _("Rental Pokémon");
 static const u8 sText_None[]                                = _("None");
+static const u8 sText_BW_Rename[]                           = _("Rename");
 #else
 static const u8 sText_Cancel[]                              = _("CANCEL");
 static const u8 sText_Switch[]                              = _("SWITCH");
@@ -417,6 +419,7 @@ static const u8 sText_ViewEVs_Graded[]                      = _("SEE EFFORT");
 static const u8 sText_NextLv[]                              = _("NEXT LV.");
 static const u8 sText_RentalPkmn[]                          = _("RENTAL POKéMON");
 static const u8 sText_None[]                                = _("NONE");
+static const u8 sText_BW_Rename[]                           = _("RENAME");
 #endif
 
 // bg gfx
@@ -5624,7 +5627,7 @@ static inline bool32 ShouldShowRename(void)
 
 static void ShowCancelOrRenamePrompt(void)
 {
-    const u8 *promptText = ShouldShowRename() ? gText_Rename : gText_Cancel2;
+    const u8 *promptText = ShouldShowRename() ? sText_BW_Rename : gText_Cancel2;
 
     int stringXPos = GetStringRightAlignXOffset(FONT_NORMAL, promptText, 62);
     int iconXPos = stringXPos - 16;
