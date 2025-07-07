@@ -3,7 +3,12 @@
 #include "event_data.h"
 #include "main.h"
 #include "sound.h"
+#include "task.h"
+#include "palette.h"
 #include "constants/songs.h"
+#include "script.h"
+#include "overworld.h"
+#include "event_scripts.h"
 
 struct Pokenav_Menu
 {
@@ -23,6 +28,8 @@ static void SetMenuIdAndCB(struct Pokenav_Menu *, u32);
 static u32 CB2_ReturnToConditionMenu(struct Pokenav_Menu *);
 static u32 CB2_ReturnToMainMenu(struct Pokenav_Menu *);
 static u32 HandleConditionSearchMenuInput(struct Pokenav_Menu *);
+static u32 HandleCantAccessPCInput(struct Pokenav_Menu *);
+static void Task_WaitFadeAccessPC(u8);
 static u32 HandleConditionMenuInput(struct Pokenav_Menu *);
 static u32 HandleCantOpenRibbonsInput(struct Pokenav_Menu *);
 static u32 HandleMainMenuInputEndTutorial(struct Pokenav_Menu *);
@@ -30,6 +37,8 @@ static u32 HandleMainMenuInputTutorial(struct Pokenav_Menu *);
 static u32 HandleMainMenuInput(struct Pokenav_Menu *);
 static u32 (*GetMainMenuInputHandler(void))(struct Pokenav_Menu *);
 static void SetMenuInputHandler(struct Pokenav_Menu *);
+
+extern const u8 EventScript_PCMainMenu[];
 
 // Number of entries - 1 for that menu type
 static const u8 sLastCursorPositions[] =
@@ -46,20 +55,20 @@ static const u8 sMenuItems[][MAX_POKENAV_MENUITEMS] =
     [POKENAV_MENU_TYPE_DEFAULT] =
     {
         POKENAV_MENUITEM_MAP,
-        POKENAV_MENUITEM_CONDITION,
+        POKENAV_MENUITEM_ACCESS_PC,
         [2 ... MAX_POKENAV_MENUITEMS - 1] = POKENAV_MENUITEM_SWITCH_OFF
     },
     [POKENAV_MENU_TYPE_UNLOCK_MC] =
     {
         POKENAV_MENUITEM_MAP,
-        POKENAV_MENUITEM_CONDITION,
+        POKENAV_MENUITEM_ACCESS_PC,
         POKENAV_MENUITEM_MATCH_CALL,
         [3 ... MAX_POKENAV_MENUITEMS - 1] = POKENAV_MENUITEM_SWITCH_OFF
     },
     [POKENAV_MENU_TYPE_UNLOCK_MC_RIBBONS] =
     {
         POKENAV_MENUITEM_MAP,
-        POKENAV_MENUITEM_CONDITION,
+        POKENAV_MENUITEM_ACCESS_PC,
         POKENAV_MENUITEM_MATCH_CALL,
         POKENAV_MENUITEM_RIBBONS,
         [4 ... MAX_POKENAV_MENUITEMS - 1] = POKENAV_MENUITEM_SWITCH_OFF
@@ -246,6 +255,18 @@ static u32 HandleMainMenuInput(struct Pokenav_Menu *menu)
                 menu->callback = HandleCantOpenRibbonsInput;
                 return POKENAV_MENU_FUNC_NO_RIBBON_WINNERS;
             }
+        case POKENAV_MENUITEM_ACCESS_PC:
+            if(Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType)){
+                gSysPcFromPokenav = TRUE;
+                // Reusing from debug menu to gracefully close PC when done.
+                CreateTask(Task_WaitFadeAccessPC, 0);
+                return POKENAV_MENU_FUNC_EXIT; 
+            }
+            else{
+                menu->callback = HandleCantAccessPCInput;
+                return POKENAV_MENU_FUNC_CANNOT_ACCESS_PC;
+            }
+
         case POKENAV_MENUITEM_SWITCH_OFF:
             return POKENAV_MENU_FUNC_EXIT;
         }
@@ -336,6 +357,34 @@ static u32 HandleCantOpenRibbonsInput(struct Pokenav_Menu *menu)
     }
 
     return POKENAV_MENU_FUNC_NONE;
+}
+
+
+static u32 HandleCantAccessPCInput(struct Pokenav_Menu *menu)
+{
+    if (UpdateMenuCursorPos(menu))
+    {
+        menu->callback = GetMainMenuInputHandler();
+        return POKENAV_MENU_FUNC_MOVE_CURSOR;
+    }
+
+    if (JOY_NEW(A_BUTTON | B_BUTTON))
+    {
+        menu->callback = GetMainMenuInputHandler();
+        return POKENAV_MENU_FUNC_RESHOW_DESCRIPTION;
+    }
+
+    return POKENAV_MENU_FUNC_NONE;
+}
+
+
+static void Task_WaitFadeAccessPC(u8 taskId)
+{
+    if (WaitForPokenavShutdownFade())
+    {
+        ScriptContext_SetupScript(EventScript_PCMainMenu);
+        DestroyTask(taskId);
+    }
 }
 
 static u32 HandleConditionMenuInput(struct Pokenav_Menu *menu)

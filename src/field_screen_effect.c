@@ -441,7 +441,7 @@ static void Task_ExitNonDoor(u8 taskId)
         gTasks[taskId].tState++;
         break;
     case 1:
-        if (WaitForWeatherFadeIn())
+        if (WaitForWeatherFadeIn() && !gSysPcFromPokenav)
         {
             UnfreezeObjectEvents();
             UnlockPlayerFieldControls();
