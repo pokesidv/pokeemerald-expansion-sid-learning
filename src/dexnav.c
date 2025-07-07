@@ -2350,7 +2350,6 @@ void Task_OpenDexNavFromStartMenu(u8 taskId)
     }
     else if (!gPaletteFade.active)
     {
-
         CleanupOverworldWindowsAndTilemaps();
         if (gSysDexNavFromPokenav)
             DexNavGuiInit(CB2_ReturnToField);
