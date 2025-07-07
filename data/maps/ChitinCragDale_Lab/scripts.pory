@@ -108,6 +108,7 @@ script ChitinCragDale_Lab_EventScript_SetStartingFlags {
 	setflag(DN_FLAG_DETECTOR_MODE)
 	special(SetUnlockedPokedexFlags)
 	setflag(FLAG_RECEIVED_POKEDEX_FROM_BIRCH)
+	setflag(OW_FLAG_POKE_RIDER)
 	setvar(VAR_CABLE_CLUB_TUTORIAL_STATE, 2)
 	setflag(FLAG_SYS_NATIONAL_DEX)
 	special(EnableNationalPokedex)

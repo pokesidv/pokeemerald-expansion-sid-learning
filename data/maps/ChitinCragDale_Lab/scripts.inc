@@ -209,6 +209,7 @@ ChitinCragDale_Lab_EventScript_SetStartingFlags::
 	special SetUnlockedPokedexFlags
 # 110 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setflag FLAG_RECEIVED_POKEDEX_FROM_BIRCH
+	setflag OW_FLAG_POKE_RIDER
 # 111 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	setvar VAR_CABLE_CLUB_TUTORIAL_STATE, 2
 # 112 "data/maps/ChitinCragDale_Lab/scripts.pory"
