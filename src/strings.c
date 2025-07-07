@@ -1310,3 +1310,4 @@ const u8 gText_Relearn[] = _("{START_BUTTON} RELEARN"); // future note: don't de
 const u8 gText_Rename[] = _("RENAME");
 const u8 gText_CannotSendMonToBoxHM[] = _("Cannot send that mon to the box,\nbecause it knows a HM move.{PAUSE_UNTIL_PRESS}");
 const u8 gText_Pokenav_Cannot_Access_PC[] = _("Can't access PC. Go outside.");
+const u8 gText_Pokenav_Cannot_Access_DexNav[] = _("No wild Pokémon here!");

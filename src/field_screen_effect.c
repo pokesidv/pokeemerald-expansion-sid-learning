@@ -441,6 +441,7 @@ static void Task_ExitNonDoor(u8 taskId)
         gTasks[taskId].tState++;
         break;
     case 1:
+        // TODO (vi): think if gSysDexNavFromPokenav is needed here?
         if (WaitForWeatherFadeIn() && !gSysPcFromPokenav)
         {
             UnfreezeObjectEvents();
