@@ -2352,7 +2352,6 @@ void Task_OpenDexNavFromStartMenu(u8 taskId)
     {
 
         CleanupOverworldWindowsAndTilemaps();
-        // TODO (vi): check if return to field without open menu is possible
         if (gSysDexNavFromPokenav)
             DexNavGuiInit(CB2_ReturnToField);
         else

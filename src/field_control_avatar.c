@@ -6,6 +6,7 @@
 #include "debug.h"
 #include "dexnav.h"
 #include "faraway_island.h"
+#include "pokenav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
@@ -33,6 +34,7 @@
 #include "trainer_hill.h"
 #include "vs_seeker.h"
 #include "wild_encounter.h"
+#include "field_weather.h"
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
 #include "constants/field_poison.h"
@@ -98,6 +100,7 @@ void FieldClearPlayerInput(struct FieldInput *input)
     input->input_field_1_2 = FALSE;
     input->input_field_1_3 = FALSE;
     input->dpadDirection = 0;
+    input->pressedLButton = FALSE;
 }
 
 void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
@@ -120,6 +123,8 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
                 input->pressedBButton = TRUE;
             if (newKeys & R_BUTTON && !FlagGet(DN_FLAG_SEARCHING))
                 input->pressedRButton = TRUE;
+            if (newKeys & L_BUTTON)
+                input->pressedLButton = TRUE;
         }
 
         if (heldKeys & (DPAD_UP | DPAD_DOWN | DPAD_LEFT | DPAD_RIGHT))
@@ -232,6 +237,17 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
 
     if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
         return TRUE;
+
+    if (input->pressedLButton && FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
+    {
+        PlaySE(SE_WIN_OPEN);
+        // TODO (vi): open pokenav
+        PlayRainStoppingSoundEffect();
+        CleanupOverworldWindowsAndTilemaps();
+        gSysPokenavFromOverworldShortcut = TRUE;
+        SetMainCallback2(CB2_InitPokeNav);  // Display PokéNav
+        return TRUE;
+    }
 
     if (input->pressedRButton && TryStartDexNavSearch())
         return TRUE;
