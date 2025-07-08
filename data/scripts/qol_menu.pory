@@ -8,12 +8,20 @@ script EventScript_QolMenu {
     dynmultipush("Option 2", 2)
     dynmultipush("Option 3", 3)
     dynmultipush("Option 4", 4)
-    dynmultipush("Option 5", 5)
-    dynmultipush("Option 6", 6)
-    dynmultipush("Option 7", 7)
-    dynmultipush("Option 8", 8)
+    // dynmultipush("Option 5", 5)
+    // dynmultipush("Option 6", 6)
+    // dynmultipush("Option 7", 7)
+    // dynmultipush("Option 8", 8)
+    // dynmultipush("Option 9", 9)
+    // dynmultipush("Option 10", 10)
+    // dynmultipush("Option 11", 11)
+    // dynmultipush("Option 12", 12)
+    // dynmultipush("Option 13", 13)
+    // dynmultipush("Option 14", 14)
+    // dynmultipush("Option 15", 15)
+    // dynmultipush("Option 16", 16)
 
-    dynmultistack(0, 0, FALSE, 8, FALSE, 1, DYN_MULTICHOICE_CB_NONE)
+    dynmultistack(0, 0, FALSE, 9, FALSE, 1, DYN_MULTICHOICE_CB_NONE)
     switch(var(VAR_RESULT)){
         case 1:
             if(flag(FLAG_SID_REPEL)){
