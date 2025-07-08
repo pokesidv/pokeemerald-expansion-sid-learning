@@ -95,6 +95,7 @@ script ChitinCragDale_Lab_EventScript_PickSelectedStarter {
 
 script ChitinCragDale_Lab_EventScript_SetStartingFlags {
     setflag(FLAG_SYS_POKEMON_GET)
+    setflag(FLAG_SID_QOL_MENU_GET)
 	setflag(FLAG_RESCUED_BIRCH)
 	setflag(FLAG_HIDE_ROUTE_101_BIRCH_ZIGZAGOON_BATTLE)
 	setflag(FLAG_ADVENTURE_STARTED)

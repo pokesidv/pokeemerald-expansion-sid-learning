@@ -1,0 +1,31 @@
+
+script EventScript_QolMenu {
+    if(flag(FLAG_SID_REPEL)){
+        dynmultipush("Repel:  {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", 1)
+    } else {
+        dynmultipush("Repel:  off", 1)
+    }
+    dynmultipush("Option 2", 2)
+    dynmultipush("Option 3", 3)
+    dynmultipush("Option 4", 4)
+    dynmultipush("Option 5", 5)
+    dynmultipush("Option 6", 6)
+    dynmultipush("Option 7", 7)
+    dynmultipush("Option 8", 8)
+
+    dynmultistack(0, 0, FALSE, 8, FALSE, 1, DYN_MULTICHOICE_CB_NONE)
+    switch(var(VAR_RESULT)){
+        case 1:
+            if(flag(FLAG_SID_REPEL)){
+                clearflag(FLAG_SID_REPEL)
+                msgbox(format("Repel turned off. Catch 'em all!"))
+            } else {
+                setflag(FLAG_SID_REPEL)
+                msgbox(format("Repel turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}. You're scaring wild Pokémon away!"))
+            }
+            waitmessage
+            release
+        default:
+    }
+    end
+}

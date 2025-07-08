@@ -121,7 +121,9 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
                 input->pressedAButton = TRUE;
             if (newKeys & B_BUTTON)
                 input->pressedBButton = TRUE;
-            if (newKeys & R_BUTTON && !FlagGet(DN_FLAG_SEARCHING))
+            // if (newKeys & R_BUTTON && !FlagGet(DN_FLAG_SEARCHING))
+            //     input->pressedRButton = TRUE;
+            if (newKeys & R_BUTTON)
                 input->pressedRButton = TRUE;
             if (newKeys & L_BUTTON)
                 input->pressedLButton = TRUE;
@@ -247,9 +249,14 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         SetMainCallback2(CB2_InitPokeNav);  // Display PokéNav
         return TRUE;
     }
-
-    if (input->pressedRButton && TryStartDexNavSearch())
+    
+    // if (input->pressedRButton && TryStartDexNavSearch())
+    //     return TRUE;
+    if (input->pressedRButton && FlagGet(FLAG_SID_QOL_MENU_GET) == TRUE){
+        PlaySE(SE_WIN_OPEN);
+        ScriptContext_SetupScript(EventScript_QolMenu);
         return TRUE;
+    }
 
     if(input->input_field_1_2 && DEBUG_OVERWORLD_MENU && !DEBUG_OVERWORLD_IN_MENU)
     {

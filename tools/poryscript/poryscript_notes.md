@@ -1,0 +1,1 @@
+sometimes poryscript gets deleted magically. redownload the LINUX version (!!) and put it back, then if it gives permission issues run `chmod +x tools/poryscript/poryscript`

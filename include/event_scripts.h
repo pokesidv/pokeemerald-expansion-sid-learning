@@ -685,5 +685,7 @@ extern const u8 EventScript_LostSignal[];
 extern const u8 EventScript_TooDark[];
 extern const u8 EventScript_MovedTooFast[];
 
+// QOL Menu
+extern const u8 EventScript_QolMenu[];
 
 #endif // GUARD_EVENT_SCRIPTS_H
