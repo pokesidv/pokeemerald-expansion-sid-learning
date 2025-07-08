@@ -47,7 +47,7 @@
 #define FLAG_STARTER_FIRE     0x21 // true if the fire starter pokeball was picked
 #define FLAG_STARTER_WATER    0x22 // true if the water starter pokeball was picked
 #define FLAG_OW_FLAG_POKE_RIDER    0x23 // renamed: see overworld.h for details
-#define FLAG_UNUSED_0x024    0x24 // Unused Flag
+#define FLAG_SID_REPEL       0x24 // renamed: set the flag to repel pokemon
 #define FLAG_UNUSED_0x025    0x25 // Unused Flag
 #define FLAG_UNUSED_0x026    0x26 // Unused Flag
 #define FLAG_UNUSED_0x027    0x27 // Unused Flag

@@ -1077,9 +1077,10 @@ bool8 UpdateRepelCounter(void)
 
 static bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
 {
+    
     u8 i;
-
-    if (!REPEL_STEP_COUNT)
+    // this is so that the flag makes the repel check happen even if you're not using a repel item
+    if (!REPEL_STEP_COUNT && FlagGet(FLAG_SID_REPEL) == FALSE)
         return TRUE;
 
     for (i = 0; i < PARTY_SIZE; i++)
