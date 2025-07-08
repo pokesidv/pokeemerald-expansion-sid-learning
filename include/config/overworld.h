@@ -141,4 +141,7 @@
 // Berry Blender
 #define BERRY_BLENDER_THROW_ALL_BERRIES_AT_ONCE TRUE        // This is a small little addition, that basically speeds up the animation where all players' berries are thrown into the blender. Self-explanatory I hope!
 
+// vi (custom configs)
+#define START_MENU_CUSTOM_LABELS TRUE        // with this enabled, the start menu will use custom labels for the Pokemon (party) and Options (settings).
+
 #endif // GUARD_CONFIG_OVERWORLD_H
