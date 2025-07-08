@@ -216,8 +216,8 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_AccessDexNav,
-            sOptionsLabelGfx_AccessPokedex,
-            sOptionsLabelGfx_SwitchOff
+            sOptionsLabelGfx_AccessPokedex
+            // sOptionsLabelGfx_SwitchOff
         }
     },
     [POKENAV_MENU_TYPE_UNLOCK_MC] =
@@ -228,9 +228,9 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_AccessDexNav,
-            sOptionsLabelGfx_AccessPokedex,
+            sOptionsLabelGfx_AccessPokedex
             // sOptionsLabelGfx_MatchCall,
-            sOptionsLabelGfx_SwitchOff
+            // sOptionsLabelGfx_SwitchOff
         }
     },
     [POKENAV_MENU_TYPE_UNLOCK_MC_RIBBONS] =
@@ -241,10 +241,10 @@ struct
             sOptionsLabelGfx_RegionMap,
             sOptionsLabelGfx_AccessPC,
             sOptionsLabelGfx_AccessDexNav,
-            sOptionsLabelGfx_AccessPokedex,
+            sOptionsLabelGfx_AccessPokedex
             // sOptionsLabelGfx_MatchCall,
             // sOptionsLabelGfx_Ribbons,
-            sOptionsLabelGfx_SwitchOff
+            // sOptionsLabelGfx_SwitchOff
         }
     },
     [POKENAV_MENU_TYPE_CONDITION] =
