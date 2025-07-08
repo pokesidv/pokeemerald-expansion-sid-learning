@@ -2444,5 +2444,10 @@ extern const u8 gText_CannotSendMonToBoxHM[];
 
 extern const u8 gText_Pokenav_Cannot_Access_PC[];
 extern const u8 gText_Pokenav_Cannot_Access_DexNav[];
+//Start Pokevial Branch
+extern const u8 gText_PokevialHasDoses[];
+extern const u8 gText_PokevialIsEmpty[];
+extern const u8 gText_YourPkmnWereRestored[];
+//End Pokevial Branch
 
 #endif // GUARD_STRINGS_H

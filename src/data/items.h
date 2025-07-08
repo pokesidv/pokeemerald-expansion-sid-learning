@@ -14141,4 +14141,25 @@ const struct Item gItemsInfo[] =
         .iconPic = gItemIcon_PokeshiDoll,
         .iconPalette = gItemIconPalette_PokeshiDoll,
     },
+
+    //Start Pokevial Branch
+    [ITEM_POKEVIAL] =
+    {
+        .name = _("POKéVIAL"),
+        .itemId = ITEM_POKEVIAL,
+        .price = 0,
+        .description = COMPOUND_STRING(
+            "Restores all\n"
+            "POKéMON to full\n"
+            "health."),
+        .importance = 1,
+        // .registrability = TRUE, // TODO (vi): is this not needed anymore?
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Pokevial,
+        .iconPic = gItemIcon_Pokevial,
+        .iconPalette = gItemIconPalette_Pokevial,
+        .effect = gItemEffect_Pokevial,
+    },
+    //End Pokevial Branch
 };

@@ -27,6 +27,7 @@
 #include "constants/abilities.h"
 #include "constants/items.h"
 #include "constants/battle_frontier.h"
+#include "pokevial.h" //Pokevial Branch
 
 static void CB2_ReturnFromChooseHalfParty(void);
 static void CB2_ReturnFromChooseBattleFrontierParty(void);
@@ -34,6 +35,7 @@ static void HealPlayerBoxes(void);
 
 void HealPlayerParty(void)
 {
+    PokevialRefill(); //Pokevial Branch
     u32 i;
     for (i = 0; i < gPlayerPartyCount; i++)
         HealPokemon(&gPlayerParty[i]);
