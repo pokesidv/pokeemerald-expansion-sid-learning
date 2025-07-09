@@ -5,6 +5,22 @@ script EventScript_QolMenu {
     } else {
         dynmultipush("Repel:  off", 1)
     }
+
+    
+    pokevialgetdose()
+    copyvar(VAR_0x8005, VAR_0x8006)
+    pokevialgetsize()
+    copyvar(VAR_0x8004, VAR_0x8006)
+    buffernumberstring(STR_VAR_1, VAR_0x8005)
+    if(var(VAR_0x8005) == 0){
+        dynmultipush("Pokévial: empty", 2)
+    } elif (var(VAR_0x8005) == 1){
+        dynmultipush("Pokévial: {COLOR GREEN}{SHADOW LIGHT_GREEN}1{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} use", 2)
+    } else {
+        dynmultipush("Pokévial: {COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} uses", 2)
+    }
+
+
     dynmultipush("Option 2", 2)
     dynmultipush("Option 3", 3)
     dynmultipush("Option 4", 4)
