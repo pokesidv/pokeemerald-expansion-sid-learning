@@ -570,3 +570,9 @@ gSpecials::
     def_special PokevialIsFull
     def_special PokeVialTryUse
     //End Pokevial Branch
+    //Start Time waiting branch
+    def_special WaitTillMorning
+    def_special WaitTillDay
+    def_special WaitTillEvening
+    def_special WaitTillNight
+    //End Time waiting branch

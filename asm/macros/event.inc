@@ -2708,3 +2708,28 @@
     .endm
 
     @ End Pokevial Branch
+    
+	@ Start time waiting branch
+
+    @ fast forwards the fake RTC till morning
+    .macro waittillmorning
+    special WaitTillMorning
+    .endm
+
+    @ fast forwards the fake RTC till day time
+    .macro waittillday
+    special WaitTillDay
+    .endm
+    
+	@ fast forwards the fake RTC till evening
+    .macro waittillevening
+    special WaitTillEvening
+    .endm
+
+	@ fast forwards the fake RTC till night time
+    .macro waittillnight
+    special WaitTillNight
+    .endm
+
+	@ Start time waiting branch
+

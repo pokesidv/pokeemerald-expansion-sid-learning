@@ -6,15 +6,21 @@ const QOL_MENU_OPTION_DOSE_UP = 5
 const QOL_MENU_OPTION_DOSE_DOWN = 6
 const QOL_MENU_OPTION_REFILL = 7
 const QOL_MENU_OPTION_EXP_ALL = 8
+const QOL_MENU_OPTION_WAIT = 9
+
+const TIME_ITEM_MORNING = 10;
+const TIME_ITEM_DAY = 20;
+const TIME_ITEM_EVENING = 30;
+const TIME_ITEM_NIGHT = 40;
 
 script EventScript_QolMenu {
     
     lock
 
     if(flag(FLAG_SID_REPEL)){
-        dynmultipush("Repel:          {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_REPEL)
+        dynmultipush("Repel: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_REPEL)
     } else {
-        dynmultipush("Repel:         off", QOL_MENU_OPTION_REPEL)
+        dynmultipush("Repel: {CLEAR_TO 60}off", QOL_MENU_OPTION_REPEL)
     }
     
     if(checkitem(ITEM_POKEVIAL)){
@@ -23,13 +29,13 @@ script EventScript_QolMenu {
         pokevialgetdose()
         buffernumberstring(STR_VAR_1, VAR_0x8006)
         if(var(VAR_0x8006) == 0){
-            dynmultipush("Pokévial: 0/{STR_VAR_2}", QOL_MENU_OPTION_POKEVIAL)
+            dynmultipush("Pokévial: {CLEAR_TO 60}0/{STR_VAR_2}", QOL_MENU_OPTION_POKEVIAL)
         } else {
             pokevialisfull()
             if(var(VAR_RESULT) == 1){
-                dynmultipush("Pokévial:   {COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+                dynmultipush("Pokévial: {CLEAR_TO 60}{COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
             } else {
-                dynmultipush("Pokévial:   {COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+                dynmultipush("Pokévial: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
             }
         }
         
@@ -42,11 +48,13 @@ script EventScript_QolMenu {
 
     if(checkitem(ITEM_EXP_ALL)){
         if(flag(FLAG_I_EXP_SHARE)){
-            dynmultipush("Exp-All:      {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_EXP_ALL)
+            dynmultipush("Exp-All: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_EXP_ALL)
         } else {
-            dynmultipush("Exp-All:     off", QOL_MENU_OPTION_EXP_ALL)
+            dynmultipush("Exp-All: {CLEAR_TO 60}off", QOL_MENU_OPTION_EXP_ALL)
         }
     }
+
+    dynmultipush("Wait until...", QOL_MENU_OPTION_WAIT)
 
     dynmultistack(0, 0, FALSE, 9, FALSE, QOL_MENU_OPTION_REPEL, DYN_MULTICHOICE_CB_NONE)
 
@@ -80,9 +88,37 @@ script EventScript_QolMenu {
                 setflag(FLAG_I_EXP_SHARE)
                 msgbox(format("Exp-all turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}. Easy level farming for your whole party!"))
             }
+        case QOL_MENU_OPTION_WAIT:
+            call(EventScript_QolMenu_Wait)
         default:
     }
     waitmessage
     release
     end
+}
+
+
+script EventScript_QolMenu_Wait {
+    lock
+    dynmultipush("Morning", 10)
+    dynmultipush("Day", 20)
+    dynmultipush("Evening", 30)
+    dynmultipush("Night", 40)
+    
+    dynmultistack(0, 0, FALSE, 9, FALSE, 10, DYN_MULTICHOICE_CB_NONE)
+
+    switch(var(VAR_RESULT)){
+        case 10:
+            waittillmorning()
+        case 20:
+            waittillday()
+        case 30:
+            waittillevening()
+        case 40:
+            waittillnight()
+        default:
+    }
+    waitmessage
+    release
+    return
 }
