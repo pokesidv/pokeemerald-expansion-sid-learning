@@ -2114,6 +2114,6 @@ const u32 gItemIcon_Pokevial9[] = INCBIN_U32("graphics/items/icons/pokevial9.4bp
 const u32 gItemIcon_Pokevial[] = INCBIN_U32("graphics/items/icons/pokevial.4bpp.lz");
 
 // TODO (vi): check if this .gbapal is correct instead of the original .lz
-const u32 gItemIconPalette_Pokevial[] = INCBIN_U32("graphics/items/icon_palettes/pokevial.gbapal");
+const u16 gItemIconPalette_Pokevial[] = INCBIN_U16("graphics/items/icon_palettes/pokevial.gbapal");
 // const u32 gItemIconPalette_Pokevial[] = INCBIN_U32("graphics/items/icon_palettes/pokevial.gbapal.lz");
 //End Pokevial Branch

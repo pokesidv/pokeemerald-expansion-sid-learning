@@ -14146,7 +14146,6 @@ const struct Item gItemsInfo[] =
     [ITEM_POKEVIAL] =
     {
         .name = _("POKéVIAL"),
-        .itemId = ITEM_POKEVIAL,
         .price = 0,
         .description = COMPOUND_STRING(
             "Restores all\n"
