@@ -73,4 +73,6 @@ void UpdateSpinData(void);
 void ResetSpinTimer(void);
 bool32 CanTriggerSpinEvolution();
 
+extern bool8 gRunToggleBtnSet;
+
 #endif // GUARD_FIELD_PLAYER_AVATAR_H
