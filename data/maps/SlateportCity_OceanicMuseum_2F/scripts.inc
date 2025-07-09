@@ -246,8 +246,8 @@ SlateportCity_OceanicMuseum_2F_EventScript_SubmersibleReplica::
 	msgbox SlateportCity_OceanicMuseum_2F_Text_SumbersibleReplica, MSGBOX_SIGN
 	end
 
-SlateportCity_OceanicMuseum_2F_EventScript_SSAnneReplica::
-	msgbox SlateportCity_OceanicMuseum_2F_Text_SSAnneReplica, MSGBOX_SIGN
+SlateportCity_OceanicMuseum_2F_EventScript_SsAnneReplica::
+	msgbox SlateportCity_OceanicMuseum_2F_Text_SsAnneReplica, MSGBOX_SIGN
 	end
 
 SlateportCity_OceanicMuseum_2F_EventScript_MuseumPatron1::
@@ -429,7 +429,7 @@ SlateportCity_OceanicMuseum_2F_Text_SumbersibleReplica:
 	.string "“A replica of a compact, unmanned\n"
 	.string "pod for seafloor exploration.”$"
 
-SlateportCity_OceanicMuseum_2F_Text_SSAnneReplica:
+SlateportCity_OceanicMuseum_2F_Text_SsAnneReplica:
 	.string "“S.S. ANNE\p"
 	.string "“A replica of the luxury liner that\n"
 	.string "circles the globe.”$"

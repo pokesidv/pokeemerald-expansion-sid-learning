@@ -46,7 +46,7 @@ enum {
     MB_LAVARIDGE_GYM_B1F_WARP,
     MB_SEAWEED_NO_SURFACING,
     MB_REFLECTION_UNDER_BRIDGE,
-    MB_UNUSED_2C,
+    MB_STRENGTH_BUTTON, // TODO (vi) (frlg tiles): implement this
     MB_UNUSED_2D,
     MB_UNUSED_2E,
     MB_UNUSED_2F,
@@ -86,12 +86,12 @@ enum {
     MB_WESTWARD_CURRENT,
     MB_NORTHWARD_CURRENT,
     MB_SOUTHWARD_CURRENT,
-    MB_UNUSED_54,
-    MB_UNUSED_55,
-    MB_UNUSED_56,
-    MB_UNUSED_57,
-    MB_UNUSED_58,
-    MB_UNUSED_59,
+    MB_SPIN_RIGHT,         // TODO (vi) (frlg tiles): implement this
+    MB_SPIN_LEFT,          // TODO (vi) (frlg tiles): implement this
+    MB_SPIN_UP,            // TODO (vi) (frlg tiles): implement this
+    MB_SPIN_DOWN,          // TODO (vi) (frlg tiles): implement this
+    MB_STOP_SPINNING,      // TODO (vi) (frlg tiles): implement this
+    MB_POKEMART_SHELF,     // TODO (vi) (frlg tiles): implement this
     MB_UNUSED_5A,
     MB_UNUSED_5B,
     MB_UNUSED_5C,
@@ -160,24 +160,24 @@ enum {
     MB_SECRET_BASE_SPOT_BLUE_CAVE_OPEN,
     MB_SECRET_BASE_SPOT_TREE_RIGHT,
     MB_SECRET_BASE_SPOT_TREE_RIGHT_OPEN,
-    MB_UNUSED_9E,
-    MB_UNUSED_9F,
+    MB_CABLE_CLUB_WIRELESS_MONITOR, // TODO (vi) (frlg tiles): implement this
+    MB_BATTLE_RECORDS,              // TODO (vi) (frlg tiles): implement this
     MB_BERRY_TREE_SOIL,
-    MB_UNUSED_A1,
-    MB_UNUSED_A2,
-    MB_UNUSED_A3,
-    MB_UNUSED_A4,
-    MB_UNUSED_A5,
-    MB_UNUSED_A6,
-    MB_UNUSED_A7,
-    MB_UNUSED_A8,
-    MB_UNUSED_A9,
-    MB_UNUSED_AA,
-    MB_UNUSED_AB,
-    MB_UNUSED_AC,
-    MB_UNUSED_AD,
-    MB_UNUSED_AE,
-    MB_UNUSED_AF,
+    MB_FOOD,                        // TODO (vi) (frlg tiles): implement this
+    MB_INDIGO_PLATEAU_MARK_DPAD,    // TODO (vi) (frlg tiles): implement this
+    MB_INDIGO_PLATEAU_MARK_2_DPAD,  // TODO (vi) (frlg tiles): implement this
+    MB_BLUEPRINTS,                  // TODO (vi) (frlg tiles): implement this
+    MB_PAINTING,                    // TODO (vi) (frlg tiles): implement this
+    MB_POWER_PLANT_MACHINE,         // TODO (vi) (frlg tiles): implement this
+    MB_TELEPHONE,                   // TODO (vi) (frlg tiles): implement this
+    MB_COMPUTER,                    // TODO (vi) (frlg tiles): implement this
+    MB_ADVERTISING_POSTER,          // TODO (vi) (frlg tiles): implement this
+    MB_FOOD_SMELLS_TASTY,           // TODO (vi) (frlg tiles): implement this
+    MB_TRASH_BIN,                   // TODO (vi) (frlg tiles): implement this
+    MB_CUP,                         // TODO (vi) (frlg tiles): implement this
+    MB_BLINKING_LIGHTS,             // TODO (vi) (frlg tiles): implement this
+    MB_NEATLY_LINED_UP_TOOLS,       // TODO (vi) (frlg tiles): implement this
+    MB_IMPRESSIVE_MACHINE,          // TODO (vi) (frlg tiles): implement this
     MB_SECRET_BASE_PC,
     MB_SECRET_BASE_REGISTER_PC,
     MB_SECRET_BASE_SCENERY,
@@ -217,11 +217,11 @@ enum {
     MB_ISOLATED_HORIZONTAL_RAIL,
     MB_VERTICAL_RAIL,
     MB_HORIZONTAL_RAIL,
-    MB_UNUSED_D7,
-    MB_UNUSED_D8,
-    MB_UNUSED_D9,
-    MB_UNUSED_DA,
-    MB_UNUSED_DB,
+    MB_VIDEO_GAME,                    // TODO (vi) (frlg tiles): implement this
+    MB_BURGLARY,                      // TODO (vi) (frlg tiles): implement this
+    MB_TRAINER_TOWER_MONITOR,         // TODO (vi) (frlg tiles): implement this
+    MB_CYCLING_ROAD_PULL_DOWN,        // TODO (vi) (frlg tiles): implement this
+    MB_CYCLING_ROAD_PULL_DOWN_GRASS,  // TODO (vi) (frlg tiles): implement this
     MB_UNUSED_DC,
     MB_UNUSED_DD,
     MB_UNUSED_DE,

@@ -309,8 +309,9 @@ const u16 gMetatiles_CeruleanGym[] = INCBIN_U16("data/tilesets/secondary/cerulea
 const u16 gMetatileAttributes_CeruleanGym[] = INCBIN_U16("data/tilesets/secondary/cerulean_gym/metatile_attributes.bin");
 
 
-const u16 gMetatiles_SilphCo[] = INCBIN_U16("data/tilesets/secondary/silph_co/metatiles.bin");
-const u16 gMetatileAttributes_SilphCo[] = INCBIN_U16("data/tilesets/secondary/silph_co/metatile_attributes.bin");
+// TODO (vi): restore missing silph co tileset
+// const u16 gMetatiles_SilphCo[] = INCBIN_U16("data/tilesets/secondary/silph_co/metatiles.bin");
+// const u16 gMetatileAttributes_SilphCo[] = INCBIN_U16("data/tilesets/secondary/silph_co/metatile_attributes.bin");
 
 
 const u16 gMetatiles_CinnabarGym[] = INCBIN_U16("data/tilesets/secondary/cinnabar_gym/metatiles.bin");
