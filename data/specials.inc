@@ -567,4 +567,6 @@ gSpecials::
     def_special PokevialGetDose
     def_special PokevialGetSize
     def_special PokevialRefill
+    def_special PokevialIsFull
+    def_special PokeVialTryUse
     //End Pokevial Branch

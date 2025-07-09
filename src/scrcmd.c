@@ -3253,7 +3253,7 @@ bool8 ScrCmd_pokevial(struct ScriptContext *ctx)
     u8 amount = ScriptReadByte(ctx);
     
     // TODO (vi): check if adding this is required
-    Script_RequestEffects(SCREFF_V1);
+    Script_RequestEffects(SCREFF_V1 | SCREFF_SAVE);
 
     switch (mode) {
         case VIAL_GET:

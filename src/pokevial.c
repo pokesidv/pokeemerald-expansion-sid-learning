@@ -4,6 +4,16 @@
 #include "graphics.h"
 #include "math_util.h"
 #include "random.h"
+#include "field_weather.h"
+#include "item.h"
+#include "item_use.h"
+#include "item_menu.h"
+#include "script.h"
+#include "event_object_movement.h"
+#include "field_player_avatar.h"
+#include "task.h"
+#include "map_name_popup.h"
+#include "bg.h"
 
 static void PokevialFixDoseOverflow(void);
 
@@ -62,6 +72,36 @@ bool32 PokevialRefill()
     gSaveBlock1Ptr->pokevial.Dose = gSaveBlock1Ptr->pokevial.Size;
     return TRUE;
 }
+
+bool32 PokevialIsFull()
+{
+    if (PokevialGetDose() == PokevialGetSize())
+        return TRUE;
+
+    return FALSE;
+}
+
+#define tUsingRegisteredKeyItem data[3] // See usage in item_use.c
+void PokeVialTryUse()
+{
+    if (CheckBagHasItem(ITEM_POKEVIAL, 1) == TRUE)
+    {
+        // u8 taskId;
+
+        // HideMapNamePopUpWindow();
+        // ChangeBgY_ScreenOff(0, 0, BG_COORD_SET);
+        // LockPlayerFieldControls();
+        // FreezeObjectEvents();
+        // PlayerFreeze();
+        // StopPlayerAvatar();
+        // gSpecialVar_ItemId = ITEM_POKEVIAL;
+        // taskId = CreateTask(GetItemFieldFunc(ITEM_POKEVIAL), 4);
+        FadeScreen(FADE_TO_BLACK,0);
+        CreateTask(Task_UsePokevialFieldYes, 1);
+        // gTasks[taskId].tUsingRegisteredKeyItem = TRUE;
+    }
+}
+#undef tUsingRegisteredKeyItem
 
 const u32 *const pokevialIconIndex[VIAL_NUM_STATES] =
 {

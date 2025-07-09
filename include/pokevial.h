@@ -13,6 +13,8 @@ void PokevialSizeDown(u8);
 void PokevialDoseDown(u8);
 
 bool32 PokevialRefill(void);
+bool32 PokevialIsFull(void);
+void PokeVialTryUse(void);
 const void *PokevialGetDoseIcon(void);
 void Pokevial_HealPlayerParty(void);
 
@@ -30,6 +32,6 @@ enum pokevialPercentConstant {
     POKEVIAL_ICON_PERCENT_100,
 };
 
-#define POKEVIAL_SKIP_CUTSCENE  TRUE // When this FALSE is changed to TRUE, when using the Pokevial, the item will cut to the party screen and use the HealPlayerParty special instead.
+#define POKEVIAL_SKIP_CUTSCENE  FALSE // When this FALSE is changed to TRUE, when using the Pokevial, the item will cut to the party screen and use the HealPlayerParty special instead.
 
 #endif // GUARD_POKEVIAL_H

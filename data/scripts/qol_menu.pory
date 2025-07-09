@@ -1,45 +1,46 @@
+const QOL_MENU_OPTION_REPEL = 1
+const QOL_MENU_OPTION_POKEVIAL = 2
+const QOL_MENU_OPTION_SIZE_UP = 3
+const QOL_MENU_OPTION_SIZE_DOWN = 4
+const QOL_MENU_OPTION_DOSE_UP = 5
+const QOL_MENU_OPTION_DOSE_DOWN = 6
+const QOL_MENU_OPTION_REFILL = 7
 
 script EventScript_QolMenu {
+    
+    lock
+
     if(flag(FLAG_SID_REPEL)){
         dynmultipush("Repel:  {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", 1)
     } else {
-        dynmultipush("Repel:  off", 1)
+        dynmultipush("Repel:  off", QOL_MENU_OPTION_REPEL)
     }
-
     
-    pokevialgetdose()
-    copyvar(VAR_0x8005, VAR_0x8006)
     pokevialgetsize()
-    copyvar(VAR_0x8004, VAR_0x8006)
-    buffernumberstring(STR_VAR_1, VAR_0x8005)
-    if(var(VAR_0x8005) == 0){
-        dynmultipush("Pokévial: empty", 2)
-    } elif (var(VAR_0x8005) == 1){
-        dynmultipush("Pokévial: {COLOR GREEN}{SHADOW LIGHT_GREEN}1{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} use", 2)
+    buffernumberstring(STR_VAR_2, VAR_0x8006)
+    pokevialgetdose()
+    buffernumberstring(STR_VAR_1, VAR_0x8006)
+    if(var(VAR_0x8006) == 0){
+        dynmultipush("Pokévial: 0/{STR_VAR_2}", QOL_MENU_OPTION_POKEVIAL)
     } else {
-        dynmultipush("Pokévial: {COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY} uses", 2)
+        pokevialisfull()
+        if(var(VAR_RESULT) == 1){
+            dynmultipush("Pokévial: {COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+        } else {
+            dynmultipush("Pokévial: {COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+        }
     }
 
+    // dynmultipush("Size up", QOL_MENU_OPTION_SIZE_UP)
+    // dynmultipush("Size down", QOL_MENU_OPTION_SIZE_DOWN)
+    // dynmultipush("Dose up", QOL_MENU_OPTION_DOSE_UP)
+    // dynmultipush("Dose down", QOL_MENU_OPTION_DOSE_DOWN)
+    // dynmultipush("Refill", QOL_MENU_OPTION_REFILL)
 
-    dynmultipush("Option 2", 2)
-    dynmultipush("Option 3", 3)
-    dynmultipush("Option 4", 4)
-    // dynmultipush("Option 5", 5)
-    // dynmultipush("Option 6", 6)
-    // dynmultipush("Option 7", 7)
-    // dynmultipush("Option 8", 8)
-    // dynmultipush("Option 9", 9)
-    // dynmultipush("Option 10", 10)
-    // dynmultipush("Option 11", 11)
-    // dynmultipush("Option 12", 12)
-    // dynmultipush("Option 13", 13)
-    // dynmultipush("Option 14", 14)
-    // dynmultipush("Option 15", 15)
-    // dynmultipush("Option 16", 16)
+    dynmultistack(0, 0, FALSE, 9, FALSE, QOL_MENU_OPTION_REPEL, DYN_MULTICHOICE_CB_NONE)
 
-    dynmultistack(0, 0, FALSE, 9, FALSE, 1, DYN_MULTICHOICE_CB_NONE)
     switch(var(VAR_RESULT)){
-        case 1:
+        case QOL_MENU_OPTION_REPEL:
             if(flag(FLAG_SID_REPEL)){
                 clearflag(FLAG_SID_REPEL)
                 msgbox(format("Repel turned off. Catch 'em all!"))
@@ -47,9 +48,22 @@ script EventScript_QolMenu {
                 setflag(FLAG_SID_REPEL)
                 msgbox(format("Repel turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}. You're scaring wild Pokémon away!"))
             }
-            waitmessage
-            release
+        case QOL_MENU_OPTION_POKEVIAL:
+            pokevialtryuse()
+        case QOL_MENU_OPTION_SIZE_UP:
+            pokevialincreasesize()
+            pokevialrefill()
+        case QOL_MENU_OPTION_SIZE_DOWN:
+            pokevialdecreasesize()
+        case QOL_MENU_OPTION_DOSE_UP:
+            pokevialadddose()
+        case QOL_MENU_OPTION_DOSE_DOWN:
+            pokevialremovedose()
+        case QOL_MENU_OPTION_REFILL:
+            pokevialrefill()
         default:
     }
+    waitmessage
+    release
     end
 }

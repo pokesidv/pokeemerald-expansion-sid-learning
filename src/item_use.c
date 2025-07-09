@@ -100,7 +100,6 @@ static const u8 sText_PokeFluteAwakenedMon[] = _("The POKé FLUTE awakened sleep
 
 //Start Pokevial Branch
 static void UsePokevialFieldYes(u8 taskId);
-static void Task_UsePokevialFieldYes(u8 taskId);
 static void UsePokevialFieldNo(u8 taskId);
 static void UsePokevialYesNo(u8);
 static void UsePokevialYes(u8);
@@ -1681,7 +1680,7 @@ static void UsePokevialFieldYes(u8 taskId)
     }
 }
 
-static void Task_UsePokevialFieldYes(u8 taskId)
+void Task_UsePokevialFieldYes(u8 taskId)
 {
     if (!gPaletteFade.active)
     {

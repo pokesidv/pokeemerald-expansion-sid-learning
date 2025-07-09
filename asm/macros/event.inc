@@ -2646,7 +2646,7 @@
     @ When parameter is empty, it assumes VIAL_SIZE.
     @ When amount is empty, it assumes 1.
 	.macro pokevial mode:req, parameter=VIAL_SIZE, amount=1
-	.byte 0xe3
+	.byte 0xe5
     .byte \mode
     .byte \parameter
     .byte \amount
@@ -2695,6 +2695,16 @@
     .macro pokevialreward
     pokevial VIAL_INCREASE VIAL_SIZE 1
     specialvar VAR_RESULT,PokevialRefill
+    .endm
+
+    @ Checks if the pokevial is full and stores the result to VAR_RESULT (1 if full, 0 otherwise)
+    .macro pokevialisfull
+    specialvar VAR_RESULT,PokevialIsFull
+    .endm
+	
+    @ Tries to use the pokevial if it's in the bag
+    .macro pokevialtryuse
+    special PokeVialTryUse
     .endm
 
     @ End Pokevial Branch
