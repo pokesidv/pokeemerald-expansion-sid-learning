@@ -625,7 +625,8 @@
   ],
   "gMapGroup_ArdorProvince": [
     "ChitinCragDale",
-    "ArdorProvince_Route1"
+    "ArdorProvince_Route1",
+    "WoodsTrial"
   ],
   "gMapGroup_Indoor_Ardor_ChitinCragDale": [
     "ChitinCragDale_Lab"

@@ -70,14 +70,7 @@
   "warp_events": [
     {
       "x": 6,
-      "y": 12,
-      "elevation": 0,
-      "dest_map": "MAP_CHITIN_CRAG_DALE",
-      "dest_warp_id": "0"
-    },
-    {
-      "x": 7,
-      "y": 12,
+      "y": 10,
       "elevation": 0,
       "dest_map": "MAP_CHITIN_CRAG_DALE",
       "dest_warp_id": "0"

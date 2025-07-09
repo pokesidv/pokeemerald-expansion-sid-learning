@@ -1169,3 +1169,5 @@ EventScript_VsSeekerChargingDone::
 	.include "data/maps/ArdorProvince_Route1/scripts.inc"
 
 	.include "data/scripts/qol_menu.inc"
+
+	.include "data/maps/WoodsTrial/scripts.inc"

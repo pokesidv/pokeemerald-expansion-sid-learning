@@ -15,7 +15,7 @@
   "connections": [
     {
       "map": "MAP_ARDOR_PROVINCE_ROUTE1",
-      "offset": 0,
+      "offset": -4,
       "direction": "right"
     }
   ],
@@ -27,13 +27,6 @@
       "elevation": 0,
       "dest_map": "MAP_CHITIN_CRAG_DALE_LAB",
       "dest_warp_id": "0"
-    },
-    {
-      "x": 6,
-      "y": 7,
-      "elevation": 0,
-      "dest_map": "MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_1F",
-      "dest_warp_id": "1"
     }
   ],
   "coord_events": [],

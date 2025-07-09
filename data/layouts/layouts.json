@@ -4424,8 +4424,8 @@
     {
       "id": "LAYOUT_CHITIN_CRAG_DALE_LAB",
       "name": "ChitinCragDale_Lab_Layout",
-      "width": 13,
-      "height": 13,
+      "width": 12,
+      "height": 12,
       "primary_tileset": "gTileset_Building",
       "secondary_tileset": "gTileset_Lab",
       "border_filepath": "data/layouts/ChitinCragDale_Lab/border.bin",
@@ -4435,11 +4435,21 @@
       "id": "LAYOUT_ARDOR_PROVINCE_ROUTE1",
       "name": "ArdorProvince_Route1_Layout",
       "width": 20,
+      "height": 24,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_SaffronCity",
+      "border_filepath": "data/layouts/ArdorProvince_Route1/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route1/map.bin"
+    },
+    {
+      "id": "LAYOUT_WOODS_TRIAL",
+      "name": "WoodsTrial_Layout",
+      "width": 20,
       "height": 20,
       "primary_tileset": "gTileset_General",
       "secondary_tileset": "gTileset_PalletTown",
-      "border_filepath": "data/layouts/ArdorProvince_Route1/border.bin",
-      "blockdata_filepath": "data/layouts/ArdorProvince_Route1/map.bin"
+      "border_filepath": "data/layouts/WoodsTrial/border.bin",
+      "blockdata_filepath": "data/layouts/WoodsTrial/map.bin"
     }
   ]
 }

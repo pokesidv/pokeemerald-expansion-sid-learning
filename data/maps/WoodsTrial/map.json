@@ -1,8 +1,8 @@
 {
-  "id": "MAP_ARDOR_PROVINCE_ROUTE1",
-  "name": "ArdorProvince_Route1",
-  "layout": "LAYOUT_ARDOR_PROVINCE_ROUTE1",
-  "music": "MUS_ROUTE101",
+  "id": "MAP_WOODS_TRIAL",
+  "name": "WoodsTrial",
+  "layout": "LAYOUT_WOODS_TRIAL",
+  "music": "MUS_PETALBURG_WOODS",
   "region_map_section": "MAPSEC_LITTLEROOT_TOWN",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
@@ -12,20 +12,21 @@
   "allow_running": true,
   "show_map_name": true,
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
-  "connections": [
-    {
-      "map": "MAP_CHITIN_CRAG_DALE",
-      "offset": 4,
-      "direction": "left"
-    }
-  ],
+  "connections": null,
   "object_events": [],
   "warp_events": [
     {
-      "x": 11,
-      "y": 6,
+      "x": 8,
+      "y": 13,
       "elevation": 0,
-      "dest_map": "MAP_WOODS_TRIAL",
+      "dest_map": "MAP_ARDOR_PROVINCE_ROUTE1",
+      "dest_warp_id": "0"
+    },
+    {
+      "x": 9,
+      "y": 13,
+      "elevation": 0,
+      "dest_map": "MAP_ARDOR_PROVINCE_ROUTE1",
       "dest_warp_id": "0"
     }
   ],
