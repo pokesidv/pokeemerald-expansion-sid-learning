@@ -5,37 +5,48 @@ const QOL_MENU_OPTION_SIZE_DOWN = 4
 const QOL_MENU_OPTION_DOSE_UP = 5
 const QOL_MENU_OPTION_DOSE_DOWN = 6
 const QOL_MENU_OPTION_REFILL = 7
+const QOL_MENU_OPTION_EXP_ALL = 8
 
 script EventScript_QolMenu {
     
     lock
 
     if(flag(FLAG_SID_REPEL)){
-        dynmultipush("Repel:  {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", 1)
+        dynmultipush("Repel:          {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_REPEL)
     } else {
-        dynmultipush("Repel:  off", QOL_MENU_OPTION_REPEL)
+        dynmultipush("Repel:         off", QOL_MENU_OPTION_REPEL)
     }
     
-    pokevialgetsize()
-    buffernumberstring(STR_VAR_2, VAR_0x8006)
-    pokevialgetdose()
-    buffernumberstring(STR_VAR_1, VAR_0x8006)
-    if(var(VAR_0x8006) == 0){
-        dynmultipush("Pokévial: 0/{STR_VAR_2}", QOL_MENU_OPTION_POKEVIAL)
-    } else {
-        pokevialisfull()
-        if(var(VAR_RESULT) == 1){
-            dynmultipush("Pokévial: {COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+    if(checkitem(ITEM_POKEVIAL)){
+        pokevialgetsize()
+        buffernumberstring(STR_VAR_2, VAR_0x8006)
+        pokevialgetdose()
+        buffernumberstring(STR_VAR_1, VAR_0x8006)
+        if(var(VAR_0x8006) == 0){
+            dynmultipush("Pokévial: 0/{STR_VAR_2}", QOL_MENU_OPTION_POKEVIAL)
         } else {
-            dynmultipush("Pokévial: {COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+            pokevialisfull()
+            if(var(VAR_RESULT) == 1){
+                dynmultipush("Pokévial:   {COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+            } else {
+                dynmultipush("Pokévial:   {COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}", QOL_MENU_OPTION_POKEVIAL)
+            }
         }
+        
+        // dynmultipush("Size up", QOL_MENU_OPTION_SIZE_UP)
+        // dynmultipush("Size down", QOL_MENU_OPTION_SIZE_DOWN)
+        // dynmultipush("Dose up", QOL_MENU_OPTION_DOSE_UP)
+        // dynmultipush("Dose down", QOL_MENU_OPTION_DOSE_DOWN)
+        // dynmultipush("Refill", QOL_MENU_OPTION_REFILL)
     }
 
-    // dynmultipush("Size up", QOL_MENU_OPTION_SIZE_UP)
-    // dynmultipush("Size down", QOL_MENU_OPTION_SIZE_DOWN)
-    // dynmultipush("Dose up", QOL_MENU_OPTION_DOSE_UP)
-    // dynmultipush("Dose down", QOL_MENU_OPTION_DOSE_DOWN)
-    // dynmultipush("Refill", QOL_MENU_OPTION_REFILL)
+    if(checkitem(ITEM_EXP_ALL)){
+        if(flag(FLAG_I_EXP_SHARE)){
+            dynmultipush("Exp-All:      {COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_EXP_ALL)
+        } else {
+            dynmultipush("Exp-All:     off", QOL_MENU_OPTION_EXP_ALL)
+        }
+    }
 
     dynmultistack(0, 0, FALSE, 9, FALSE, QOL_MENU_OPTION_REPEL, DYN_MULTICHOICE_CB_NONE)
 
@@ -61,6 +72,14 @@ script EventScript_QolMenu {
             pokevialremovedose()
         case QOL_MENU_OPTION_REFILL:
             pokevialrefill()
+        case QOL_MENU_OPTION_EXP_ALL:
+            if(flag(FLAG_I_EXP_SHARE)){
+                clearflag(FLAG_I_EXP_SHARE)
+                msgbox(format("Exp-all turned off. That's the sigma grindset way."))
+            } else {
+                setflag(FLAG_I_EXP_SHARE)
+                msgbox(format("Exp-all turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}. Easy level farming for your whole party!"))
+            }
         default:
     }
     waitmessage

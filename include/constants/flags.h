@@ -50,7 +50,7 @@
 #define FLAG_SID_REPEL          0x24 // renamed: set the flag to repel pokemon
 #define FLAG_SID_QOL_MENU_GET   0x25 // renamed: set to enable qol menu for the player
 #define FLAG_RUNNING_TOGGLE     0x26 // renamed: set to enable autorun for the player
-#define FLAG_UNUSED_0x027    0x27 // Unused Flag
+#define FLAG_I_EXP_SHARE   0x27 // renamed: for exp all, see item.h for more details 
 #define FLAG_UNUSED_0x028    0x28 // Unused Flag
 #define FLAG_UNUSED_0x029    0x29 // Unused Flag
 #define FLAG_UNUSED_0x02A    0x2A // Unused Flag
