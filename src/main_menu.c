@@ -1079,7 +1079,11 @@ static void Task_HandleMainMenuAPressed(u8 taskId)
             default:
                 gPlttBufferUnfaded[0] = RGB_BLACK;
                 gPlttBufferFaded[0] = RGB_BLACK;
-                gTasks[taskId].func = Task_NewGameBirchSpeech_Init;
+                // gTasks[taskId].func = Task_NewGameBirchSpeech_Init;
+                gSaveBlock2Ptr->playerGender = FEMALE;
+                NewGameBirchSpeech_SetDefaultPlayerName(Random() % NUM_PRESET_NAMES);
+                SetMainCallback2(CB2_NewGame);
+                DestroyTask(taskId);
                 break;
             case ACTION_CONTINUE:
                 gPlttBufferUnfaded[0] = RGB_BLACK;
