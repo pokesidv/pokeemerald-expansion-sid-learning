@@ -332,7 +332,7 @@ LilycoveCity_EventScript_DefeatedMay::
 	end
 
 LilycoveCity_EventScript_CheckFinalBadge::
-	goto_if_set FLAG_BADGE08_GET, LilycoveCity_EventScript_HasFinalBadge
+	goto_if_set FLAG_BADGE09_GET, LilycoveCity_EventScript_HasFinalBadge
 	return
 
 LilycoveCity_EventScript_HasFinalBadge::

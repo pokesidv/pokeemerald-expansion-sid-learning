@@ -46,6 +46,7 @@ const u16 gBadgeFlags[NUM_BADGES] =
     FLAG_BADGE06_GET,
     FLAG_BADGE07_GET,
     FLAG_BADGE08_GET,
+    FLAG_BADGE09_GET,
 };
 
 void InitEventData(void)

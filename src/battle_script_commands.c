@@ -304,7 +304,7 @@ static const u16 sTrappingMoves[NUM_TRAPPING_MOVES] =
     MOVE_THUNDER_CAGE
 };
 
-static const u16 sWhiteOutBadgeMoney[9] = { 8, 16, 24, 36, 48, 64, 80, 100, 120 };
+static const u16 sWhiteOutBadgeMoney[10] = { 8, 16, 24, 36, 48, 64, 80, 100, 110, 120 };
 
 enum GiveCaughtMonStates
 {

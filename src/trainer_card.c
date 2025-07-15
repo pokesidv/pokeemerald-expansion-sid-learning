@@ -1507,15 +1507,15 @@ static void DrawStarsAndBadgesOnCard(void)
     FillBgTilemapBufferRect(3, 143, 15, yOffsets[sData->isHoenn], sData->trainerCard.stars, 1, 4);
     if (!sData->isLink)
     {
-        x = 4;
+        x = 2;
         for (i = 0; i < NUM_BADGES; i++, tileNum += 2, x += 3)
         {
             if (sData->badgeCount[i])
             {
-                FillBgTilemapBufferRect(3, tileNum, x, 15, 1, 1, palNum);
-                FillBgTilemapBufferRect(3, tileNum + 1, x + 1, 15, 1, 1, palNum);
-                FillBgTilemapBufferRect(3, tileNum + 16, x, 16, 1, 1, palNum);
-                FillBgTilemapBufferRect(3, tileNum + 17, x + 1, 16, 1, 1, palNum);
+                FillBgTilemapBufferRect(3, tileNum,      x,     15, 1, 1, palNum);
+                FillBgTilemapBufferRect(3, tileNum + 1,  x + 1, 15, 1, 1, palNum);
+                FillBgTilemapBufferRect(3, tileNum + 18, x,     16, 1, 1, palNum);
+                FillBgTilemapBufferRect(3, tileNum + 19, x + 1, 16, 1, 1, palNum);
             }
         }
     }

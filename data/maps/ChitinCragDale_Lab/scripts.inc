@@ -455,7 +455,7 @@ ChitinCragDale_Lab_EventScript_PickSelectedStarter_Text_5:
 
 ChitinCragDale_Lab_EventScript_EditGeneration_Text_0:
 # 140 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	.string "Prof Birch$"
+	.string "Prof. Birch$"
 
 ChitinCragDale_Lab_EventScript_EditGeneration_Text_1:
 # 143 "data/maps/ChitinCragDale_Lab/scripts.pory"

@@ -17,7 +17,8 @@ u32 GetCurrentLevelCap(void)
         {FLAG_BADGE06_GET, 33},
         {FLAG_BADGE07_GET, 42},
         {FLAG_BADGE08_GET, 46},
-        {FLAG_IS_CHAMPION, 58},
+        {FLAG_BADGE09_GET, 58},
+        {FLAG_IS_CHAMPION, 64},
     };
 
     u32 i;
@@ -94,6 +95,7 @@ u32 GetCurrentEVCap(void)
         {FLAG_BADGE06_GET, MAX_TOTAL_EVS * 11 / 17},
         {FLAG_BADGE07_GET, MAX_TOTAL_EVS * 13 / 17},
         {FLAG_BADGE08_GET, MAX_TOTAL_EVS * 15 / 17},
+        {FLAG_BADGE09_GET, MAX_TOTAL_EVS * 16 / 17},
         {FLAG_IS_CHAMPION, MAX_TOTAL_EVS},
     };
 
