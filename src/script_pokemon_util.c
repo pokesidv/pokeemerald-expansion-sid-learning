@@ -573,13 +573,91 @@ void ScrCmd_createmon(struct ScriptContext *ctx)
 
 #undef PARSE_FLAG
 
+void Script_GetChosenMonAbilities(void)
+{
+    u16 species = GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPECIES, NULL);
+    
+    // if the mon is an Egg etc.
+    if(!species){
+        gSpecialVar_Result = -1;
+        return;
+    }
+
+    u16 first = GetAbilityBySpecies(species, 0);
+    u16 second = GetAbilityBySpecies(species, 1);
+    u16 hidden = GetAbilityBySpecies(species, 2);
+
+    u16 current = GetAbilityBySpecies(species, GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_ABILITY_NUM));
+    
+    StringCopy(gStringVar4, gAbilitiesInfo[current].name);
+    
+    if ((first == second // If all abilities are the same
+        && first == hidden) ||
+        (second == 0 && hidden == 0) || (first == 0 && hidden == 0) || (second == 0 && hidden == 0)
+        // Or only one ability is available
+    )
+    {
+        StringCopy(gStringVar1, gAbilitiesInfo[current].name);
+        // can't change ability, (print current one)
+        gSpecialVar_Result = 0;
+        return;
+    }
+
+    if(first != 0){
+        StringCopy(gStringVar1, gAbilitiesInfo[first].name);
+    }
+    if(second != 0){
+        StringCopy(gStringVar2, gAbilitiesInfo[second].name);
+    }
+    if(hidden != 0){
+        StringCopy(gStringVar3, gAbilitiesInfo[hidden].name);
+    }
+    
+    if(first != second && first != 0 && second != 0 && (hidden == second || hidden == first || hidden == 0)){
+        // first and second
+        gSpecialVar_Result = 1;
+        return;
+    } else if (first != hidden && first != 0 && hidden != 0 && (second == first || second == hidden || second == 0)) {
+        // first and hidden
+        gSpecialVar_Result = 2;
+        return;
+    } else if (second != hidden && second != 0 && hidden != 0 && (first == second || first == hidden || first == 0)) {
+        // second and hidden
+        gSpecialVar_Result = 3;
+        return;
+    } else if (first != second && second != hidden && first != hidden && first != 0 && second != 0 && hidden != 0){
+        // all available
+        gSpecialVar_Result = 4;
+        return;
+    }
+    // well this should never happen or I can't do logic
+    gSpecialVar_Result = 5;
+    return;
+
+}
+
+void Script_SetChosenMonFirstAbility(void)
+{
+    u8 n = 0;
+    SetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_ABILITY_NUM, &n);
+}
+void Script_SetChosenMonSecondAbility(void)
+{
+    u8 n = 1;
+    SetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_ABILITY_NUM, &n);
+}
+void Script_SetChosenMonHiddenAbility(void)
+{
+    u8 n = 2;
+    SetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_ABILITY_NUM, &n);
+}
+
 void Script_GetChosenMonOffensiveEVs(void)
 {
     ConvertIntToDecimalStringN(gStringVar1, GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_ATK_EV), STR_CONV_MODE_LEFT_ALIGN, 3);
     ConvertIntToDecimalStringN(gStringVar2, GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPATK_EV), STR_CONV_MODE_LEFT_ALIGN, 3);
     ConvertIntToDecimalStringN(gStringVar3, GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_SPEED_EV), STR_CONV_MODE_LEFT_ALIGN, 3);
 }
-
 void Script_GetChosenMonDefensiveEVs(void)
 {
     ConvertIntToDecimalStringN(gStringVar1, GetMonData(&gPlayerParty[gSpecialVar_0x8004], MON_DATA_HP_EV), STR_CONV_MODE_LEFT_ALIGN, 3);

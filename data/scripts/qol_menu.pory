@@ -7,6 +7,7 @@ const QOL_MENU_OPTION_DOSE_DOWN = 6
 const QOL_MENU_OPTION_REFILL = 7
 const QOL_MENU_OPTION_EXP_ALL = 8
 const QOL_MENU_OPTION_WAIT = 9
+const QOL_MENU_OPTION_ABILICHANGE = 10
 
 const TIME_ITEM_MORNING = 10;
 const TIME_ITEM_DAY = 20;
@@ -55,6 +56,8 @@ script EventScript_QolMenu {
     }
 
     dynmultipush("Wait until...", QOL_MENU_OPTION_WAIT)
+    
+    dynmultipush("Change ability", QOL_MENU_OPTION_ABILICHANGE)
 
     dynmultistack(0, 0, FALSE, 9, FALSE, QOL_MENU_OPTION_REPEL, DYN_MULTICHOICE_CB_NONE)
 
@@ -90,6 +93,8 @@ script EventScript_QolMenu {
             }
         case QOL_MENU_OPTION_WAIT:
             call(EventScript_QolMenu_Wait)
+        case QOL_MENU_OPTION_ABILICHANGE:
+            call(EventScript_QolMenu_PickAbiliChangeMon)
         default:
     }
     waitmessage
@@ -117,6 +122,100 @@ script EventScript_QolMenu_Wait {
         case 40:
             waittillnight()
         default:
+    }
+    waitmessage
+    release
+    return
+}
+
+script EventScript_QolMenu_PickAbiliChangeMon {
+    lock
+    getpartysize()
+    switch(var(VAR_RESULT)){
+        case 0:
+            msgbox(format("You don't have any pokemon with you!"))
+            waitmessage
+            release
+            return
+        default:
+            special(ChoosePartyMon)
+            waitstate
+            if(var(VAR_0x8004) >= PARTY_SIZE){
+                msgbox(format("Another time then!"))
+                waitmessage
+                release
+                return
+            } else {
+                call(EventScript_QolMenu_ShowAbilityMultichoice)
+            }
+
+    }
+
+}
+script EventScript_QolMenu_ShowAbilityMultichoice {
+    
+    getchosenmonabilities
+    switch(var(VAR_RESULT)){
+            case -1:
+                msgbox(format("I can't change the ability of that!"))
+                waitmessage
+                release
+                return
+            case 0:
+                msgbox(format("This pokemon can only have {STR_VAR_1}"))
+                waitmessage
+                release
+                return
+            case 5:
+                msgbox(format("I can't work with that..."))
+                waitmessage
+                release
+                return
+            case 1:
+                //  1 if first and second are available 
+                msgbox(format("Which ability do you want?"))
+                dynmultipush("{STR_VAR_1}", 0)
+                dynmultipush("{STR_VAR_2}", 1)
+                dynmultistack(0, 0, FALSE, 9, FALSE, 0, DYN_MULTICHOICE_CB_NONE)
+            case 2:
+                //  2 if first and hidden are available 
+                msgbox(format("Which ability do you want?"))
+                dynmultipush("{STR_VAR_1}", 0)
+                dynmultipush("{STR_VAR_3}", 2)
+                dynmultistack(0, 0, FALSE, 9, FALSE, 0, DYN_MULTICHOICE_CB_NONE)
+            case 3:
+                //  3 if second and hidden are available 
+                msgbox(format("Which ability do you want?"))
+                dynmultipush("{STR_VAR_2}", 1)
+                dynmultipush("{STR_VAR_3}", 2)
+                dynmultistack(0, 0, FALSE, 9, FALSE, 1, DYN_MULTICHOICE_CB_NONE)
+            case 4:
+                //  4 if all are available 
+                msgbox(format("Which ability do you want?"))
+                dynmultipush("{STR_VAR_1}", 0)
+                dynmultipush("{STR_VAR_2}", 1)
+                dynmultipush("{STR_VAR_3}", 2)
+                dynmultistack(0, 0, FALSE, 9, FALSE, 0, DYN_MULTICHOICE_CB_NONE)
+            default:
+                msgbox(format("I can't work with that."))
+                waitmessage
+                release
+                return
+    }
+
+    
+    switch(var(VAR_RESULT)){
+        case 0:
+            msgbox(format("You picked the primary ability!"))
+            setchosenmonfirstability
+        case 1:
+            msgbox(format("You picked the secondary ability!"))
+            setchosenmonsecondability
+        case 2:
+            msgbox(format("You picked the hidden ability!"))
+            setchosenmonhiddenability
+        default:
+            msgbox(format("What kind of choice is that?"))
     }
     waitmessage
     release

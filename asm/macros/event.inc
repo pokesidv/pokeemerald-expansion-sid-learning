@@ -2751,5 +2751,36 @@
     special WaitTillNight
     .endm
 
-	@ Start time waiting branch
+	@ End time waiting branch
+	
+	@ Start abilichange scripts branch
+
+	@ gets the chosen mon abilities and sets them in gStringVar1,2,3 with var result being:
+	@ -1 if selecting an egg, 0 if all abilities are the same,
+	@ 1 if first and second are available 
+	@ 2 if first and hidden are available 
+	@ 3 if second and hidden are available 
+	@ 4 if all are available 
+	@ 5 for other errors 
+	@ if 1 or 5, current ability is stored in STR_VAR_1
+    .macro getchosenmonabilities
+    special Script_GetChosenMonAbilities
+    .endm
+
+	@ sets the chosen mon ability to the first ability slot (use with caution)
+    .macro setchosenmonfirstability
+    special Script_SetChosenMonFirstAbility
+    .endm
+
+	@ sets the chosen mon ability to the second ability slot (use with caution)
+    .macro setchosenmonsecondability
+    special Script_SetChosenMonSecondAbility
+    .endm
+
+	@ sets the chosen mon ability to the third ability slot (use with caution)
+    .macro setchosenmonhiddenability
+    special Script_SetChosenMonHiddenAbility
+    .endm
+
+	@ End abilichange scripts branch
 

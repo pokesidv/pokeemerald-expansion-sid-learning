@@ -563,6 +563,7 @@ gSpecials::
 	def_special UseBlankMessageToCancelPokemonPic
 	def_special EnterCode
 	def_special GetCodeFeedback
+	def_special SetHiddenNature
     //Start Pokevial Branch
     def_special PokevialGetDose
     def_special PokevialGetSize
@@ -576,4 +577,9 @@ gSpecials::
     def_special WaitTillEvening
     def_special WaitTillNight
     //End Time waiting branch
-	def_special SetHiddenNature
+    //Start Abilichange branch
+	def_special Script_GetChosenMonAbilities
+	def_special Script_SetChosenMonFirstAbility
+	def_special Script_SetChosenMonSecondAbility
+	def_special Script_SetChosenMonHiddenAbility
+    //End Abilichange branch
