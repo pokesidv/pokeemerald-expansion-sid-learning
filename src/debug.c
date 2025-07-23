@@ -379,7 +379,7 @@ extern const u8 Debug_EventScript_FakeRTCNotEnabled[];
 extern const u8 Debug_BerryPestsDisabled[];
 extern const u8 Debug_BerryWeedsDisabled[];
 
-extern const u8 Common_EventScript_MoveRelearner[];
+extern const u8 FallarborTown_MoveRelearnersHouse_EventScript_ChooseMon[];
 
 #include "data/map_group_count.h"
 
