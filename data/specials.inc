@@ -576,3 +576,4 @@ gSpecials::
     def_special WaitTillEvening
     def_special WaitTillNight
     //End Time waiting branch
+	def_special SetHiddenNature
