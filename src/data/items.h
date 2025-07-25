@@ -14044,7 +14044,6 @@ const struct Item gItemsInfo[] =
             "POKéMON to full\n"
             "health."),
         .importance = 1,
-        // .registrability = TRUE, // TODO (vi): is this not needed anymore?
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_Pokevial,

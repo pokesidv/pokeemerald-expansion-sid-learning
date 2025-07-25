@@ -64,6 +64,7 @@ extern bool8 gSysDexNavFromPokenav;
 extern bool8 gSysPokedexFromPokenav;
 extern bool8 gSysPokenavFromOverworldShortcut;
 extern bool8 gExitStairsMovementDisabled;
+// TODO (vi): track this to change the GO animation
 extern bool8 gSkipShowMonAnim;
 extern u8 gTimeOfDay;
 extern s16 gTimeUpdateCounter;

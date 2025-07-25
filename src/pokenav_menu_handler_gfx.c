@@ -182,7 +182,6 @@ static const struct SpritePalette sPokenavOptionsSpritePalettes[] =
     {}
 };
 
-// TODO (vi): check why colors don't appear different
 // Tile number, palette tag offset
 static const u16 sOptionsLabelGfx_RegionMap[]     = {0x000, PALTAG_OPTIONS_DEFAULT - PALTAG_OPTIONS_START};
 static const u16 sOptionsLabelGfx_Condition[]     = {0x020, PALTAG_OPTIONS_BLUE - PALTAG_OPTIONS_START};
