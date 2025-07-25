@@ -43,15 +43,15 @@
 #define TEMP_FLAGS_END   FLAG_TEMP_1F
 #define NUM_TEMP_FLAGS   (TEMP_FLAGS_END - TEMP_FLAGS_START + 1)
 
-#define FLAG_STARTER_GRASS    0x20 // true if the grass starter pokeball was picked
-#define FLAG_STARTER_FIRE     0x21 // true if the fire starter pokeball was picked
-#define FLAG_STARTER_WATER    0x22 // true if the water starter pokeball was picked
+#define FLAG_STARTER_GRASS      0x20 // true if the grass starter pokeball was picked
+#define FLAG_STARTER_FIRE       0x21 // true if the fire starter pokeball was picked
+#define FLAG_STARTER_WATER      0x22 // true if the water starter pokeball was picked
 #define FLAG_OW_FLAG_POKE_RIDER 0x23 // renamed: see overworld.h for details
 #define FLAG_SID_REPEL          0x24 // renamed: set the flag to repel pokemon
 #define FLAG_SID_QOL_MENU_GET   0x25 // renamed: set to enable qol menu for the player
 #define FLAG_RUNNING_TOGGLE     0x26 // renamed: set to enable autorun for the player
-#define FLAG_I_EXP_SHARE   0x27 // renamed: for exp all, see item.h for more details 
-#define FLAG_UNUSED_0x028    0x28 // Unused Flag
+#define FLAG_I_EXP_SHARE        0x27 // renamed: for exp all, see item.h for more details 
+#define FLAG_I_ORAS_DOWSING     0x28 // renamed: for oras dowsing field effect to work
 #define FLAG_UNUSED_0x029    0x29 // Unused Flag
 #define FLAG_UNUSED_0x02A    0x2A // Unused Flag
 #define FLAG_UNUSED_0x02B    0x2B // Unused Flag
