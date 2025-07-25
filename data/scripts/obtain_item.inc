@@ -229,6 +229,7 @@ EventScript_FoundHiddenItem::
 	end
 
 EventScript_PutHiddenItemInPocket::
+	callnative Script_ClearDowsingColor
 	delay 10
 	showitemdescription
 	waitmessage
@@ -239,6 +240,7 @@ EventScript_PutHiddenItemInPocket::
 	hideitemdescription
 	special TryPutTreasureInvestigatorsOnAir
 	special SetHiddenItemFlag
+	callnative Script_UpdateDowseState
 	releaseall
 	end
 
