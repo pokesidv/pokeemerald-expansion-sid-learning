@@ -20,3 +20,5 @@ Many little things I made based on tutorials from [this list](https://github.com
 
 - expanded bag pockets: [AsparagusEduardo](https://www.pokecommunity.com/threads/more-bag-pockets.424360/)
 
+- specify preferred follower from party menu: [Kasenn](https://github.com/Kasenn/pokeemerald-expansion-kasen)
+
