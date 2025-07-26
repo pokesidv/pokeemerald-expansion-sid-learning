@@ -81,6 +81,7 @@
 #include "constants/rgb.h"
 #include "constants/songs.h"
 #include "pokevial.h" //Pokevial Branch
+#include "config/quick_swap.h" // quick swap branch
 
 enum {
     MENU_SUMMARY,
@@ -1452,6 +1453,9 @@ void Task_HandleChooseMonInput(u8 taskId)
         case B_BUTTON: // Selected Cancel / pressed B
             HandleChooseMonCancel(taskId, slotPtr);
             break;
+        case PARTY_QUICK_SWAP_BUTTON: // Quick Swap
+            DestroyTask(taskId);
+            break;
         case START_BUTTON:
             if (sPartyMenuInternal->chooseHalf)
             {
@@ -1731,6 +1735,27 @@ static u16 PartyMenuButtonHandler(s8 *slotPtr)
 
     if (JOY_NEW(START_BUTTON))
         return START_BUTTON;
+
+    if (JOY_NEW(PARTY_QUICK_SWAP_BUTTON) && CalculatePlayerPartyCount() >= 2)
+    {
+        if(gPartyMenu.action == PARTY_ACTION_CHOOSE_MON || gPartyMenu.action == PARTY_ACTION_SWITCH){
+            if (gPartyMenu.menuType != PARTY_MENU_TYPE_FIELD)
+                return 0;
+            if (*slotPtr == PARTY_SIZE + 1) // cancel button
+                return 0;
+            if (*slotPtr == PARTY_SIZE) // confirm button
+                return 0;
+            if (gPartyMenu.action == PARTY_ACTION_SWITCH)
+            {
+                // Select is allowed to act as the A Button while CursorCb_Switch is active.
+                return A_BUTTON; 
+            }
+            else {
+                CreateTask(CursorCb_Switch, 1);
+                return PARTY_QUICK_SWAP_BUTTON;
+            }
+        }
+    }
 
     if (movementDir && gPlayerPartyCount != 0)
     {

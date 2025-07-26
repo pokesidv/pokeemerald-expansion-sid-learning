@@ -1,0 +1,6 @@
+#ifndef GUARD_CONFIG_QUICK_SWAP
+#define GUARD_CONFIG_QUICK_SWAP
+
+#define PARTY_QUICK_SWAP_BUTTON  R_BUTTON   // Can use R_BUTTON or others if preferred
+
+#endif // GUARD_CONFIG_QUICK_SWAP
