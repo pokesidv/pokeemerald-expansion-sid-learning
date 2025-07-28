@@ -59,6 +59,7 @@
 #include "list_menu.h"
 #include "malloc.h"
 #include "constants/event_objects.h"
+#include "constants/field_move.h"
 #include "constants/map_types.h"
 
 typedef u16 (*SpecialFunc)(void);
