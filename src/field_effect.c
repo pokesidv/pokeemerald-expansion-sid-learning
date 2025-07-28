@@ -2006,10 +2006,6 @@ static bool8 WaterfallFieldEffect_ContinueRideOrEnd(struct Task *task, struct Ob
     if (!ObjectEventClearHeldMovementIfFinished(objectEvent))
         return FALSE;
     
-    #if FOLLOW_ME_IMPLEMENTED
-        TryAttachFollowerToPlayer();
-    #endif
-
     if (MetatileBehavior_IsWaterfall(objectEvent->currentMetatileBehavior))
     {
         // Still ascending waterfall, back to WaterfallFieldEffect_RideUp
@@ -4441,12 +4437,12 @@ bool8 IsRockClimbActive(void)
 #if FOLLOW_ME_IMPLEMENTED
 static void TryAttachFollowerToPlayer(void)
 {
-    if (PlayerHasFollower())
+    struct ObjectEvent *followerObject = GetFollowerObject();
+    if (followerObject)
     {
         //Keep the follow close by while its hidden to prevent it from going too far out of view
         struct ObjectEvent* player = &gObjectEvents[gPlayerAvatar.objectEventId];
-        struct ObjectEvent* follower = &gObjectEvents[GetFollowerMapObjId()];
-        MoveObjectEventToMapCoords(follower, player->currentCoords.x, player->currentCoords.y);
+        MoveObjectEventToMapCoords(followerObject, player->currentCoords.x, player->currentCoords.y);
     }
 }
 #endif
