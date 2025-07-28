@@ -110,7 +110,7 @@ static const struct BgTemplate sRegionMapBgTemplates[3] =
         .bg = 2,
         .charBaseIndex = 0,
         .mapBaseIndex = 0x00,
-        .screenSize = 2,
+        .screenSize = 0,
         .paletteMode = 0,
         .priority = 3,
         .baseTile = 0
@@ -185,7 +185,7 @@ u32 PokenavCallback_Init_RegionMap(void)
     if (!AllocSubstruct(POKENAV_SUBSTRUCT_REGION_MAP, sizeof(struct RegionMap)))
         return FALSE;
 
-    state->zoomDisabled = IsEventIslandMapSecId(gMapHeader.regionMapSectionId);
+    state->zoomDisabled = FALSE;
     if (!state->zoomDisabled)
         state->callback = HandleRegionMapInput;
     else
@@ -215,10 +215,10 @@ static u32 HandleRegionMapInput(struct Pokenav_RegionMapMenu *state)
     {
     case MAP_INPUT_MOVE_END:
         return POKENAV_MAP_FUNC_CURSOR_MOVED;
-    case MAP_INPUT_A_BUTTON:
-        if (!IsRegionMapZoomed())
-            return POKENAV_MAP_FUNC_ZOOM_IN;
-        return POKENAV_MAP_FUNC_ZOOM_OUT;
+    // case MAP_INPUT_A_BUTTON:
+    //     if (!IsRegionMapZoomed())
+    //         return POKENAV_MAP_FUNC_ZOOM_IN;
+    //     return POKENAV_MAP_FUNC_ZOOM_OUT;
     case MAP_INPUT_B_BUTTON:
         state->callback = GetExitRegionMapMenuId;
         return POKENAV_MAP_FUNC_EXIT;
@@ -323,10 +323,10 @@ static u32 LoopedTask_OpenRegionMap(s32 taskState)
         HideBg(1);
         HideBg(2);
         HideBg(3);
-        SetBgMode(1);
+        SetBgMode(0);
         InitBgTemplates(sRegionMapBgTemplates, ARRAY_COUNT(sRegionMapBgTemplates) - 1);
         regionMap = GetSubstructPtr(POKENAV_SUBSTRUCT_REGION_MAP);
-        InitRegionMapData(regionMap, &sRegionMapBgTemplates[1], ShouldOpenRegionMapZoomed());
+        InitRegionMapData(regionMap, &sRegionMapBgTemplates[1], FALSE);
         LoadCityZoomViewGfx();
         return LT_INC_AND_PAUSE;
     case 1:
@@ -343,7 +343,7 @@ static u32 LoopedTask_OpenRegionMap(s32 taskState)
         {
             // Dim the region map when zoom is disabled
             // (when the player is off the map)
-            BlendRegionMap(RGB_BLACK, 6);
+            // BlendRegionMap(RGB_BLACK, 6);
         }
         return LT_INC_AND_PAUSE;
     case 2:

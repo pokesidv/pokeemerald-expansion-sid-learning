@@ -120,7 +120,7 @@ static const u16 sRegionMapCursorPal[] = INCBIN_U16("graphics/pokenav/region_map
 static const u32 sRegionMapCursorSmallGfxLZ[] = INCBIN_U32("graphics/pokenav/region_map/cursor_small.4bpp.smol");
 static const u32 sRegionMapCursorLargeGfxLZ[] = INCBIN_U32("graphics/pokenav/region_map/cursor_large.4bpp.smol");
 static const u16 sRegionMapBg_Pal[] = INCBIN_U16("graphics/pokenav/region_map/map.gbapal");
-static const u32 sRegionMapBg_GfxLZ[] = INCBIN_U32("graphics/pokenav/region_map/map.8bpp.smol");
+static const u32 sRegionMapBg_GfxLZ[] = INCBIN_U32("graphics/pokenav/region_map/map.4bpp.smol");
 static const u32 sRegionMapBg_TilemapLZ[] = INCBIN_U32("graphics/pokenav/region_map/map.bin.smolTM");
 static const u16 sRegionMapPlayerIcon_BrendanPal[] = INCBIN_U16("graphics/pokenav/region_map/brendan_icon.gbapal");
 static const u8 sRegionMapPlayerIcon_BrendanGfx[] = INCBIN_U8("graphics/pokenav/region_map/brendan_icon.4bpp");
@@ -377,8 +377,8 @@ static const struct BgTemplate sFlyMapBgTemplates[] =
         .bg = 2,
         .charBaseIndex = 2,
         .mapBaseIndex = 28,
-        .screenSize = 2,
-        .paletteMode = 1,
+        .screenSize = 0,
+        .paletteMode = 0,
         .priority = 2
     }
 };
@@ -564,7 +564,7 @@ bool8 LoadRegionMapGfx(void)
         break;
     case 2:
         if (!FreeTempTileDataBuffersIfPossible())
-            LoadPalette(sRegionMapBg_Pal, BG_PLTT_ID(7), 3 * PLTT_SIZE_4BPP);
+            LoadPalette(sRegionMapBg_Pal, BG_PLTT_ID(6), 4 * PLTT_SIZE_4BPP);
         break;
     case 3:
         DecompressDataWithHeaderWram(sRegionMapCursorSmallGfxLZ, sRegionMap->cursorSmallImage);
@@ -607,7 +607,7 @@ bool8 LoadRegionMapGfx(void)
             SetBgAttribute(sRegionMap->bgNum, BG_ATTR_CHARBASEINDEX, sRegionMap->charBaseIdx);
             SetBgAttribute(sRegionMap->bgNum, BG_ATTR_MAPBASEINDEX, sRegionMap->mapBaseIdx);
             SetBgAttribute(sRegionMap->bgNum, BG_ATTR_WRAPAROUND, 1);
-            SetBgAttribute(sRegionMap->bgNum, BG_ATTR_PALETTEMODE, 1);
+            SetBgAttribute(sRegionMap->bgNum, BG_ATTR_PALETTEMODE, 0);
         }
         sRegionMap->initStep++;
         return FALSE;
@@ -621,7 +621,7 @@ bool8 LoadRegionMapGfx(void)
 void BlendRegionMap(u16 color, u32 coeff)
 {
     BlendPalettes(0x380, coeff, color);
-    CpuCopy16(&gPlttBufferFaded[BG_PLTT_ID(7)], &gPlttBufferUnfaded[BG_PLTT_ID(7)], 3 * PLTT_SIZE_4BPP);
+    CpuCopy16(&gPlttBufferFaded[BG_PLTT_ID(6)], &gPlttBufferUnfaded[BG_PLTT_ID(6)], 4 * PLTT_SIZE_4BPP);
 }
 
 void FreeRegionMapIconResources(void)
@@ -1683,7 +1683,7 @@ void CB2_OpenFlyMap(void)
         break;
     case 1:
         ResetBgsAndClearDma3BusyFlags(0);
-        InitBgsFromTemplates(1, sFlyMapBgTemplates, ARRAY_COUNT(sFlyMapBgTemplates));
+        InitBgsFromTemplates(0, sFlyMapBgTemplates, ARRAY_COUNT(sFlyMapBgTemplates));
         gMain.state++;
         break;
     case 2:
@@ -1715,7 +1715,7 @@ void CB2_OpenFlyMap(void)
         gMain.state++;
         break;
     case 7:
-        LoadPalette(sRegionMapFramePal, BG_PLTT_ID(1), sizeof(sRegionMapFramePal));
+        LoadPalette(sRegionMapFramePal, BG_PLTT_ID(6), sizeof(sRegionMapFramePal));
         PutWindowTilemap(WIN_FLY_TO_WHERE);
         FillWindowPixelBuffer(WIN_FLY_TO_WHERE, PIXEL_FILL(0));
         AddTextPrinterParameterized(WIN_FLY_TO_WHERE, FONT_NORMAL, gText_FlyToWhere, 0, 1, 0, NULL);
