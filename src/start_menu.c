@@ -51,6 +51,7 @@
 #include "constants/songs.h"
 #include "rtc.h"
 #include "fake_rtc.h"
+#include "time_waiting.h"
 
 // Menu actions
 enum
@@ -156,11 +157,14 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
     .baseBlock = 0x8
 };
 
+// If you want to shorten the dates to Sat., Sun., etc., change this to 10 or something
+#define CLOCK_WINDOW_TILE_WIDTH 16
+
 static const struct WindowTemplate sWindowTemplate_StartClock = {
     .bg = 0, 
     .tilemapLeft = 1, 
     .tilemapTop = 1, 
-    .width = 13, // If you want to shorten the dates to Sat., Sun., etc., change this to 9
+    .width = CLOCK_WINDOW_TILE_WIDTH, 
     .height = 2, 
     .paletteNum = 15,
     .baseBlock = 0x30
@@ -491,16 +495,15 @@ static void ShowPyramidFloorWindow(void)
     CopyWindowToVram(sBattlePyramidFloorWindowId, COPYWIN_GFX);
 }
 
-// If you want to shorten the dates to Sat., Sun., etc., change this to 70
-#define CLOCK_WINDOW_WIDTH 104
+#define CLOCK_WINDOW_WIDTH CLOCK_WINDOW_TILE_WIDTH * 8
 
-const u8 gText_Saturday[] = _("Saturday,");
-const u8 gText_Sunday[] = _("Sunday,");
-const u8 gText_Monday[] = _("Monday,");
-const u8 gText_Tuesday[] = _("Tuesday,");
-const u8 gText_Wednesday[] = _("Wednesday,");
-const u8 gText_Thursday[] = _("Thursday,");
-const u8 gText_Friday[] = _("Friday,");
+const u8 gText_Saturday[]  = _("Saturday");
+const u8 gText_Sunday[]    = _("Sunday");
+const u8 gText_Monday[]    = _("Monday");
+const u8 gText_Tuesday[]   = _("Tuesday");
+const u8 gText_Wednesday[] = _("Wednesday");
+const u8 gText_Thursday[]  = _("Thursday");
+const u8 gText_Friday[]    = _("Friday");
 
 const u8 *const gDayNameStringsTable[7] = {
     gText_Saturday,
@@ -512,9 +515,15 @@ const u8 *const gDayNameStringsTable[7] = {
     gText_Friday,
 };
 
+static const u8 *const gTimeOfDayStringsTable[TIMES_OF_DAY_COUNT] = {
+    COMPOUND_STRING(" morning"),
+    COMPOUND_STRING(""),
+    COMPOUND_STRING(" evening"),
+    COMPOUND_STRING(" night"),
+};
+
 static void ShowTimeWindow(void)
 {
-    const u8 *suffix;
     u8* ptr;
     u8 convertedHours;
 
@@ -542,36 +551,22 @@ static void ShowTimeWindow(void)
         minutes = gLocalTime.minutes;
     }
 
-    if (hours < 12)
-    {
-        if (hours == 0)
-            convertedHours = 12;
-        else
-            convertedHours = hours;
-        suffix = gText_AM;
-    }
-    else if (hours == 12)
-    {
-        convertedHours = 12;
-        if (suffix == gText_AM);
-            suffix = gText_PM;
-    }
-    else
-    {
-        convertedHours = hours - 12;
-        suffix = gText_PM;
-    }
+    convertedHours = hours;
 
+    // print day of week
     StringExpandPlaceholders(gStringVar4, gDayNameStringsTable[day]);
     AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, 0, 1, 0xFF, NULL); 
-
+    
+    // print time
     ptr = ConvertIntToDecimalStringN(gStringVar4, convertedHours, STR_CONV_MODE_LEFT_ALIGN, 3);
     *ptr = 0xF0;
-
     ConvertIntToDecimalStringN(ptr + 1, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-    AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, GetStringRightAlignXOffset(1, suffix, CLOCK_WINDOW_WIDTH) - (CLOCK_WINDOW_WIDTH - GetStringRightAlignXOffset(1, gStringVar4, CLOCK_WINDOW_WIDTH) + 3), 1, 0xFF, NULL); // print time
-
-    AddTextPrinterParameterized(sStartClockWindowId, 1, suffix, GetStringRightAlignXOffset(1, suffix, CLOCK_WINDOW_WIDTH), 1, 0xFF, NULL); // print am/pm
+    AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, GetStringRightAlignXOffset(1, gStringVar4, CLOCK_WINDOW_WIDTH), 1, 0xFF, NULL); 
+    
+    // print time of day
+    enum TimeOfDay timeOfDay = AccurateTimeOfDay();
+    StringExpandPlaceholders(gStringVar4, gTimeOfDayStringsTable[timeOfDay]);
+    AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, GetStringWidth(1, gDayNameStringsTable[day], 0), 1, 0xFF, NULL); 
 
     CopyWindowToVram(sStartClockWindowId, COPYWIN_GFX);
 }
@@ -791,7 +786,8 @@ static bool8 HandleStartMenuInput(void)
     }
 
     RemoveExtraStartMenuWindows();
-    ShowTimeWindow();
+    if(sCurrentStartMenuActions[sStartMenuCursorPos] != MENU_ACTION_SAVE)
+        ShowTimeWindow();
     return FALSE;
 }
 

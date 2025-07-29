@@ -576,6 +576,7 @@ gSpecials::
     def_special WaitTillDay
     def_special WaitTillEvening
     def_special WaitTillNight
+    def_special QOLMenu_CalculateTime
     //End Time waiting branch
     //Start Abilichange branch
 	def_special Script_GetChosenMonAbilities

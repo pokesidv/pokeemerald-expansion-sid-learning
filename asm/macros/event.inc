@@ -2756,6 +2756,11 @@
     special WaitTillNight
     .endm
 
+	@ puts the time of day name in STR_VAR_1, the time of day enum in gSpecialVar_0x8000, and the hours and minutes in STR_VAR_2 and STR_VAR_3 
+    .macro qoltime
+    special QOLMenu_CalculateTime
+    .endm
+
 	@ End time waiting branch
 	
 	@ Start abilichange scripts branch
