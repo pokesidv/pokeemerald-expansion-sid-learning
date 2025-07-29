@@ -516,6 +516,7 @@ static void CursorCb_Follower(u8);
 static void CursorCb_FollowerSet(u8);
 static void CursorCb_FollowerUnset(u8);
 static void CursorCb_FollowerReturn(u8);
+static void FieldCallback_RockClimb(void);
 
 // static const data
 #include "data/party_menu.h"
@@ -4582,6 +4583,21 @@ bool32 SetUpFieldMove_Waterfall(void)
     return FALSE;
 }
 
+bool32 SetUpFieldMove_RockClimb(void)
+{
+    s16 x, y;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+    if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(x, y)))
+    {
+        gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
+        gPostMenuFieldCallback = FieldCallback_RockClimb;
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
 static void FieldCallback_Dive(void)
 {
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
@@ -8640,3 +8656,10 @@ static void Task_PokevialLoop(u8 taskId)
 #undef tUsedOnSlot
 #undef tHadEffect
 #undef tLastSlotUsed
+static void FieldCallback_RockClimb(void)
+{
+    gFieldEffectArguments[0] = GetCursorSelectionMonId();
+    FieldEffectStart(FLDEFF_USE_ROCK_CLIMB);
+}
+
+
