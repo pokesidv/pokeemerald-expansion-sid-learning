@@ -158,7 +158,7 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
 };
 
 // If you want to shorten the dates to Sat., Sun., etc., change this to 10 or something
-#define CLOCK_WINDOW_TILE_WIDTH 16
+#define CLOCK_WINDOW_TILE_WIDTH 14
 
 static const struct WindowTemplate sWindowTemplate_StartClock = {
     .bg = 0, 
@@ -202,7 +202,7 @@ static const struct WindowTemplate sWindowTemplate_PyramidPeak = {
     .baseBlock = 0x8
 };
 
-static const u8 sText_MenuDebug[] = _("DEBUG");
+static const u8 sText_MenuDebug[] = _("Debug");
 
 static const struct MenuAction sStartMenuItems[] =
 {
@@ -555,18 +555,18 @@ static void ShowTimeWindow(void)
 
     // print day of week
     StringExpandPlaceholders(gStringVar4, gDayNameStringsTable[day]);
-    AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, 0, 1, 0xFF, NULL); 
+    AddTextPrinterParameterized(sStartClockWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL); 
     
     // print time
     ptr = ConvertIntToDecimalStringN(gStringVar4, convertedHours, STR_CONV_MODE_LEFT_ALIGN, 3);
     *ptr = 0xF0;
     ConvertIntToDecimalStringN(ptr + 1, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-    AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, GetStringRightAlignXOffset(1, gStringVar4, CLOCK_WINDOW_WIDTH), 1, 0xFF, NULL); 
+    AddTextPrinterParameterized(sStartClockWindowId, FONT_SMALL, gStringVar4, GetStringRightAlignXOffset(FONT_SMALL, gStringVar4, CLOCK_WINDOW_WIDTH), 1, 0xFF, NULL); 
     
     // print time of day
     enum TimeOfDay timeOfDay = AccurateTimeOfDay();
     StringExpandPlaceholders(gStringVar4, gTimeOfDayStringsTable[timeOfDay]);
-    AddTextPrinterParameterized(sStartClockWindowId, 1, gStringVar4, GetStringWidth(1, gDayNameStringsTable[day], 0), 1, 0xFF, NULL); 
+    AddTextPrinterParameterized(sStartClockWindowId, FONT_SMALL, gStringVar4, GetStringWidth(FONT_SMALL, gDayNameStringsTable[day], 0), 1, 0xFF, NULL); 
 
     CopyWindowToVram(sStartClockWindowId, COPYWIN_GFX);
 }
@@ -786,8 +786,7 @@ static bool8 HandleStartMenuInput(void)
     }
 
     RemoveExtraStartMenuWindows();
-    if(sCurrentStartMenuActions[sStartMenuCursorPos] != MENU_ACTION_SAVE)
-        ShowTimeWindow();
+    ShowTimeWindow();
     return FALSE;
 }
 
