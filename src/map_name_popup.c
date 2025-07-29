@@ -22,6 +22,7 @@
 #include "constants/weather.h"
 #include "config/general.h"
 #include "config/overworld.h"
+#include "fake_rtc.h"
 
 // enums
 enum MapPopUp_Themes
@@ -511,8 +512,23 @@ static void UpdateSecondaryPopUpWindow(u8 secondaryPopUpWindowId)
 
     if (OW_POPUP_BW_TIME_MODE != OW_POPUP_BW_TIME_NONE)
     {
-        RtcCalcLocalTime();
-        FormatDecimalTimeWithoutSeconds(withoutPrefixPtr, gLocalTime.hours, gLocalTime.minutes, OW_POPUP_BW_TIME_MODE == OW_POPUP_BW_TIME_24_HR);
+        s8 hours;
+        s8 minutes;
+
+        if (OW_USE_FAKE_RTC)
+        {
+            struct SiiRtcInfo *rtc = FakeRtc_GetCurrentTime();
+            hours = rtc->hour;
+            minutes = rtc->minute;
+        }
+        else
+        {
+            RtcCalcLocalTime();
+            hours = gLocalTime.hours;
+            minutes = gLocalTime.minutes;
+        }
+
+        FormatDecimalTimeWithoutSeconds(withoutPrefixPtr, hours, minutes, OW_POPUP_BW_TIME_MODE == OW_POPUP_BW_TIME_24_HR);
         AddTextPrinterParameterized(secondaryPopUpWindowId, FONT_SMALL, mapDisplayHeader, GetStringRightAlignXOffset(FONT_SMALL, mapDisplayHeader, DISPLAY_WIDTH) - 5, 8, TEXT_SKIP_DRAW, NULL);
     }
     CopyWindowToVram(secondaryPopUpWindowId, COPYWIN_FULL);
