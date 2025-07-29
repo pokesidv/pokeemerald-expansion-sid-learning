@@ -4247,6 +4247,7 @@ static bool8 RockClimb_Init(struct Task *task, struct ObjectEvent *objectEvent)
     FreezeObjectEvents();
     // Put follower into pokeball before using Rock Climb
     HideFollowerForFieldEffect();
+    objectEvent->noShadow = TRUE; // hide shadow 
     gPlayerAvatar.preventStep = TRUE;
     SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_SURFING);
     PlayerGetDestCoords(&task->tDestX, &task->tDestY);
@@ -4410,6 +4411,7 @@ static bool8 RockClimb_WaitStopRockClimb(struct Task *task, struct ObjectEvent *
         gPlayerAvatar.preventStep = FALSE;
         if (followerObject)
             ObjectEventClearHeldMovementIfFinished(followerObject); // restore follower to normal
+        objectEvent->noShadow = FALSE; // restore shadow 
         UnfreezeObjectEvents();
         UnlockPlayerFieldControls();
         DestroySprite(&gSprites[objectEvent->fieldEffectSpriteId]);
