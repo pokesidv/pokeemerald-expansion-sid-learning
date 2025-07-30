@@ -652,8 +652,6 @@ static bool8 ForcedMovement_PushedByCurrentAdvanced(u8 pushDirection, u16 heldKe
 {
     if (heldKeys & B_BUTTON)
     {
-        // playerObjEvent->facingDirectionLocked = TRUE;
-        // return DoForcedMovement(oppositeDirection, PlayerWalkSlow);
         return FALSE;
     }
     
@@ -913,9 +911,14 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
     gPlayerAvatar.creeping = FALSE;
     if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
     {
+        u8 waterCurrentPushingDirection = GetWaterCurrentDirectionIfMetatileBehaviorMatches();
         if (FlagGet(DN_FLAG_SEARCHING) && (heldKeys & A_BUTTON))
         {
             gPlayerAvatar.creeping = TRUE;
+            PlayerWalkSlow(direction);
+        }
+        else if(waterCurrentPushingDirection != DIR_NONE && waterCurrentPushingDirection != direction && (heldKeys & B_BUTTON))
+        {
             PlayerWalkSlow(direction);
         }
         else
