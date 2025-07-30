@@ -72,6 +72,12 @@ static void MovePlayerAvatarUsingKeypadInput(u8, u16, u16);
 static void PlayerAllowForcedMovementIfMovingSameDirection(void);
 static u8 GetForcedMovementByMetatileBehavior(void);
 
+
+static bool8 TryDoMetatileBehaviorForcedMovementWithHeldKeys(u16 heldKeys);
+static u8 GetWaterCurrentDirectionIfMetatileBehaviorMatches(void);
+static bool8 ForcedMovement_PushedByCurrentAdvanced(u8, u16);
+
+
 static bool8 ForcedMovement_None(void);
 static bool8 ForcedMovement_Slip(void);
 static bool8 ForcedMovement_WalkSouth(void);
@@ -384,7 +390,7 @@ void PlayerStep(u8 direction, u16 newKeys, u16 heldKeys)
         {
             npc_clear_strange_bits(playerObjEvent);
             DoPlayerAvatarTransition();
-            if (TryDoMetatileBehaviorForcedMovement() == 0)
+            if (TryDoMetatileBehaviorForcedMovementWithHeldKeys(heldKeys) == 0)
             {
                 MovePlayerAvatarUsingKeypadInput(direction, newKeys, heldKeys);
                 PlayerAllowForcedMovementIfMovingSameDirection();
@@ -465,6 +471,43 @@ static void PlayerAllowForcedMovementIfMovingSameDirection(void)
 bool8 TryDoMetatileBehaviorForcedMovement(void)
 {
     return sForcedMovementFuncs[GetForcedMovementByMetatileBehavior()]();
+}
+
+static bool8 TryDoMetatileBehaviorForcedMovementWithHeldKeys(u16 heldKeys)
+{
+
+    u8 waterCurrentDirection = GetWaterCurrentDirectionIfMetatileBehaviorMatches();
+    if(waterCurrentDirection != DIR_NONE)
+    {
+        return ForcedMovement_PushedByCurrentAdvanced(waterCurrentDirection, heldKeys);
+    }
+
+    return sForcedMovementFuncs[GetForcedMovementByMetatileBehavior()]();
+}
+
+static u8 GetWaterCurrentDirectionIfMetatileBehaviorMatches(void)
+{
+    if (!(gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_CONTROLLABLE))
+    {
+        switch (gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior)
+        {
+        case MB_EASTWARD_CURRENT:
+            return DIR_EAST;
+            break;
+        case MB_WESTWARD_CURRENT:
+            return DIR_WEST;
+            break;
+        case MB_NORTHWARD_CURRENT:
+            return DIR_NORTH;
+            break;
+        case MB_SOUTHWARD_CURRENT:
+            return DIR_SOUTH;
+            break;
+        default:
+            break;
+        }
+    }
+    return DIR_NONE;
 }
 
 static u8 GetForcedMovementByMetatileBehavior(void)
@@ -603,6 +646,18 @@ static bool8 ForcedMovement_PushedWestByCurrent(void)
 static bool8 ForcedMovement_PushedEastByCurrent(void)
 {
     return DoForcedMovement(DIR_EAST, PlayerRideWaterCurrent);
+}
+
+static bool8 ForcedMovement_PushedByCurrentAdvanced(u8 pushDirection, u16 heldKeys)
+{
+    if (heldKeys & B_BUTTON)
+    {
+        // playerObjEvent->facingDirectionLocked = TRUE;
+        // return DoForcedMovement(oppositeDirection, PlayerWalkSlow);
+        return FALSE;
+    }
+    
+    return DoForcedMovement(pushDirection, PlayerRideWaterCurrent);
 }
 
 static bool8 ForcedMovement_Slide(u8 direction, void (*moveFunc)(u8))
