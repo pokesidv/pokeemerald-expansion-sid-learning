@@ -78,6 +78,7 @@ static bool8 ForcedMovement_WalkSouth(void);
 static bool8 ForcedMovement_WalkNorth(void);
 static bool8 ForcedMovement_WalkWest(void);
 static bool8 ForcedMovement_WalkEast(void);
+static bool8 ForcedMovement_PushedSouthByWaterfall(void);
 static bool8 ForcedMovement_PushedSouthByCurrent(void);
 static bool8 ForcedMovement_PushedNorthByCurrent(void);
 static bool8 ForcedMovement_PushedWestByCurrent(void);
@@ -225,7 +226,7 @@ static bool8 (*const sForcedMovementFuncs[NUM_FORCED_MOVEMENTS + 1])(void) =
     ForcedMovement_SlideNorth,
     ForcedMovement_SlideWest,
     ForcedMovement_SlideEast,
-    ForcedMovement_PushedSouthByCurrent,
+    ForcedMovement_PushedSouthByWaterfall,
     ForcedMovement_MatJump,
     ForcedMovement_MatSpin,
     ForcedMovement_MuddySlope,
@@ -577,6 +578,11 @@ static bool8 ForcedMovement_WalkWest(void)
 static bool8 ForcedMovement_WalkEast(void)
 {
     return DoForcedMovement(DIR_EAST, PlayerWalkNormal);
+}
+
+static bool8 ForcedMovement_PushedSouthByWaterfall(void)
+{
+    return DoForcedMovement(DIR_SOUTH, PlayerRideWaterCurrent);
 }
 
 static bool8 ForcedMovement_PushedSouthByCurrent(void)
