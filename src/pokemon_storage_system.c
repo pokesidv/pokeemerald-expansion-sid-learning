@@ -7243,13 +7243,10 @@ static u8 InBoxInput_Normal(void)
         if (JOY_NEW(B_BUTTON))
             return INPUT_PRESSED_B;
 
-        if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-        {
-            if (JOY_HELD(L_BUTTON))
-                return INPUT_SCROLL_LEFT;
-            if (JOY_HELD(R_BUTTON))
-                return INPUT_SCROLL_RIGHT;
-        }
+        if (JOY_HELD(L_BUTTON))
+            return INPUT_SCROLL_LEFT;
+        if (JOY_HELD(R_BUTTON))
+            return INPUT_SCROLL_RIGHT;
 
         if (JOY_NEW(SELECT_BUTTON))
         {
@@ -7410,16 +7407,16 @@ static u8 InBoxInput_MovingMultiple(void)
     {
         return INPUT_MULTIMOVE_UNABLE;
     }
+    else if (JOY_HELD(L_BUTTON))
+    {
+        return INPUT_SCROLL_LEFT;
+    }
+    else if (JOY_HELD(R_BUTTON))
+    {
+        return INPUT_SCROLL_RIGHT;
+    }
     else
     {
-        if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-        {
-            if (JOY_HELD(L_BUTTON))
-                return INPUT_SCROLL_LEFT;
-            if (JOY_HELD(R_BUTTON))
-                return INPUT_SCROLL_RIGHT;
-        }
-
         return INPUT_NONE;
     }
 }
@@ -7580,13 +7577,10 @@ static u8 HandleInput_OnBox(void)
         if (JOY_HELD(DPAD_RIGHT))
             return INPUT_SCROLL_RIGHT;
 
-        if (gSaveBlock2Ptr->optionsButtonMode == OPTIONS_BUTTON_MODE_LR)
-        {
-            if (JOY_HELD(L_BUTTON))
-                return INPUT_SCROLL_LEFT;
-            if (JOY_HELD(R_BUTTON))
-                return INPUT_SCROLL_RIGHT;
-        }
+        if (JOY_HELD(L_BUTTON))
+            return INPUT_SCROLL_LEFT;
+        if (JOY_HELD(R_BUTTON))
+            return INPUT_SCROLL_RIGHT;
 
         if (JOY_NEW(A_BUTTON))
         {
