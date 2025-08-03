@@ -8,6 +8,7 @@ const QOL_MENU_OPTION_REFILL = 7
 const QOL_MENU_OPTION_EXP_ALL = 8
 const QOL_MENU_OPTION_WAIT = 9
 const QOL_MENU_OPTION_ABILICHANGE = 10
+const QOL_MENU_OPTION_NATURE_CHANGE = 11
 
 const TIME_ITEM_MORNING = 10;
 const TIME_ITEM_DAY = 20;
@@ -58,6 +59,7 @@ script EventScript_QolMenu {
     }
 
     dynmultipush("Change ability", QOL_MENU_OPTION_ABILICHANGE)
+    dynmultipush("Change nature", QOL_MENU_OPTION_NATURE_CHANGE)
 
     dynmultistack(0, 0, FALSE, 9, FALSE, QOL_MENU_OPTION_WAIT, DYN_MULTICHOICE_CB_NONE)
 
@@ -95,6 +97,8 @@ script EventScript_QolMenu {
             call(EventScript_QolMenu_Wait)
         case QOL_MENU_OPTION_ABILICHANGE:
             call(EventScript_QolMenu_PickAbiliChangeMon)
+        case QOL_MENU_OPTION_NATURE_CHANGE:
+            call(EventScript_QolMenu_PickNatureChangeMon)
         default:
     }
     waitmessage
@@ -182,6 +186,7 @@ script EventScript_QolMenu_PickAbiliChangeMon {
     }
 
 }
+
 script EventScript_QolMenu_ShowAbilityMultichoice {
     
     getchosenmonabilities
@@ -247,6 +252,79 @@ script EventScript_QolMenu_ShowAbilityMultichoice {
         default:
             msgbox(format("What kind of choice is that?"))
     }
+    waitmessage
+    release
+    return
+}
+
+script EventScript_QolMenu_PickNatureChangeMon {
+    lock
+    getpartysize()
+    switch(var(VAR_RESULT)){
+        case 0:
+            msgbox(format("You don't have any pokemon with you!"))
+            waitmessage
+            release
+            return
+        default:
+            special(ChoosePartyMon)
+            waitstate
+            if(var(VAR_0x8004) >= PARTY_SIZE){
+                msgbox(format("Another time then!"))
+                waitmessage
+                release
+                return
+            } else {
+                specialvar(VAR_RESULT, ScriptGetPartyMonSpecies)
+                if(var(VAR_RESULT) == SPECIES_EGG){
+                    msgbox(format("I can't change the nature of an egg!"))
+                    waitmessage
+                    release
+                    return
+                }
+                bufferspeciesname(STR_VAR_1, VAR_RESULT)
+                call(EventScript_QolMenu_ShowNatureMultichoice)
+            }
+
+    }
+
+}
+
+
+script EventScript_QolMenu_ShowNatureMultichoice {
+
+    msgbox(format("Which hidden nature do you want for {STR_VAR_1}?"))
+    dynmultipush("Hardy {CLEAR_TO 60} +Atk / -Atk", 0)
+    dynmultipush("Lonely {CLEAR_TO 60} +Atk / -Def", 1)
+    dynmultipush("Brave {CLEAR_TO 60} +Atk / -Spe", 2)
+    dynmultipush("Adamant {CLEAR_TO 60} +Atk / -SpA", 3)
+    dynmultipush("Naughty {CLEAR_TO 60} +Atk / -SpD", 4)
+    dynmultipush("Bold {CLEAR_TO 60} +Def / -Atk", 5)
+    dynmultipush("Docile {CLEAR_TO 60} +Def / -Def", 6)
+    dynmultipush("Relaxed {CLEAR_TO 60} +Def / -Spe", 7)
+    dynmultipush("Impish {CLEAR_TO 60} +Def / -SpA", 8)
+    dynmultipush("Lax {CLEAR_TO 60} +Def / -SpD", 9)
+    dynmultipush("Timid {CLEAR_TO 60} +Spe / -Atk", 10)
+    dynmultipush("Hasty {CLEAR_TO 60} +Spe / -Def", 11)
+    dynmultipush("Serious {CLEAR_TO 60} +Spe / -Spe", 12)
+    dynmultipush("Jolly {CLEAR_TO 60} +Spe / -SpA", 13)
+    dynmultipush("Naive {CLEAR_TO 60} +Spe / -SpD", 14)
+    dynmultipush("Modest {CLEAR_TO 60} +SpA / -Atk", 15)
+    dynmultipush("Mild {CLEAR_TO 60} +SpA / -Def", 16)
+    dynmultipush("Quiet {CLEAR_TO 60} +SpA / -Spe", 17)
+    dynmultipush("Bashful {CLEAR_TO 60} +SpA / -SpA", 18)
+    dynmultipush("Rash {CLEAR_TO 60} +SpA / -SpD", 19)
+    dynmultipush("Calm {CLEAR_TO 60} +SpD / -Atk", 20)
+    dynmultipush("Gentle {CLEAR_TO 60} +SpD / -Def", 21)
+    dynmultipush("Sassy {CLEAR_TO 60} +SpD / -Spe", 22)
+    dynmultipush("Careful {CLEAR_TO 60} +SpD / -SpA", 23)
+    dynmultipush("Quirky {CLEAR_TO 60} +SpD / -SpD", 24)
+    dynmultistack(0, 0, FALSE, 5, FALSE, 0, DYN_MULTICHOICE_CB_NONE)
+
+    if(var(VAR_RESULT) <= 24){
+        special(SetHiddenNature)
+    }
+
     waitmessage
     release
     return
