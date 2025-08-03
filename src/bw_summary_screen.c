@@ -380,6 +380,8 @@ static void CB2_PssChangePokemonNickname(void);
 
 static const u8 sMemoNatureTextColor[]                      = _("{COLOR DYNAMIC_COLOR2}{SHADOW DYNAMIC_COLOR3}");
 static const u8 sMemoMiscTextColor[]                        = _("{COLOR WHITE}{SHADOW DARK_GRAY}");
+static const u8 sMemoHiddenNatureTextColor[]                = _(" ({COLOR BLUE}{SHADOW DARK_GRAY}");
+static const u8 sText_EndParentheses[]                      = _("{COLOR WHITE}{SHADOW DARK_GRAY})");
 static const u8 sStatsHPLayout[]                            = _("{DYNAMIC 0}/{DYNAMIC 1}");
 static const u8 sStatsHPIVEVLayout[]                        = _("{DYNAMIC 0}");
 static const u8 sStatsNonHPLayout[]                         = _("{DYNAMIC 0}\n{DYNAMIC 1}\n{DYNAMIC 2}\n{DYNAMIC 3}\n{DYNAMIC 4}");
@@ -4194,7 +4196,13 @@ static void BufferNatureString(void)
 {
     struct PokemonSummaryScreenData *sumStruct = sMonSummaryScreen;
     DynamicPlaceholderTextUtil_SetPlaceholderPtr(2, gNaturesInfo[sumStruct->summary.nature].name);
-    DynamicPlaceholderTextUtil_SetPlaceholderPtr(5, gText_EmptyString5);
+
+    if(sumStruct->summary.nature != sumStruct->summary.mintNature)
+    {
+        DynamicPlaceholderTextUtil_SetPlaceholderPtr(5, sMemoHiddenNatureTextColor);
+        DynamicPlaceholderTextUtil_SetPlaceholderPtr(6, gNaturesInfo[sumStruct->summary.mintNature].name);
+        DynamicPlaceholderTextUtil_SetPlaceholderPtr(7, sText_EndParentheses);
+    }
 }
 
 static void GetMetLevelString(u8 *output)
