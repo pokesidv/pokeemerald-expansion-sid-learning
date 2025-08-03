@@ -13,9 +13,8 @@ enum Pocket
     POCKET_TM_HM,
     POCKET_KEY_ITEMS,
     POCKETS_COUNT,
+    POCKET_DUMMY = POCKETS_COUNT,
 };
-
-#define POCKET_DUMMY POCKETS_COUNT
 
 #define REPEL_LURE_MASK         (1 << 15)
 #define IS_LAST_USED_LURE(var)  (var & REPEL_LURE_MASK)
