@@ -75,6 +75,7 @@
 #include "rtc.h"
 #include "fake_rtc.h"
 #include "save.h"
+#include "time_waiting.h"
 
 enum FollowerNPCCreateDebugMenu
 {
@@ -1584,7 +1585,7 @@ void DebugMenu_CalculateTime(struct ScriptContext *ctx)
 
 void DebugMenu_CalculateTimeOfDay(struct ScriptContext *ctx)
 {
-    enum TimeOfDay timeOfDay = GetTimeOfDay();
+    enum TimeOfDay timeOfDay = AccurateTimeOfDay();
     switch (timeOfDay)
     {
         case TIME_MORNING:
