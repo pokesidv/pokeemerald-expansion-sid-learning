@@ -9,6 +9,7 @@ const QOL_MENU_OPTION_EXP_ALL = 8
 const QOL_MENU_OPTION_WAIT = 9
 const QOL_MENU_OPTION_ABILICHANGE = 10
 const QOL_MENU_OPTION_NATURE_CHANGE = 11
+const QOL_MENU_OPTION_GIVE_ROCK_CLIMB_MON = 12
 
 const TIME_ITEM_MORNING = 10;
 const TIME_ITEM_DAY = 20;
@@ -60,8 +61,10 @@ script EventScript_QolMenu {
 
     dynmultipush("Change ability", QOL_MENU_OPTION_ABILICHANGE)
     dynmultipush("Change nature", QOL_MENU_OPTION_NATURE_CHANGE)
+    dynmultipush("Rock climb mon", QOL_MENU_OPTION_GIVE_ROCK_CLIMB_MON)
 
     dynmultistack(0, 0, FALSE, 9, FALSE, QOL_MENU_OPTION_WAIT, DYN_MULTICHOICE_CB_NONE)
+
 
     switch(var(VAR_RESULT)){
         case QOL_MENU_OPTION_REPEL:
@@ -99,6 +102,8 @@ script EventScript_QolMenu {
             call(EventScript_QolMenu_PickAbiliChangeMon)
         case QOL_MENU_OPTION_NATURE_CHANGE:
             call(EventScript_QolMenu_PickNatureChangeMon)
+        case QOL_MENU_OPTION_GIVE_ROCK_CLIMB_MON:
+            call(EventScript_QolMenu_GiveRockClimbMon)
         default:
     }
     waitmessage
@@ -328,4 +333,8 @@ script EventScript_QolMenu_ShowNatureMultichoice {
     waitmessage
     release
     return
+}
+
+script EventScript_QolMenu_GiveRockClimbMon {
+    givemon(SPECIES_PIKACHU, 20, ITEM_NONE, ITEM_POKE_BALL, NATURE_ADAMANT, 0, MON_MALE, 0, 252, 4, 252, 0, 0, 31, 31, 31, 31, 31, 31, MOVE_ROCK_CLIMB, MOVE_THUNDER_SHOCK, MOVE_GROWL, MOVE_TAIL_WHIP, TRUE, FALSE, TYPE_STEEL)
 }
