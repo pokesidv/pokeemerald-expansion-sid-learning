@@ -497,22 +497,22 @@ static void ShowPyramidFloorWindow(void)
 
 #define CLOCK_WINDOW_WIDTH CLOCK_WINDOW_TILE_WIDTH * 8
 
-const u8 gText_Saturday[]  = _("Saturday");
 const u8 gText_Sunday[]    = _("Sunday");
 const u8 gText_Monday[]    = _("Monday");
 const u8 gText_Tuesday[]   = _("Tuesday");
 const u8 gText_Wednesday[] = _("Wednesday");
 const u8 gText_Thursday[]  = _("Thursday");
 const u8 gText_Friday[]    = _("Friday");
+const u8 gText_Saturday[]  = _("Saturday");
 
 const u8 *const gDayNameStringsTable[7] = {
-    gText_Saturday,
     gText_Sunday,
     gText_Monday,
     gText_Tuesday,
     gText_Wednesday,
     gText_Thursday,
     gText_Friday,
+    gText_Saturday,
 };
 
 static const u8 *const gTimeOfDayStringsTable[TIMES_OF_DAY_COUNT] = {
