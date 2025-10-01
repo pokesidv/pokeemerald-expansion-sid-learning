@@ -1230,6 +1230,270 @@
       "y": 4,
       "width": 1,
       "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_0",
+      "name": "Route V0",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_THORNWOOD_CROSS",
+      "name": "Thornwood Cross",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_1",
+      "name": "Route V1",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GRIMFEN_THICKET",
+      "name": "Grimfen Thicket",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_2A",
+      "name": "Route V2A",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VOLTLOFT_CANOPY",
+      "name": "Voltloft Canopy",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_2B",
+      "name": "Route V2B",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_3A",
+      "name": "Route V3A",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GLADEWARD_CRADLE",
+      "name": "Gladeward Cradle",
+      "x": 20,
+      "y": 9,
+      "width": 2,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_3B",
+      "name": "Route V3B",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_VIGOR_4",
+      "name": "Route V4",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_0",
+      "name": "Route A0",
+      "x": 24,
+      "y": 6,
+      "width": 1,
+      "height": 2
+    },
+    {
+      "id": "MAPSEC_KINDLEHEARTH_FORGE",
+      "name": "Kindlehearth Forge",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_1",
+      "name": "Route A1",
+      "x": 23,
+      "y": 4,
+      "width": 1,
+      "height": 2
+    },
+    {
+      "id": "MAPSEC_CHITINCRAG_DALE",
+      "name": "Chitincrag Dale",
+      "x": 23,
+      "y": 3,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_2A",
+      "name": "Route A2A",
+      "x": 20,
+      "y": 3,
+      "width": 3,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_IRONWILL_MONASTERY",
+      "name": "Ironwill Monastery",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_2B",
+      "name": "Route A2B",
+      "x": 24,
+      "y": 3,
+      "width": 4,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_3A",
+      "name": "Route A3A",
+      "x": 16,
+      "y": 0,
+      "width": 5,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_CINDERPEAK_BASTION",
+      "name": "Cinderpeak Bastion",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_3B",
+      "name": "Route A3B",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_ARDOR_4",
+      "name": "Route A4",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_0",
+      "name": "Route G0",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_DRIFTBROOK_HAVEN",
+      "name": "Driftbrook Haven",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_1",
+      "name": "Route G1",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_FROSTVEIL_BURROW",
+      "name": "Frostveil Burrow",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_2A",
+      "name": "Route G2A",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_STILLMIST_COVE",
+      "name": "Stillmist Cove",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_2B",
+      "name": "Route G2B",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_3A",
+      "name": "Route G3A",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_LORETIDE_SHELL",
+      "name": "Loretide Shell",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_3B",
+      "name": "Route G3B",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_GUILE_4",
+      "name": "Route G4",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
     }
   ]
 }
