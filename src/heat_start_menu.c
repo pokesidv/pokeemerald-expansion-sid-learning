@@ -598,13 +598,13 @@ static void SpriteCB_IconFlag(struct Sprite *sprite)
 // If you want to shorten the dates to Sat., Sun., etc., change this to 70
 #define CLOCK_WINDOW_WIDTH 100
 
-static const u8 gText_Friday[] = _("Fri,");
-static const u8 gText_Saturday[] = _("Sat,");
-static const u8 gText_Sunday[] = _("Sun,");
-static const u8 gText_Monday[] = _("Mon,");
-static const u8 gText_Tuesday[] = _("Tue,");
-static const u8 gText_Wednesday[] = _("Wed,");
-static const u8 gText_Thursday[] = _("Thu,");
+static const u8 gText_Friday[] = _("Friday,");
+static const u8 gText_Saturday[] = _("Saturday,");
+static const u8 gText_Sunday[] = _("Sunday,");
+static const u8 gText_Monday[] = _("Monday,");
+static const u8 gText_Tuesday[] = _("Tuesday,");
+static const u8 gText_Wednesday[] = _("Wednesday,");
+static const u8 gText_Thursday[] = _("Thursday,");
 
 static const u8 *const gDayNameStringsTable[] =
     {
@@ -891,10 +891,10 @@ static void HeatStartMenu_UpdateClockDisplay(void)
     day = rtc->dayOfWeek;
     hours = rtc->hour;
     minutes = rtc->minute;
-    onOffColon = (OW_ALTERED_TIME_RATIO == GEN_8_PLA)   ? TRUE : // the minutes already go by every second so just always show the colon
-           (OW_ALTERED_TIME_RATIO == GEN_9)       ?  (rtc->second / 20) % 2 :
-           (OW_ALTERED_TIME_RATIO == TIME_DEBUG)  ?  rtc->second % 2 :
-                                                     rtc->second % 2;
+    onOffColon = (OW_ALTERED_TIME_RATIO == GEN_8_PLA) ? TRUE : // the minutes already go by every second so just always show the colon
+                     (OW_ALTERED_TIME_RATIO == GEN_9)    ? (rtc->minute % 2 ? (rtc->second / 20) % 2 : !((rtc->second / 20) % 2))
+                 : (OW_ALTERED_TIME_RATIO == TIME_DEBUG) ? rtc->second % 2
+                                                         : rtc->second % 2;
   }
   else
   {
