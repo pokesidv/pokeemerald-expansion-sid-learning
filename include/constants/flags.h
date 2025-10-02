@@ -1388,10 +1388,10 @@
 #define FLAG_IS_CHAMPION                            (SYSTEM_FLAGS + 0x1F) // Seems to be related to linking.
 #define FLAG_NURSE_UNION_ROOM_REMINDER              (SYSTEM_FLAGS + 0x20)
 
-#define FLAG_DEXNAV_SEARCHING                      (SYSTEM_FLAGS + 0x21) // renamed: see dexnav.h configs
-#define FLAG_DEXNAV_DEXNAV_GET                     (SYSTEM_FLAGS + 0x22) // renamed: see dexnav.h configs
-#define FLAG_DEXNAV_DETECTOR_MODE                  (SYSTEM_FLAGS + 0x23) // renamed: see dexnav.h configs
-#define FLAG_SUPPRESS_SPEAKER_NAME                 (SYSTEM_FLAGS + 0x24) // renamed: namebox branch
+#define FLAG_DEXNAV_SEARCHING                       (SYSTEM_FLAGS + 0x21) // renamed: see dexnav.h configs
+#define FLAG_DEXNAV_DEXNAV_GET                      (SYSTEM_FLAGS + 0x22) // renamed: see dexnav.h configs
+#define FLAG_DEXNAV_DETECTOR_MODE                   (SYSTEM_FLAGS + 0x23) // renamed: see dexnav.h configs
+#define FLAG_OW_FLAG_SUPPRESS_NAME_BOX              (SYSTEM_FLAGS + 0x24) // renamed: see overworld.h configs
 #define FLAG_UNUSED_0x885                           (SYSTEM_FLAGS + 0x25) // Unused Flag
 #define FLAG_UNUSED_0x886                           (SYSTEM_FLAGS + 0x26) // Unused Flag
 #define FLAG_UNUSED_0x887                           (SYSTEM_FLAGS + 0x27) // Unused Flag

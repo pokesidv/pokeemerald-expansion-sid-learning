@@ -254,7 +254,7 @@ ChitinCragDale_Lab_EventScript_EditGeneration::
 # 138 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	faceplayer
 # 140 "data/maps/ChitinCragDale_Lab/scripts.pory"
-	speakername ChitinCragDale_Lab_EventScript_EditGeneration_Text_0
+	setspeaker ChitinCragDale_Lab_EventScript_EditGeneration_Text_0
 # 142 "data/maps/ChitinCragDale_Lab/scripts.pory"
 	goto_if_set FLAG_STARTER_GRASS, ChitinCragDale_Lab_EventScript_EditGeneration_2
 # 142 "data/maps/ChitinCragDale_Lab/scripts.pory"

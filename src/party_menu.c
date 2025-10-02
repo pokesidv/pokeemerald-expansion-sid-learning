@@ -4588,7 +4588,7 @@ bool32 SetUpFieldMove_RockClimb(void)
         gPostMenuFieldCallback = FieldCallback_RockClimb;
         return TRUE;
     }
-    
+
     return FALSE;
 }
 
@@ -4921,6 +4921,12 @@ void CB2_ShowPartyMenuForItemUse(void)
     u8 i;
     u8 msgId;
     TaskFunc task;
+
+    if (gPartyMenu.data1 == DATA1_PARTY_MENU_FROM_FIELD)
+    {
+        callback = CB2_ReturnToField;
+        gPartyMenu.data1 = 0;
+    }
 
     if (gMain.inBattle)
     {

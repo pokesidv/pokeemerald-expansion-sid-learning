@@ -137,7 +137,7 @@ script ChitinCragDale_Lab_EventScript_EditGeneration {
     lock
     faceplayer
     
-    speakername("Prof. Birch")
+    setspeaker("Prof. Birch")
     
     if(flag(FLAG_STARTER_GRASS) || flag(FLAG_STARTER_FIRE) || flag(FLAG_STARTER_WATER)) {
         msgbox(format("Enjoy your starter!"))

@@ -996,7 +996,7 @@ static void Task_EvolutionScene(u8 taskId)
                 if (var == MAX_MON_MOVES)
                 {
                     // Didn't select move slot
-                    gTasks[taskId].tLearnMoveNoState = (P_ASK_MOVE_CONFIRMATION) ? MVSTATE_ASK_CANCEL : MVSTATE_CANCEL;
+                    gTasks[taskId].tLearnMoveState = (P_ASK_MOVE_CONFIRMATION) ? MVSTATE_ASK_CANCEL : MVSTATE_CANCEL;
                 }
                 else
                 {
@@ -1389,7 +1389,7 @@ static void Task_TradeEvolutionScene(u8 taskId)
                 if (var == MAX_MON_MOVES)
                 {
                     // Didn't select move slot
-                    gTasks[taskId].tLearnMoveNoState = (P_ASK_MOVE_CONFIRMATION) ? T_MVSTATE_ASK_CANCEL : T_MVSTATE_CANCEL;
+                    gTasks[taskId].tLearnMoveState = (P_ASK_MOVE_CONFIRMATION) ? T_MVSTATE_ASK_CANCEL : T_MVSTATE_CANCEL;
                 }
                 else
                 {

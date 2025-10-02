@@ -42,6 +42,7 @@
 #include "data.h"
 #include "vs_seeker.h"
 #include "item.h"
+#include "field_name_box.h"
 #include "constants/battle_frontier.h"
 #include "constants/battle_setup.h"
 #include "constants/event_objects.h"
@@ -1004,7 +1005,7 @@ void TrainerBattleLoadArgsSecondTrainer(const u8 *data)
 
 void SetMapVarsToTrainerA(void)
 {
-    if (TRAINER_BATTLE_PARAM.objEventLocalIdA != 0)
+    if (TRAINER_BATTLE_PARAM.objEventLocalIdA != LOCALID_NONE)
     {
         gSpecialVar_LastTalked = TRAINER_BATTLE_PARAM.objEventLocalIdA;
         gSelectedObjectEvent = GetObjectEventIdByLocalIdAndMap(TRAINER_BATTLE_PARAM.objEventLocalIdA, gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup);
@@ -1497,20 +1498,18 @@ static const u8 *ReturnEmptyStringIfNull(const u8 *string)
 
 static const u8 *GetIntroSpeechOfApproachingTrainer(void)
 {
-    if (gApproachingTrainerId == 0){
-        if (TRAINER_BATTLE_PARAM.opponentA != 0)
-        {
-            u32 trainerIdA = SanitizeTrainerId(TRAINER_BATTLE_PARAM.opponentA);
-            gSpeakerName = GetTrainerNameFromId(trainerIdA);
-        }
+    if (gApproachingTrainerId == 0)
+    {
+        if (OW_NAME_BOX_NPC_TRAINER)
+            gSpeakerName = GetTrainerNameFromId(TRAINER_BATTLE_PARAM.opponentA);
+
         return ReturnEmptyStringIfNull(TRAINER_BATTLE_PARAM.introTextA);
-    }  
-    else{
-        if (TRAINER_BATTLE_PARAM.opponentB != 0)
-        {
-            u32 trainerIdB = SanitizeTrainerId(TRAINER_BATTLE_PARAM.opponentB);
-            gSpeakerName = GetTrainerNameFromId(trainerIdB);
-        }
+    }
+    else
+    {
+        if (OW_NAME_BOX_NPC_TRAINER)
+            gSpeakerName = GetTrainerNameFromId(TRAINER_BATTLE_PARAM.opponentB);
+
         return ReturnEmptyStringIfNull(TRAINER_BATTLE_PARAM.introTextB);
     }
 }

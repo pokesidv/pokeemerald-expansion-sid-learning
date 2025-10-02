@@ -69,13 +69,14 @@ AI_DOUBLE_BATTLE_TEST("AI will not use a status move if partner already chose He
     }
 
     GIVEN {
-        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_CHECK_VIABILITY | AI_FLAG_TRY_TO_FAINT);
-        PLAYER(SPECIES_WOBBUFFET);
-        PLAYER(SPECIES_WOBBUFFET);
-        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_HELPING_HAND); }
-        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_SCRATCH, statusMove); }
+        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_CHECK_VIABILITY | AI_FLAG_TRY_TO_FAINT | AI_FLAG_OMNISCIENT);
+        PLAYER(SPECIES_WOBBUFFET) { Moves(MOVE_CELEBRATE, MOVE_SCRATCH, statusMove, MOVE_WATER_GUN); }
+        PLAYER(SPECIES_WOBBUFFET) { Moves(MOVE_CELEBRATE, MOVE_SCRATCH, statusMove, MOVE_WATER_GUN); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_HELPING_HAND, MOVE_EXPLOSION); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_SCRATCH, statusMove, MOVE_WATER_GUN); }
     } WHEN {
-            TURN {  NOT_EXPECT_MOVE(opponentRight, statusMove);
+            TURN {  EXPECT_MOVE(opponentLeft, MOVE_HELPING_HAND);
+                    NOT_EXPECT_MOVE(opponentRight, statusMove);
                     SCORE_LT_VAL(opponentRight, statusMove, AI_SCORE_DEFAULT, target:playerLeft);
                     SCORE_LT_VAL(opponentRight, statusMove, AI_SCORE_DEFAULT, target:playerRight);
                     SCORE_LT_VAL(opponentRight, statusMove, AI_SCORE_DEFAULT, target:opponentLeft);
@@ -90,7 +91,7 @@ TO_DO_BATTLE_TEST("AI understands Instruct")
 TO_DO_BATTLE_TEST("AI understands Quick Guard")
 TO_DO_BATTLE_TEST("AI understands Wide Guard")
 
-AI_DOUBLE_BATTLE_TEST("AI will not use the same nondamaging move as its partner for no reason")
+AI_DOUBLE_BATTLE_TEST("AI won't use the same nondamaging move as its partner for no reason")
 {
     u32 move;
     PARAMETRIZE { move = MOVE_AROMATHERAPY; }
@@ -185,7 +186,8 @@ AI_DOUBLE_BATTLE_TEST("AI will choose Bulldoze if it triggers its ally's ability
     ASSUME(GetMoveType(MOVE_BULLDOZE) == TYPE_GROUND);
     ASSUME(MoveHasAdditionalEffect(MOVE_BULLDOZE, MOVE_EFFECT_SPD_MINUS_1));
 
-    u32 species, ability, currentHP;
+    u32 species, currentHP;
+    enum Ability ability;
 
     PARAMETRIZE { species = SPECIES_KINGAMBIT; ability = ABILITY_DEFIANT;  currentHP = 400; }
     PARAMETRIZE { species = SPECIES_SHUCKLE;   ability = ABILITY_CONTRARY; currentHP = 400; }
@@ -212,7 +214,7 @@ AI_DOUBLE_BATTLE_TEST("AI will choose Beat Up on an ally with Justified if it wi
     ASSUME(GetMoveEffect(MOVE_BEAT_UP) == EFFECT_BEAT_UP);
     ASSUME(GetMoveType(MOVE_BEAT_UP) == TYPE_DARK);
 
-    u32 defAbility, atkAbility, currentHP;
+    enum Ability defAbility, atkAbility, currentHP;
 
     PARAMETRIZE { defAbility = ABILITY_FLASH_FIRE; atkAbility = ABILITY_SCRAPPY;        currentHP = 400; }
     PARAMETRIZE { defAbility = ABILITY_JUSTIFIED;  atkAbility = ABILITY_SCRAPPY;        currentHP = 400; }
@@ -372,7 +374,8 @@ AI_DOUBLE_BATTLE_TEST("AI sees corresponding absorbing abilities on partners")
     ASSUME(GetMoveTarget(MOVE_EARTHQUAKE) == MOVE_TARGET_FOES_AND_ALLY);
     ASSUME(GetMoveType(MOVE_EARTHQUAKE) == TYPE_GROUND);
 
-    u32 ability, move, species;
+    enum Ability ability;
+    u32 move, species;
 
     PARAMETRIZE { species = SPECIES_PSYDUCK;    ability = ABILITY_CLOUD_NINE;         move = MOVE_DISCHARGE; }
     PARAMETRIZE { species = SPECIES_PIKACHU;    ability = ABILITY_LIGHTNING_ROD;      move = MOVE_DISCHARGE; }
@@ -409,7 +412,8 @@ AI_DOUBLE_BATTLE_TEST("AI treats an ally's redirection ability appropriately (ge
     ASSUME(GetMoveTarget(MOVE_SURF) == MOVE_TARGET_FOES_AND_ALLY);
     ASSUME(GetMoveType(MOVE_SURF) == TYPE_WATER);
 
-    u32 ability, move, species;
+    enum Ability ability;
+    u32 move, species;
 
     PARAMETRIZE { species = SPECIES_SEAKING;    ability = ABILITY_LIGHTNING_ROD;    move = MOVE_DISCHARGE; }
     PARAMETRIZE { species = SPECIES_SHELLOS;    ability = ABILITY_STORM_DRAIN;      move = MOVE_SURF; }
@@ -433,7 +437,8 @@ AI_DOUBLE_BATTLE_TEST("AI treats an ally's redirection ability appropriately (ge
     ASSUME(GetMoveTarget(MOVE_SURF) == MOVE_TARGET_FOES_AND_ALLY);
     ASSUME(GetMoveType(MOVE_SURF) == TYPE_WATER);
 
-    u32 ability, move, species;
+    enum Ability ability;
+    u32 move, species;
 
     PARAMETRIZE { species = SPECIES_SEAKING;    ability = ABILITY_LIGHTNING_ROD;    move = MOVE_DISCHARGE; }
     PARAMETRIZE { species = SPECIES_SHELLOS;    ability = ABILITY_STORM_DRAIN;      move = MOVE_SURF; }
@@ -494,15 +499,15 @@ AI_DOUBLE_BATTLE_TEST("AI sets up weather for its ally")
     PARAMETRIZE { goodWeather = MOVE_HAIL; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_BLIZZARD; }
     PARAMETRIZE { goodWeather = MOVE_SNOWSCAPE; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_BLIZZARD; }
     PARAMETRIZE { goodWeather = MOVE_SANDSTORM; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_SHORE_UP; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodWeather = MOVE_SUNNY_DAY; badWeather = MOVE_RAIN_DANCE; weatherTrigger = MOVE_SOLAR_BEAM; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodWeather = MOVE_RAIN_DANCE; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_THUNDER; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodWeather = MOVE_HAIL; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_BLIZZARD; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodWeather = MOVE_SNOWSCAPE; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_BLIZZARD; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodWeather = MOVE_SANDSTORM; badWeather = MOVE_SUNNY_DAY; weatherTrigger = MOVE_SHORE_UP; }
 
     GIVEN {
@@ -510,7 +515,7 @@ AI_DOUBLE_BATTLE_TEST("AI sets up weather for its ally")
         PLAYER(SPECIES_WOBBUFFET);
         PLAYER(SPECIES_WOBBUFFET);
         OPPONENT(SPECIES_TORNADUS) { Item(ITEM_SAFETY_GOGGLES); Ability(ABILITY_PRANKSTER); Moves(goodWeather, badWeather, MOVE_RETURN, MOVE_TAUNT); }
-        OPPONENT(SPECIES_WOBBUFFET) { Moves(weatherTrigger, MOVE_EARTH_POWER);  }
+        OPPONENT(SPECIES_WOBBUFFET) { Item(ITEM_SAFETY_GOGGLES); Moves(weatherTrigger, MOVE_EARTH_POWER); }
     } WHEN {
         TURN { EXPECT_MOVE(opponentLeft, goodWeather); }
     }
@@ -525,13 +530,13 @@ AI_DOUBLE_BATTLE_TEST("AI sets up terrain for its ally")
     PARAMETRIZE { goodTerrain = MOVE_GRASSY_TERRAIN; badTerrain = MOVE_PSYCHIC_TERRAIN; terrainTrigger = MOVE_GRASSY_GLIDE; }
     PARAMETRIZE { goodTerrain = MOVE_MISTY_TERRAIN; badTerrain = MOVE_PSYCHIC_TERRAIN; terrainTrigger = MOVE_MISTY_EXPLOSION; }
     PARAMETRIZE { goodTerrain = MOVE_PSYCHIC_TERRAIN; badTerrain = MOVE_ELECTRIC_TERRAIN; terrainTrigger = MOVE_EXPANDING_FORCE; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodTerrain = MOVE_ELECTRIC_TERRAIN; badTerrain = MOVE_PSYCHIC_TERRAIN; terrainTrigger = MOVE_RISING_VOLTAGE; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodTerrain = MOVE_GRASSY_TERRAIN; badTerrain = MOVE_PSYCHIC_TERRAIN; terrainTrigger = MOVE_GRASSY_GLIDE; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodTerrain = MOVE_MISTY_TERRAIN; badTerrain = MOVE_PSYCHIC_TERRAIN; terrainTrigger = MOVE_MISTY_EXPLOSION; }
-    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION; 
+    PARAMETRIZE { aiFlags |= AI_FLAG_OMNISCIENT | AI_FLAG_SMART_SWITCHING | AI_FLAG_SMART_MON_CHOICES | AI_FLAG_PP_STALL_PREVENTION;
                   goodTerrain = MOVE_PSYCHIC_TERRAIN; badTerrain = MOVE_ELECTRIC_TERRAIN; terrainTrigger = MOVE_EXPANDING_FORCE; }
 
     GIVEN {
@@ -594,6 +599,91 @@ AI_DOUBLE_BATTLE_TEST("AI uses Trick Room intelligently")
             TURN { NOT_EXPECT_MOVE(opponentRight, MOVE_TRICK_ROOM); }
     }
 }
+
+AI_DOUBLE_BATTLE_TEST("AI uses Trick Room with both battlers on the turn it expires in line with the double Trick Room config")
+{
+    PASSES_RANDOMLY(DOUBLE_TRICK_ROOM_ON_LAST_TURN_CHANCE, 100, RNG_AI_REFRESH_TRICK_ROOM_ON_LAST_TURN);
+    GIVEN {
+        ASSUME(GetMoveEffect(MOVE_TRICK_ROOM) == EFFECT_TRICK_ROOM);
+        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY | AI_FLAG_DOUBLE_BATTLE);
+        PLAYER(SPECIES_WOBBUFFET) { Speed(4); }
+        PLAYER(SPECIES_WOBBUFFET) { Speed(3); }
+        OPPONENT(SPECIES_WYNAUT) { Moves(MOVE_TRICK_ROOM, MOVE_PSYCHIC); Speed(2); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_TRICK_ROOM, MOVE_PSYCHIC); Speed(1); }
+    } WHEN {
+            TURN {  EXPECT_MOVE(opponentLeft, MOVE_TRICK_ROOM); NOT_EXPECT_MOVE(opponentRight, MOVE_TRICK_ROOM); }
+            TURN {  NOT_EXPECT_MOVE(opponentLeft, MOVE_TRICK_ROOM); NOT_EXPECT_MOVE(opponentRight, MOVE_TRICK_ROOM); }
+            TURN {  NOT_EXPECT_MOVE(opponentLeft, MOVE_TRICK_ROOM); NOT_EXPECT_MOVE(opponentRight, MOVE_TRICK_ROOM); }
+            TURN {  NOT_EXPECT_MOVE(opponentLeft, MOVE_TRICK_ROOM); NOT_EXPECT_MOVE(opponentRight, MOVE_TRICK_ROOM); }
+            TURN {  EXPECT_MOVE(opponentLeft, MOVE_TRICK_ROOM); EXPECT_MOVE(opponentRight, MOVE_TRICK_ROOM); }
+        }
+}
+
+AI_DOUBLE_BATTLE_TEST("AI uses Helping Hand if it's about to die")
+{
+    u32 hp;
+
+    PARAMETRIZE { hp = 1; }
+    PARAMETRIZE { hp = 500; }
+
+    GIVEN {
+        ASSUME(GetMoveEffect(MOVE_HELPING_HAND) == EFFECT_HELPING_HAND);
+        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY | AI_FLAG_OMNISCIENT);
+        PLAYER(SPECIES_WOBBUFFET) { Moves(MOVE_TACKLE, MOVE_CELEBRATE); }
+        PLAYER(SPECIES_WOBBUFFET) { Moves(MOVE_TACKLE, MOVE_CELEBRATE); }
+        OPPONENT(SPECIES_WOBBUFFET) { HP(hp); Moves(MOVE_HELPING_HAND, MOVE_MUDDY_WATER); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_MUDDY_WATER); }
+    } WHEN {
+    if (hp == 1)
+        TURN { EXPECT_MOVE(opponentLeft, MOVE_HELPING_HAND); }
+    else
+        TURN { NOT_EXPECT_MOVE(opponentLeft, MOVE_HELPING_HAND); }
+    }
+}
+
+AI_DOUBLE_BATTLE_TEST("AI uses Helping Hand if the ally does notably more damage")
+{
+
+    KNOWN_FAILING;  // Failure was masked by test runner issues
+    GIVEN {
+        ASSUME(GetMoveEffect(MOVE_HELPING_HAND) == EFFECT_HELPING_HAND);
+        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY | AI_FLAG_OMNISCIENT);
+        PLAYER(SPECIES_WOBBUFFET) { Moves(MOVE_TACKLE, MOVE_CELEBRATE); }
+        PLAYER(SPECIES_WOBBUFFET) { Moves(MOVE_TACKLE, MOVE_CELEBRATE); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_HELPING_HAND, MOVE_MUD_SLAP); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_MUDDY_WATER); }
+    } WHEN {
+        TURN { EXPECT_MOVE(opponentLeft, MOVE_HELPING_HAND); }
+    }
+}
+
+AI_DOUBLE_BATTLE_TEST("AI uses Tailwind")
+{
+    u32 speed1, speed2, speed3, speed4;
+
+    PARAMETRIZE { speed1 = 20; speed2 = 20; speed3 = 20; speed4 = 20; }
+    PARAMETRIZE { speed1 = 20; speed2 = 20; speed3 =  5; speed4 =  5; }
+    PARAMETRIZE { speed1 = 20; speed2 = 20; speed3 = 15; speed4 = 15; }
+    PARAMETRIZE { speed1 =  1; speed2 =  1; speed3 =  5; speed4 =  5; }
+    PARAMETRIZE { speed1 =  1; speed2 = 20; speed3 = 15; speed4 = 15; }
+    PARAMETRIZE { speed1 =  1; speed2 = 20; speed3 = 20; speed4 = 15; }
+
+    GIVEN {
+        ASSUME(GetMoveEffect(MOVE_AFTER_YOU) == EFFECT_AFTER_YOU);
+        ASSUME(GetMoveEffect(MOVE_TRICK_ROOM) == EFFECT_TRICK_ROOM);
+        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY | AI_FLAG_DOUBLE_BATTLE);
+        PLAYER(SPECIES_WOBBUFFET) { Speed(speed1); }
+        PLAYER(SPECIES_WOBBUFFET) { Speed(speed2); }
+        OPPONENT(SPECIES_WOBBUFFET) { Speed(speed3); Moves(MOVE_TAILWIND, MOVE_HEADBUTT); }
+        OPPONENT(SPECIES_WOBBUFFET) { Speed(speed4); Moves(MOVE_TAILWIND, MOVE_HEADBUTT); }
+    } WHEN {
+        if (speed3 > 10)
+            TURN { EXPECT_MOVE(opponentLeft, MOVE_TAILWIND); }
+        else
+            TURN { NOT_EXPECT_MOVE(opponentLeft, MOVE_TAILWIND); }
+    }
+}
+
 AI_DOUBLE_BATTLE_TEST("AI uses Guard Split to improve its stats")
 {
 
@@ -648,3 +738,16 @@ AI_DOUBLE_BATTLE_TEST("AI uses Power Split to improve its stats")
     }
 }
 
+AI_DOUBLE_BATTLE_TEST("AI prefers to Fake Out the opponent vulnerable to flinching.")
+{
+
+    GIVEN {
+        AI_FLAGS(AI_FLAG_CHECK_BAD_MOVE | AI_FLAG_TRY_TO_FAINT | AI_FLAG_CHECK_VIABILITY | AI_FLAG_DOUBLE_BATTLE | AI_FLAG_OMNISCIENT);
+        PLAYER(SPECIES_ZUBAT) { Ability(ABILITY_INNER_FOCUS); }
+        PLAYER(SPECIES_BRAIXEN) { Ability(ABILITY_BLAZE); }
+        OPPONENT(SPECIES_WOBBUFFET) { Moves(MOVE_FAKE_OUT, MOVE_BRANCH_POKE, MOVE_ROCK_SMASH); }
+        OPPONENT(SPECIES_WOBBUFFET);
+    } WHEN {
+        TURN { EXPECT_MOVE(opponentLeft, MOVE_FAKE_OUT, target:playerRight); }
+    }
+}

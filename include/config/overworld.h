@@ -109,7 +109,8 @@
 #define OW_FLAG_NO_ENCOUNTER        0  // If this flag is set, wild encounters will be disabled.
 #define OW_FLAG_NO_TRAINER_SEE      0  // If this flag is set, trainers will not battle the player unless they're talked to.
 #define OW_FLAG_NO_COLLISION        0  // If this flag is set, the player will be able to walk over tiles with collision. Mainly intended for debugging purposes.
-#define OW_FLAG_POKE_RIDER          0x23  // If this flag is set, the player will be able to use fly from the Pokenav Region Map and the Town Map key item by pressing 'R' on a city/location they are able to fly to.
+#define OW_FLAG_POKE_RIDER          FLAG_OW_FLAG_POKE_RIDER  // If this flag is set, the player will be able to use fly from the Pokenav Region Map and the Town Map key item by pressing 'R' on a city/location they are able to fly to.
+#define OW_FLAG_SUPPRESS_NAME_BOX   FLAG_OW_FLAG_SUPPRESS_NAME_BOX  // If this flag is set, any namebox (whether its from a macro or a code) will not show up until this flag is unset.
 
 #define BATTLE_PYRAMID_RANDOM_ENCOUNTERS    FALSE    // If set to TRUE, battle pyramid Pokemon will be generated randomly based on the round's challenge instead of hardcoded in src/data/battle_frontier/battle_pyramid_level_50_wild_mons.h (or open_level_wild_mons.h)
 
@@ -144,5 +145,16 @@
 
 // vi (custom configs)
 #define START_MENU_CUSTOM_LABELS TRUE        // with this enabled, the start menu will use custom labels for the Pokemon (party) and Options (settings). Also they are all decapitalized
+
+// Namebox Speaker configs
+#define OW_NAME_BOX_USE_DYNAMIC_WIDTH TRUE  // When TRUE, the namebox window can use different width depending on the length of the speaker's name.
+#define OW_NAME_BOX_NPC_TRAINER       TRUE  // When TRUE, any approaching NPC trainers will have a namebox shown automagically. The name will be taken from their trainer data.
+#define OW_NAME_BOX_DEFAULT_WIDTH     8     // Maximum width of what OW_NAME_BOX_USE_DYNAMIC_WIDTH can set. Also the default width when the config above is set to FALSE (or the dynamic width exceeds this value).
+#define OW_NAME_BOX_DEFAULT_HEIGHT    2     // Maximum height of the namebox window.
+
+// Text colors of Namebox. The numbers corresponds to the palette index.
+// The BG color is not provided as it always needs to be 0.
+#define OW_NAME_BOX_FOREGROUND_COLOR  2
+#define OW_NAME_BOX_SHADOW_COLOR      3
 
 #endif // GUARD_CONFIG_OVERWORLD_H
