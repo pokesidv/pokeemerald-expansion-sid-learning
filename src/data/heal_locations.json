@@ -204,6 +204,30 @@
       "respawn_map": "MAP_LITTLEROOT_TOWN_BRENDANS_HOUSE_2F",
       "respawn_x": 4,
       "respawn_y": 4
+    },
+    {
+      "id": "HEAL_LOCATION_ARDOR_PROVINCE_ROUTE1",
+      "map": "MAP_ARDOR_PROVINCE_ROUTE1",
+      "x": 10,
+      "y": 19
+    },
+    {
+      "id": "HEAL_LOCATION_ARDOR_PROVINCE_ROUTE2A",
+      "map": "MAP_ARDOR_PROVINCE_ROUTE2A",
+      "x": 32,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_IRONWILL_MONASTERY",
+      "map": "MAP_IRONWILL_MONASTERY",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_KINDLEHEARTH_FORGE",
+      "map": "MAP_KINDLEHEARTH_FORGE",
+      "x": 10,
+      "y": 10
     }
   ]
 }

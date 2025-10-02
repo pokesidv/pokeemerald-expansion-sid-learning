@@ -16,7 +16,17 @@
     {
       "map": "MAP_ARDOR_PROVINCE_ROUTE1",
       "offset": 0,
+      "direction": "down"
+    },
+    {
+      "map": "MAP_ARDOR_PROVINCE_ROUTE2B",
+      "offset": 0,
       "direction": "right"
+    },
+    {
+      "map": "MAP_ARDOR_PROVINCE_ROUTE2A",
+      "offset": 0,
+      "direction": "left"
     }
   ],
   "object_events": [],

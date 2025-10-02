@@ -1330,8 +1330,8 @@
     {
       "id": "MAPSEC_KINDLEHEARTH_FORGE",
       "name": "Kindlehearth Forge",
-      "x": 0,
-      "y": 0,
+      "x": 24,
+      "y": 5,
       "width": 1,
       "height": 1
     },
@@ -1362,8 +1362,8 @@
     {
       "id": "MAPSEC_IRONWILL_MONASTERY",
       "name": "Ironwill Monastery",
-      "x": 0,
-      "y": 0,
+      "x": 20,
+      "y": 2,
       "width": 1,
       "height": 1
     },
@@ -1394,9 +1394,9 @@
     {
       "id": "MAPSEC_ARDOR_3B",
       "name": "Route A3B",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 20,
+      "y": 1,
+      "width": 5,
       "height": 1
     },
     {
@@ -1410,9 +1410,9 @@
     {
       "id": "MAPSEC_GUILE_0",
       "name": "Route G0",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 10,
+      "y": 1,
+      "width": 2,
       "height": 1
     },
     {
@@ -1426,15 +1426,15 @@
     {
       "id": "MAPSEC_GUILE_1",
       "name": "Route G1",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 7,
+      "y": 1,
+      "width": 2,
       "height": 1
     },
     {
       "id": "MAPSEC_FROSTVEIL_BURROW",
       "name": "Frostveil Burrow",
-      "x": 0,
+      "x": 7,
       "y": 0,
       "width": 1,
       "height": 1
@@ -1442,10 +1442,10 @@
     {
       "id": "MAPSEC_GUILE_2A",
       "name": "Route G2A",
-      "x": 0,
-      "y": 0,
+      "x": 4,
+      "y": 3,
       "width": 1,
-      "height": 1
+      "height": 3
     },
     {
       "id": "MAPSEC_STILLMIST_COVE",
@@ -1458,18 +1458,18 @@
     {
       "id": "MAPSEC_GUILE_2B",
       "name": "Route G2B",
-      "x": 0,
+      "x": 4,
       "y": 0,
-      "width": 1,
+      "width": 3,
       "height": 1
     },
     {
       "id": "MAPSEC_GUILE_3A",
       "name": "Route G3A",
-      "x": 0,
-      "y": 0,
+      "x": 4,
+      "y": 7,
       "width": 1,
-      "height": 1
+      "height": 4
     },
     {
       "id": "MAPSEC_LORETIDE_SHELL",
@@ -1482,17 +1482,17 @@
     {
       "id": "MAPSEC_GUILE_3B",
       "name": "Route G3B",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 1,
+      "y": 7,
+      "width": 3,
       "height": 1
     },
     {
       "id": "MAPSEC_GUILE_4",
       "name": "Route G4",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 6,
+      "y": 10,
+      "width": 4,
       "height": 1
     }
   ]

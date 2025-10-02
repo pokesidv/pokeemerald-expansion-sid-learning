@@ -4435,11 +4435,61 @@
       "id": "LAYOUT_ARDOR_PROVINCE_ROUTE1",
       "name": "ArdorProvince_Route1_Layout",
       "width": 20,
-      "height": 20,
+      "height": 40,
       "primary_tileset": "gTileset_General",
-      "secondary_tileset": "gTileset_Slateport",
+      "secondary_tileset": "gTileset_Petalburg",
       "border_filepath": "data/layouts/ArdorProvince_Route1/border.bin",
       "blockdata_filepath": "data/layouts/ArdorProvince_Route1/map.bin"
+    },
+    {
+      "id": "LAYOUT_IRONWILL_MONASTERY",
+      "name": "Ironwill_Monastery_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Ironwill_Monastery/border.bin",
+      "blockdata_filepath": "data/layouts/Ironwill_Monastery/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE2A",
+      "name": "ArdorProvince_Route2A_Layout",
+      "width": 60,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ArdorProvince_Route2A/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route2A/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE0",
+      "name": "ArdorProvince_Route0_Layout",
+      "width": 20,
+      "height": 40,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ArdorProvince_Route0/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route0/map.bin"
+    },
+    {
+      "id": "LAYOUT_KINDLEHEARTH_FORGE",
+      "name": "KindlehearthForge_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/KindlehearthForge/border.bin",
+      "blockdata_filepath": "data/layouts/KindlehearthForge/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE2B",
+      "name": "ArdorProvince_Route2B_Layout",
+      "width": 80,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ArdorProvince_Route2B/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route2B/map.bin"
     }
   ]
 }

@@ -1,9 +1,9 @@
 {
-  "id": "MAP_ARDOR_PROVINCE_ROUTE1",
-  "name": "ArdorProvince_Route1",
-  "layout": "LAYOUT_ARDOR_PROVINCE_ROUTE1",
-  "music": "MUS_ROUTE101",
-  "region_map_section": "MAPSEC_ARDOR_1",
+  "id": "MAP_ARDOR_PROVINCE_ROUTE0",
+  "name": "ArdorProvince_Route0",
+  "layout": "LAYOUT_ARDOR_PROVINCE_ROUTE0",
+  "music": "MUS_DUMMY",
+  "region_map_section": "MAPSEC_ARDOR_0",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
   "map_type": "MAP_TYPE_ROUTE",
@@ -14,14 +14,9 @@
   "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
   "connections": [
     {
-      "map": "MAP_CHITIN_CRAG_DALE",
+      "map": "MAP_KINDLEHEARTH_FORGE",
       "offset": 0,
       "direction": "up"
-    },
-    {
-      "map": "MAP_KINDLEHEARTH_FORGE",
-      "offset": 20,
-      "direction": "right"
     }
   ],
   "object_events": [],

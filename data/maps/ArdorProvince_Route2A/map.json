@@ -1,12 +1,12 @@
 {
-  "id": "MAP_ARDOR_PROVINCE_ROUTE1",
-  "name": "ArdorProvince_Route1",
-  "layout": "LAYOUT_ARDOR_PROVINCE_ROUTE1",
-  "music": "MUS_ROUTE101",
-  "region_map_section": "MAPSEC_ARDOR_1",
+  "id": "MAP_ARDOR_PROVINCE_ROUTE2A",
+  "name": "ArdorProvince_Route2A",
+  "layout": "LAYOUT_ARDOR_PROVINCE_ROUTE2A",
+  "music": "MUS_DUMMY",
+  "region_map_section": "MAPSEC_ARDOR_2A",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
-  "map_type": "MAP_TYPE_ROUTE",
+  "map_type": "MAP_TYPE_OCEAN_ROUTE",
   "allow_cycling": true,
   "allow_escaping": false,
   "allow_running": true,
@@ -16,12 +16,12 @@
     {
       "map": "MAP_CHITIN_CRAG_DALE",
       "offset": 0,
-      "direction": "up"
+      "direction": "right"
     },
     {
-      "map": "MAP_KINDLEHEARTH_FORGE",
-      "offset": 20,
-      "direction": "right"
+      "map": "MAP_IRONWILL_MONASTERY",
+      "offset": 0,
+      "direction": "up"
     }
   ],
   "object_events": [],

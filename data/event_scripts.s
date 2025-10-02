@@ -1170,3 +1170,13 @@ EventScript_VsSeekerChargingDone::
 	.include "data/maps/ArdorProvince_Route1/scripts.inc"
 
 	.include "data/scripts/qol_menu.inc"
+
+	.include "data/maps/ArdorProvince_Route2B/scripts.inc"
+
+	.include "data/maps/ArdorProvince_Route0/scripts.inc"
+
+	.include "data/maps/KindlehearthForge/scripts.inc"
+
+	.include "data/maps/ArdorProvince_Route2A/scripts.inc"
+
+	.include "data/maps/Ironwill_Monastery/scripts.inc"

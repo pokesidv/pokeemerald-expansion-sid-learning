@@ -625,7 +625,12 @@
   ],
   "gMapGroup_ArdorProvince": [
     "ChitinCragDale",
-    "ArdorProvince_Route1"
+    "ArdorProvince_Route1",
+    "KindlehearthForge",
+    "ArdorProvince_Route0",
+    "ArdorProvince_Route2B",
+    "ArdorProvince_Route2A",
+    "Ironwill_Monastery"
   ],
   "gMapGroup_Indoor_Ardor_ChitinCragDale": [
     "ChitinCragDale_Lab"
