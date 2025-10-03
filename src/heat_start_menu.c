@@ -827,7 +827,7 @@ static void HeatStartMenu_LoadBgGfx(void)
 
 static void HeatStartMenu_ShowTimeWindow(void)
 {
-  u8 analogHour;
+  // u8 analogHour;
 
   u32 day;
   s8 hours;
@@ -854,12 +854,12 @@ static void HeatStartMenu_ShowTimeWindow(void)
   PutWindowTilemap(sHeatStartMenu->sStartClockWindowId);
   FlagSet(FLAG_TEMP_5);
 
-  analogHour = (hours >= 13 && hours <= 24) ? hours - 12 : hours;
+  // analogHour = (hours >= 13 && hours <= 24) ? hours - 12 : hours;
 
   StringCopy(gStringVar3, gDayNameStringsTable[(day % 7)]);
   ConvertIntToDecimalStringN(gStringVar1, hours, STR_CONV_MODE_LEADING_ZEROS, 2);
   ConvertIntToDecimalStringN(gStringVar2, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-  ConvertIntToDecimalStringN(gStringVar1, analogHour, STR_CONV_MODE_LEADING_ZEROS, 2);
+  // ConvertIntToDecimalStringN(gStringVar1, analogHour, STR_CONV_MODE_LEADING_ZEROS, 2);
 
   StringExpandPlaceholders(gStringVar4, gText_CurrentTime);
   // if (hours >= 13 && hours <= 24)
@@ -878,7 +878,7 @@ static void HeatStartMenu_UpdateClockDisplay(void)
   return;
 
 
-  u8 analogHour;
+  // u8 analogHour;
 
   u32 day;
   s8 hours;
@@ -905,12 +905,12 @@ static void HeatStartMenu_UpdateClockDisplay(void)
     onOffColon = gLocalTime.seconds % 2;
   }
   
-  analogHour = (hours >= 13 && hours <= 24) ? hours - 12 : hours;
+  // analogHour = (hours >= 13 && hours <= 24) ? hours - 12 : hours;
 
   StringCopy(gStringVar3, gDayNameStringsTable[(day % 7)]);
   ConvertIntToDecimalStringN(gStringVar1, hours, STR_CONV_MODE_LEADING_ZEROS, 2);
   ConvertIntToDecimalStringN(gStringVar2, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-  ConvertIntToDecimalStringN(gStringVar1, analogHour, STR_CONV_MODE_LEADING_ZEROS, 2);
+  // ConvertIntToDecimalStringN(gStringVar1, analogHour, STR_CONV_MODE_LEADING_ZEROS, 2);
   if (hours == 0)
     ConvertIntToDecimalStringN(gStringVar1, 12, STR_CONV_MODE_LEADING_ZEROS, 2);
   if (hours == 12)
