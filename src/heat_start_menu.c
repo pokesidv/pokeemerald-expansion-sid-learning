@@ -108,6 +108,11 @@ enum MENU
   MENU_FLAG,
 };
 
+#define HSM_SHOW_POKEDEX FALSE
+#define HSM_POKEDEX_ENABLED (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE && HSM_SHOW_POKEDEX)
+#define HSM_SHOW_POKETCH FALSE
+#define HSM_POKETCH_ENABLED (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE && HSM_SHOW_POKETCH)
+
 enum FLAG_VALUES
 {
   FLAG_VALUE_NOT_SET,
@@ -625,11 +630,11 @@ static const u8 gText_CurrentTimePMOff[] = _("  {STR_VAR_3} {CLEAR_TO 51}{STR_VA
 
 static void SetSelectedMenu(void)
 {
-  if (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
+  if (HSM_POKETCH_ENABLED)
   {
     menuSelected = MENU_POKETCH;
   }
-  else if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
+  else if (HSM_POKEDEX_ENABLED)
   {
     menuSelected = MENU_POKEDEX;
   }
@@ -683,7 +688,7 @@ void HeatStartMenu_Init(void)
 
   if (GetSafariZoneFlag() == FALSE)
   {
-    if (FlagGet(FLAG_SYS_POKENAV_GET) == FALSE && menuSelected == 0)
+    if (HSM_POKETCH_ENABLED == FALSE && menuSelected == 0)
     {
       menuSelected = 255;
     }
@@ -744,7 +749,7 @@ static void HeatStartMenu_CreateSprites(void)
   u32 y6 = 130;
   u32 y7 = 150;
 
-  if (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
+  if (HSM_POKETCH_ENABLED)
   {
     sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x - 1, y1 - 2, 0);
     sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, y2 - 3, 0);
@@ -755,7 +760,7 @@ static void HeatStartMenu_CreateSprites(void)
     sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, y7, 0);
     return;
   }
-  else if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
+  else if (HSM_POKEDEX_ENABLED)
   {
     sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x - 1, y1, 0);
     sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, y2 - 1, 0);
@@ -1013,7 +1018,7 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
   }
   ScheduleBgCopyTilemapToVram(0);
 
-  if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
+  if (HSM_POKEDEX_ENABLED)
   {
     FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdPokedex]);
     DestroySprite(&gSprites[sHeatStartMenu->spriteIdPokedex]);
@@ -1028,7 +1033,7 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
   {
     FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdSave]);
     DestroySprite(&gSprites[sHeatStartMenu->spriteIdSave]);
-    if (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
+    if (HSM_POKETCH_ENABLED)
     {
       FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdPoketch]);
       DestroySprite(&gSprites[sHeatStartMenu->spriteIdPoketch]);
@@ -1335,7 +1340,7 @@ static void ShowSaveInfoWindow(void)
   const u8 *suffix;
   u8 *alignedSuffix = gStringVar3;
 
-  if (!FlagGet(FLAG_SYS_POKEDEX_GET))
+  if (!HSM_POKEDEX_ENABLED)
   {
     saveInfoWindow.height -= 2;
   }
@@ -1370,7 +1375,7 @@ static void ShowSaveInfoWindow(void)
   xOffset = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 0x70);
   AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gStringVar4, xOffset, yOffset, TEXT_SKIP_DRAW, NULL);
 
-  if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
+  if (HSM_POKEDEX_ENABLED)
   {
     // Print pokedex count
     yOffset += 16;
@@ -1503,7 +1508,7 @@ static void HeatStartMenu_HandleInput_DPADDOWN(void)
   switch (menuSelected)
   {
   case MENU_OPTIONS:
-    if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
+    if (HSM_POKEDEX_ENABLED)
     {
       menuSelected = MENU_POKEDEX;
     }
@@ -1519,7 +1524,7 @@ static void HeatStartMenu_HandleInput_DPADDOWN(void)
   default:
     menuSelected++;
     PlaySE(SE_SELECT);
-    if (FlagGet(FLAG_SYS_POKENAV_GET) == FALSE && menuSelected == MENU_POKETCH)
+    if (HSM_POKETCH_ENABLED == FALSE && menuSelected == MENU_POKETCH)
     {
       menuSelected++;
     }
@@ -1543,11 +1548,11 @@ static void HeatStartMenu_HandleInput_DPADUP(void)
     break;
   default:
     PlaySE(SE_SELECT);
-    if (FlagGet(FLAG_SYS_POKENAV_GET) == FALSE && menuSelected == MENU_TRAINER_CARD)
+    if (HSM_POKETCH_ENABLED == FALSE && menuSelected == MENU_TRAINER_CARD)
     {
       menuSelected -= 2;
     }
-    else if ((FlagGet(FLAG_SYS_POKEMON_GET) == FALSE && menuSelected == MENU_BAG) || (FlagGet(FLAG_SYS_POKEDEX_GET) == FALSE && menuSelected == MENU_PARTY))
+    else if ((FlagGet(FLAG_SYS_POKEMON_GET) == FALSE && menuSelected == MENU_BAG) || (HSM_POKEDEX_ENABLED == FALSE && menuSelected == MENU_PARTY))
     {
       menuSelected = MENU_OPTIONS;
       break;
