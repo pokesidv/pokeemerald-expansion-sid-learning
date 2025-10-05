@@ -524,8 +524,7 @@ static const u8 *const gTimeOfDayStringsTable[TIMES_OF_DAY_COUNT] = {
 
 static void ShowTimeWindow(void)
 {
-    u8* ptr;
-    u8 convertedHours;
+    u8* ptr; // pointer to add the hour / minute separator
 
     // print window
     sStartClockWindowId = AddWindow(&sWindowTemplate_StartClock);
@@ -551,14 +550,12 @@ static void ShowTimeWindow(void)
         minutes = gLocalTime.minutes;
     }
 
-    convertedHours = hours;
-
     // print day of week
     StringExpandPlaceholders(gStringVar4, gDayNameStringsTable[day]);
     AddTextPrinterParameterized(sStartClockWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL); 
     
     // print time
-    ptr = ConvertIntToDecimalStringN(gStringVar4, convertedHours, STR_CONV_MODE_LEFT_ALIGN, 3);
+    ptr = ConvertIntToDecimalStringN(gStringVar4, hours, STR_CONV_MODE_LEFT_ALIGN, 3);
     *ptr = 0xF0;
     ConvertIntToDecimalStringN(ptr + 1, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
     AddTextPrinterParameterized(sStartClockWindowId, FONT_SMALL, gStringVar4, GetStringRightAlignXOffset(FONT_SMALL, gStringVar4, CLOCK_WINDOW_WIDTH), 1, 0xFF, NULL); 

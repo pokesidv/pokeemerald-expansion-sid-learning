@@ -45,6 +45,7 @@
 #include "task.h"
 #include "text.h"
 #include "text_window.h"
+#include "time_waiting.h"
 #include "trainer_card.h"
 #include "window.h"
 #include "union_room.h"
@@ -108,9 +109,9 @@ enum MENU
   MENU_FLAG,
 };
 
-#define HSM_SHOW_POKEDEX FALSE
+#define HSM_SHOW_POKEDEX TRUE
 #define HSM_POKEDEX_ENABLED (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE && HSM_SHOW_POKEDEX)
-#define HSM_SHOW_POKETCH FALSE
+#define HSM_SHOW_POKETCH TRUE
 #define HSM_POKETCH_ENABLED (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE && HSM_SHOW_POKETCH)
 
 enum FLAG_VALUES
@@ -132,7 +133,8 @@ struct HeatStartMenu
 {
   MainCallback savedCallback;
   u32 loadState;
-  u32 sStartClockWindowId;
+  u32 sDayWindowId;
+  u32 sTimeWindowId;
   u32 sMenuNameWindowId;
   u32 sSafariBallsWindowId;
   u32 flag; // some u32 holding values for controlling the sprite anims and lifetime
@@ -194,23 +196,32 @@ static const struct WindowTemplate sSaveInfoWindowTemplate = {
     .paletteNum = 15,
     .baseBlock = 8};
 
-static const struct WindowTemplate sWindowTemplate_StartClock = {
+static const struct WindowTemplate sWindowTemplate_StartDay = {
     .bg = 0,
-    .tilemapLeft = 2,
-    .tilemapTop = 17,
-    .width = 12, // If you want to shorten the dates to Sat., Sun., etc., change this to 9
+    .tilemapLeft = 1, 
+    .tilemapTop = 1, 
+    .width = 11, // If you want to shorten the dates to Sat., Sun., etc., change this to 8?
     .height = 2,
     .paletteNum = 15,
     .baseBlock = 0x30};
 
+static const struct WindowTemplate sWindowTemplate_StartClock = {
+    .bg = 0,
+    .tilemapLeft = 14, 
+    .tilemapTop = 1, 
+    .width = 5, 
+    .height = 2,
+    .paletteNum = 15,
+    .baseBlock = 0x30 + (11 * 2)};
+
 static const struct WindowTemplate sWindowTemplate_MenuName = {
     .bg = 0,
-    .tilemapLeft = 16,
+    .tilemapLeft = 17,
     .tilemapTop = 17,
     .width = 7,
     .height = 2,
     .paletteNum = 15,
-    .baseBlock = 0x30 + (12 * 2)};
+    .baseBlock = 0x30 + (11 * 2) + (5 * 2)};
 
 static const struct WindowTemplate sWindowTemplate_SafariBalls = {
     .bg = 0,
@@ -219,7 +230,7 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
     .width = 7,
     .height = 4,
     .paletteNum = 15,
-    .baseBlock = (0x30 + (12 * 2)) + (7 * 2)};
+    .baseBlock = 0x30 + (11 * 2) + (5 * 2) + (7 * 2)};
 
 static const struct SpritePalette sSpritePal_Icon[] =
     {
@@ -603,30 +614,33 @@ static void SpriteCB_IconFlag(struct Sprite *sprite)
 // If you want to shorten the dates to Sat., Sun., etc., change this to 70
 #define CLOCK_WINDOW_WIDTH 100
 
-static const u8 gText_Friday[] = _("Friday,");
-static const u8 gText_Saturday[] = _("Saturday,");
-static const u8 gText_Sunday[] = _("Sunday,");
-static const u8 gText_Monday[] = _("Monday,");
-static const u8 gText_Tuesday[] = _("Tuesday,");
-static const u8 gText_Wednesday[] = _("Wednesday,");
-static const u8 gText_Thursday[] = _("Thursday,");
+static const u8 gText_Friday[]    = _("Friday");
+static const u8 gText_Saturday[]  = _("Saturday");
+static const u8 gText_Sunday[]    = _("Sunday");
+static const u8 gText_Monday[]    = _("Monday");
+static const u8 gText_Tuesday[]   = _("Tuesday");
+static const u8 gText_Wednesday[] = _("Wednesday");
+static const u8 gText_Thursday[]  = _("Thursday");
 
-static const u8 *const gDayNameStringsTable[] =
-    {
-        gText_Friday,
-        gText_Saturday,
-        gText_Sunday,
-        gText_Monday,
-        gText_Tuesday,
-        gText_Wednesday,
-        gText_Thursday};
+static const u8 *const gDayNameStringsTable[7] = {
+    gText_Sunday,
+    gText_Monday,
+    gText_Tuesday,
+    gText_Wednesday,
+    gText_Thursday,
+    gText_Friday,
+    gText_Saturday,
+};
 
-static const u8 gText_CurrentTime[] = _("  {STR_VAR_3} {CLEAR_TO 64}{STR_VAR_1}:{STR_VAR_2}");
-static const u8 gText_CurrentTimeOff[] = _("  {STR_VAR_3} {CLEAR_TO 64}{STR_VAR_1} {STR_VAR_2}");
-static const u8 gText_CurrentTimeAM[] = _("  {STR_VAR_3} {CLEAR_TO 51}{STR_VAR_1}:{STR_VAR_2} AM");
-static const u8 gText_CurrentTimeAMOff[] = _("  {STR_VAR_3} {CLEAR_TO 51}{STR_VAR_1} {STR_VAR_2} AM");
-static const u8 gText_CurrentTimePM[] = _("  {STR_VAR_3} {CLEAR_TO 51}{STR_VAR_1}:{STR_VAR_2} PM");
-static const u8 gText_CurrentTimePMOff[] = _("  {STR_VAR_3} {CLEAR_TO 51}{STR_VAR_1} {STR_VAR_2} PM");
+static const u8 *const gTimeOfDayStringsTable[TIMES_OF_DAY_COUNT] = {
+    COMPOUND_STRING(" morning"),
+    COMPOUND_STRING(""),
+    COMPOUND_STRING(" evening"),
+    COMPOUND_STRING(" night"),
+};
+
+static const u8 gText_CurrentTime[] = _("{CLEAR_TO 7}{STR_VAR_1}{CLEAR_TO 40}");
+static const u8 gText_CurrentDay[] = _("{CLEAR_TO 2}{STR_VAR_3}{STR_VAR_2}{CLEAR_TO 88}");
 
 static void SetSelectedMenu(void)
 {
@@ -683,7 +697,8 @@ void HeatStartMenu_Init(void)
 
   sHeatStartMenu->savedCallback = CB2_ReturnToFieldWithOpenMenu;
   sHeatStartMenu->loadState = 0;
-  sHeatStartMenu->sStartClockWindowId = 0;
+  sHeatStartMenu->sDayWindowId = 0;
+  sHeatStartMenu->sTimeWindowId = 0;
   sHeatStartMenu->flag = 0;
 
   if (GetSafariZoneFlag() == FALSE)
@@ -722,7 +737,7 @@ void HeatStartMenu_Init(void)
     HeatStartMenu_SafariZone_CreateSprites();
     HeatStartMenu_LoadBgGfx();
     ShowSafariBallsWindow();
-    HeatStartMenu_ShowTimeWindow();
+    // HeatStartMenu_ShowTimeWindow();
     sHeatStartMenu->sMenuNameWindowId = AddWindow(&sWindowTemplate_MenuName);
     HeatStartMenu_UpdateMenuName();
     CreateTask(Task_HeatStartMenu_SafariZone_HandleMainInput, 0);
@@ -832,59 +847,62 @@ static void HeatStartMenu_LoadBgGfx(void)
 
 static void HeatStartMenu_ShowTimeWindow(void)
 {
-  // u8 analogHour;
-
+  // get time
   u32 day;
   s8 hours;
   s8 minutes;
 
   if (OW_USE_FAKE_RTC)
   {
-    struct SiiRtcInfo *rtc = FakeRtc_GetCurrentTime();
-    day = rtc->dayOfWeek;
-    hours = rtc->hour;
-    minutes = rtc->minute;
+      struct SiiRtcInfo *rtc = FakeRtc_GetCurrentTime();
+      day = rtc->dayOfWeek;
+      hours = rtc->hour;
+      minutes = rtc->minute;
   }
   else
   {
-    day = ((gLocalTime.days - 1) + 6) % 7;
-    RtcCalcLocalTime();
-    hours = gLocalTime.hours;
-    minutes = gLocalTime.minutes;
+      day = ((gLocalTime.days - 1) + 6) % 7 ;
+      RtcCalcLocalTime();
+      hours = gLocalTime.hours;
+      minutes = gLocalTime.minutes;
   }
-
-  // print window
-  sHeatStartMenu->sStartClockWindowId = AddWindow(&sWindowTemplate_StartClock);
-  FillWindowPixelBuffer(sHeatStartMenu->sStartClockWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-  PutWindowTilemap(sHeatStartMenu->sStartClockWindowId);
+  
+  // create windows
+  sHeatStartMenu->sDayWindowId = AddWindow(&sWindowTemplate_StartDay);
+  FillWindowPixelBuffer(sHeatStartMenu->sDayWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+  PutWindowTilemap(sHeatStartMenu->sDayWindowId);
+  sHeatStartMenu->sTimeWindowId = AddWindow(&sWindowTemplate_StartClock);
+  FillWindowPixelBuffer(sHeatStartMenu->sTimeWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+  PutWindowTilemap(sHeatStartMenu->sTimeWindowId);
   FlagSet(FLAG_TEMP_5);
 
-  // analogHour = (hours >= 13 && hours <= 24) ? hours - 12 : hours;
-
+  // day
   StringCopy(gStringVar3, gDayNameStringsTable[(day % 7)]);
-  ConvertIntToDecimalStringN(gStringVar1, hours, STR_CONV_MODE_LEADING_ZEROS, 2);
-  ConvertIntToDecimalStringN(gStringVar2, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-  // ConvertIntToDecimalStringN(gStringVar1, analogHour, STR_CONV_MODE_LEADING_ZEROS, 2);
-
+  // time of day
+  enum TimeOfDay timeOfDay = AccurateTimeOfDay();
+  StringExpandPlaceholders(gStringVar2, gTimeOfDayStringsTable[timeOfDay]);
+  // display text
+  StringExpandPlaceholders(gStringVar4, gText_CurrentDay);
+  AddTextPrinterParameterized(sHeatStartMenu->sDayWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
+  CopyWindowToVram(sHeatStartMenu->sDayWindowId, COPYWIN_GFX);
+  
+  // time
+  u8* ptr;
+  ptr = ConvertIntToDecimalStringN(gStringVar1, hours, STR_CONV_MODE_LEADING_ZEROS, 2);
+  *ptr = 0xF0;
+  ConvertIntToDecimalStringN(ptr + 1, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+  // display text
   StringExpandPlaceholders(gStringVar4, gText_CurrentTime);
-  // if (hours >= 13 && hours <= 24)
-  //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimePM);
-  // else
-  //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimeAM);
-
-  AddTextPrinterParameterized(sHeatStartMenu->sStartClockWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
-  CopyWindowToVram(sHeatStartMenu->sStartClockWindowId, COPYWIN_GFX);
+  AddTextPrinterParameterized(sHeatStartMenu->sTimeWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
+  CopyWindowToVram(sHeatStartMenu->sTimeWindowId, COPYWIN_GFX);
 }
 
 static void HeatStartMenu_UpdateClockDisplay(void)
 {
-  
   if (!FlagGet(FLAG_TEMP_5))
   return;
 
-
-  // u8 analogHour;
-
+  // get time
   u32 day;
   s8 hours;
   s8 minutes;
@@ -910,46 +928,36 @@ static void HeatStartMenu_UpdateClockDisplay(void)
     onOffColon = gLocalTime.seconds % 2;
   }
   
-  // analogHour = (hours >= 13 && hours <= 24) ? hours - 12 : hours;
-
+  
+  // day
   StringCopy(gStringVar3, gDayNameStringsTable[(day % 7)]);
-  ConvertIntToDecimalStringN(gStringVar1, hours, STR_CONV_MODE_LEADING_ZEROS, 2);
-  ConvertIntToDecimalStringN(gStringVar2, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-  // ConvertIntToDecimalStringN(gStringVar1, analogHour, STR_CONV_MODE_LEADING_ZEROS, 2);
-  if (hours == 0)
-    ConvertIntToDecimalStringN(gStringVar1, 12, STR_CONV_MODE_LEADING_ZEROS, 2);
-  if (hours == 12)
-    ConvertIntToDecimalStringN(gStringVar1, 12, STR_CONV_MODE_LEADING_ZEROS, 2);
-
-  if (onOffColon)
-  {
-    StringExpandPlaceholders(gStringVar4, gText_CurrentTime);
-    // if (hours >= 12 && hours <= 24)
-    //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimePM);
-    // else
-    //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimeAM);
-  }
-  else
-  {
-    StringExpandPlaceholders(gStringVar4, gText_CurrentTimeOff);
-    // if (hours >= 12 && hours <= 24)
-    //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimePMOff);
-    // else
-    //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimeAMOff);
-  }
-
-  AddTextPrinterParameterized(sHeatStartMenu->sStartClockWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
-  CopyWindowToVram(sHeatStartMenu->sStartClockWindowId, COPYWIN_GFX);
+  // time of day
+  enum TimeOfDay timeOfDay = AccurateTimeOfDay();
+  StringExpandPlaceholders(gStringVar2, gTimeOfDayStringsTable[timeOfDay]);
+  // display text
+  StringExpandPlaceholders(gStringVar4, gText_CurrentDay);
+  AddTextPrinterParameterized(sHeatStartMenu->sDayWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
+  CopyWindowToVram(sHeatStartMenu->sDayWindowId, COPYWIN_GFX);
+  
+  // time
+  u8* ptr;
+  ptr = ConvertIntToDecimalStringN(gStringVar1, hours, STR_CONV_MODE_LEADING_ZEROS, 2);
+  *ptr = onOffColon ? 0xF0 : ' '; // blinking colon
+  ConvertIntToDecimalStringN(ptr + 1, minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+  // display text
+  StringExpandPlaceholders(gStringVar4, gText_CurrentTime);
+  AddTextPrinterParameterized(sHeatStartMenu->sTimeWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
+  CopyWindowToVram(sHeatStartMenu->sTimeWindowId, COPYWIN_GFX);
 }
 
-static const u8 gText_Poketch[] = _("  PokeNav");
-static const u8 gText_Pokedex[] = _("  Pokédex");
-static const u8 gText_Party[] = _("    Party ");
-static const u8 gText_Bag[] = _("      Bag  ");
-static const u8 gText_Trainer[] = _("   Trainer");
-static const u8 gText_Save[] = _("     Save  ");
-static const u8 gText_Options[] = _("   Options");
-static const u8 gText_Flag[] = _("   Retire");
+static const u8 gText_Poketch[] = _("{CLEAR_TO 7}PokeNav{CLEAR_TO 56}");
+static const u8 gText_Pokedex[] = _("{CLEAR_TO 7}Pokédex{CLEAR_TO 56}");
+static const u8 gText_Party[]   = _("{CLEAR_TO 12}Party{CLEAR_TO 56}");
+static const u8 gText_Bag[]     = _("{CLEAR_TO 17}Bag{CLEAR_TO 56}");
+static const u8 gText_Trainer[] = _("{CLEAR_TO 7}Trainer{CLEAR_TO 56}");
+static const u8 gText_Save[]    = _("{CLEAR_TO 14}Save{CLEAR_TO 56}");
+static const u8 gText_Options[] = _("{CLEAR_TO 7}Options{CLEAR_TO 56}");
+static const u8 gText_Flag[]    = _("{CLEAR_TO 10}Retire{CLEAR_TO 56}");
 
 static void HeatStartMenu_UpdateMenuName(void)
 {
@@ -993,15 +1001,19 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
   u8 *buf = GetBgTilemapBuffer(0);
 
   FillWindowPixelBuffer(sHeatStartMenu->sMenuNameWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-  FillWindowPixelBuffer(sHeatStartMenu->sStartClockWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+  FillWindowPixelBuffer(sHeatStartMenu->sDayWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+  FillWindowPixelBuffer(sHeatStartMenu->sTimeWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
 
   ClearWindowTilemap(sHeatStartMenu->sMenuNameWindowId);
-  ClearWindowTilemap(sHeatStartMenu->sStartClockWindowId);
+  ClearWindowTilemap(sHeatStartMenu->sDayWindowId);
+  ClearWindowTilemap(sHeatStartMenu->sTimeWindowId);
 
   CopyWindowToVram(sHeatStartMenu->sMenuNameWindowId, COPYWIN_GFX);
-  CopyWindowToVram(sHeatStartMenu->sStartClockWindowId, COPYWIN_GFX);
+  CopyWindowToVram(sHeatStartMenu->sDayWindowId, COPYWIN_GFX);
+  CopyWindowToVram(sHeatStartMenu->sTimeWindowId, COPYWIN_GFX);
 
-  RemoveWindow(sHeatStartMenu->sStartClockWindowId);
+  RemoveWindow(sHeatStartMenu->sDayWindowId);
+  RemoveWindow(sHeatStartMenu->sTimeWindowId);
   RemoveWindow(sHeatStartMenu->sMenuNameWindowId);
 
   if (GetSafariZoneFlag() == TRUE)
@@ -1575,7 +1587,9 @@ static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
     LoadPalette(sIconPal, OBJ_PLTT_ID(index), PLTT_SIZE_4BPP);
   }
 
-  HeatStartMenu_UpdateClockDisplay();
+  if(GetSafariZoneFlag() == FALSE){
+    HeatStartMenu_UpdateClockDisplay();
+  }
   if (JOY_NEW(A_BUTTON))
   {
     PlaySE(SE_SELECT);
