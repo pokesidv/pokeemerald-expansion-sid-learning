@@ -23,6 +23,7 @@
 #include "follower_npc.h"
 #include "item_menu.h"
 #include "link.h"
+#include "map_name_popup.h"
 #include "match_call.h"
 #include "metatile_behavior.h"
 #include "overworld.h"
@@ -37,7 +38,6 @@
 #include "vs_seeker.h"
 #include "wild_encounter.h"
 #include "field_weather.h"
-#include "map_name_popup.h"
 #include "constants/event_bg.h"
 #include "constants/event_objects.h"
 #include "constants/field_poison.h"
@@ -239,11 +239,10 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         return TRUE;
     if (input->pressedStartButton)
     {
-        if(!FuncIsActiveTask(Task_MapNamePopUpWindow)){
-            PlaySE(SE_WIN_OPEN);
-            HeatStartMenu_Init();
-            return TRUE;
-        }
+        PlaySE(SE_WIN_OPEN);
+        HideMapNamePopUpWindow();
+        HeatStartMenu_Init();
+        return TRUE;
     }
 
     if (input->tookStep && TryFindHiddenPokemon())
