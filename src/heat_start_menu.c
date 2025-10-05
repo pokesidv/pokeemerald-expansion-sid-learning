@@ -867,7 +867,7 @@ static void HeatStartMenu_ShowTimeWindow(void)
   // else
   //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimeAM);
 
-  AddTextPrinterParameterized(sHeatStartMenu->sStartClockWindowId, 1, gStringVar4, 0, 1, 0xFF, NULL);
+  AddTextPrinterParameterized(sHeatStartMenu->sStartClockWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
   CopyWindowToVram(sHeatStartMenu->sStartClockWindowId, COPYWIN_GFX);
 }
 
@@ -933,7 +933,7 @@ static void HeatStartMenu_UpdateClockDisplay(void)
     //   StringExpandPlaceholders(gStringVar4, gText_CurrentTimeAMOff);
   }
 
-  AddTextPrinterParameterized(sHeatStartMenu->sStartClockWindowId, 1, gStringVar4, 0, 1, 0xFF, NULL);
+  AddTextPrinterParameterized(sHeatStartMenu->sStartClockWindowId, FONT_SMALL, gStringVar4, 0, 1, 0xFF, NULL);
   CopyWindowToVram(sHeatStartMenu->sStartClockWindowId, COPYWIN_GFX);
 }
 
