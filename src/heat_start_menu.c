@@ -74,13 +74,12 @@ static void SpriteCB_Icon_Common(struct Sprite *sprite, u8 menu);
 
 /* TASKs */
 static void Task_HeatStartMenu_HandleMainInput(u8 taskId);
-static void Task_HeatStartMenu_SafariZone_HandleMainInput(u8 taskId);
 static void Task_HandleSave(u8 taskId);
 
 /* OTHER FUNCTIONS */
 static void HeatStartMenu_LoadSprites(void);
 static void HeatStartMenu_CreateSprites(void);
-static void HeatStartMenu_SafariZone_CreateSprites(void);
+static void HeatStartMenu_CreateSprite(u8 menu, u32 x, u32 y);
 static void HeatStartMenu_LoadBgGfx(void);
 static void HeatStartMenu_ShowTimeWindow(void);
 static void HeatStartMenu_UpdateClockDisplay(void);
@@ -102,9 +101,16 @@ static void ShowSaveInfoWindow(void);
 static u8 SaveConfirmSaveCallback(void);
 static void InitSave(void);
 
-static void SetSelectedMenu(void);
+static void SetInitialSelectedOption(void);
+static bool8 IsMenuOptionShown(u8 menu);
+static u8 HowManyOptionsShown(void);
+static u8 IndexToShownOption(u8 index);
+static u8 ShownOptionToIndex(u8 option);
 static void ShowSafariBallsWindow(void);
 static void HeatStartMenu_ExitAndClearTilemap(void);
+static void HeatStartMenu_CleanupTextWindow(u32 windowId);
+static void HeatStartMenu_CleanupSprite(struct Sprite *sprite);
+static void HeatStartMenu_CleanupSpriteFromMenuOption(u8 menu);
 static void HeatStartMenu_OpenMenu(void);
 static void DoCleanUpAndStartSaveMenu(void);
 static void DoCleanUpAndStartSafariZoneRetire(void);
@@ -112,20 +118,16 @@ static void DoCleanUpAndStartSafariZoneRetire(void);
 /* ENUMs */
 enum MENU
 {
-  MENU_POKEDEX,
-  MENU_PARTY,
-  MENU_BAG,
-  MENU_POKETCH,
-  MENU_TRAINER_CARD,
-  MENU_SAVE,
-  MENU_OPTIONS,
-  MENU_FLAG,
+  HSMO_POKEDEX,
+  HSMO_PARTY,
+  HSMO_BAG,
+  HSMO_POKETCH,
+  HSMO_TRAINER_CARD,
+  HSMO_OPTIONS,
+  HSMO_SAVE,
+  HSMO_FLAG,
+  HSMO_COUNT,
 };
-
-#define HSM_SHOW_POKEDEX FALSE
-#define HSM_POKEDEX_ENABLED (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE && HSM_SHOW_POKEDEX)
-#define HSM_SHOW_POKETCH FALSE
-#define HSM_POKETCH_ENABLED (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE && HSM_SHOW_POKETCH)
 
 enum FLAG_VALUES
 {
@@ -171,8 +173,18 @@ static EWRAM_DATA u8 sSaveInfoWindowId = 0;
 
 // --BG-GFX--
 static const u32 sStartMenuTiles[] = INCBIN_U32("graphics/heat_start_menu/bg.4bpp.lz");
-static const u32 sStartMenuTilemap[] = INCBIN_U32("graphics/heat_start_menu/bg.bin.lz");
-static const u32 sStartMenuTilemapSafari[] = INCBIN_U32("graphics/heat_start_menu/bg_safari.bin.lz");
+static const u32 sStartMenuTilemap2[] = INCBIN_U32("graphics/heat_start_menu/bg_2slots.bin.lz");
+static const u32 sStartMenuTilemap3[] = INCBIN_U32("graphics/heat_start_menu/bg_3slots.bin.lz");
+static const u32 sStartMenuTilemap4[] = INCBIN_U32("graphics/heat_start_menu/bg_4slots.bin.lz");
+static const u32 sStartMenuTilemap5[] = INCBIN_U32("graphics/heat_start_menu/bg_5slots.bin.lz");
+static const u32 sStartMenuTilemap6[] = INCBIN_U32("graphics/heat_start_menu/bg_6slots.bin.lz");
+static const u32 sStartMenuTilemap7[] = INCBIN_U32("graphics/heat_start_menu/bg_7slots.bin.lz");
+static const u32 sStartMenuTilemapSafari2[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_2slots.bin.lz");
+static const u32 sStartMenuTilemapSafari3[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_2slots.bin.lz");
+static const u32 sStartMenuTilemapSafari4[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_4slots.bin.lz");
+static const u32 sStartMenuTilemapSafari5[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_5slots.bin.lz");
+static const u32 sStartMenuTilemapSafari6[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_6slots.bin.lz");
+static const u32 sStartMenuTilemapSafari7[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_7slots.bin.lz");
 static const u16 sStartMenuPalette[] = INCBIN_U16("graphics/heat_start_menu/bg.gbapal");
 const u16 gStandardMenuPalette[] = INCBIN_U16("graphics/interface/std_menu.gbapal");
 
@@ -525,42 +537,42 @@ static const struct SpriteTemplate gSpriteIconFlag = {
 // sprite animation callbacks for each icon
 static void SpriteCB_IconPoketch(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_POKETCH);
+  SpriteCB_Icon_Common(sprite, HSMO_POKETCH);
 }
 
 static void SpriteCB_IconPokedex(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_POKEDEX);
+  SpriteCB_Icon_Common(sprite, HSMO_POKEDEX);
 }
 
 static void SpriteCB_IconParty(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_PARTY);
+  SpriteCB_Icon_Common(sprite, HSMO_PARTY);
 }
 
 static void SpriteCB_IconBag(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_BAG);
+  SpriteCB_Icon_Common(sprite, HSMO_BAG);
 }
 
 static void SpriteCB_IconTrainerCard(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_TRAINER_CARD);
+  SpriteCB_Icon_Common(sprite, HSMO_TRAINER_CARD);
 }
 
 static void SpriteCB_IconSave(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_SAVE);
+  SpriteCB_Icon_Common(sprite, HSMO_SAVE);
 }
 
 static void SpriteCB_IconOptions(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_OPTIONS);
+  SpriteCB_Icon_Common(sprite, HSMO_OPTIONS);
 }
 
 static void SpriteCB_IconFlag(struct Sprite *sprite)
 {
-  SpriteCB_Icon_Common(sprite, MENU_FLAG);
+  SpriteCB_Icon_Common(sprite, HSMO_FLAG);
 }
 
 // common code for all icon sprite callbacks
@@ -612,71 +624,134 @@ void HeatStartMenu_Init(void)
   sHeatStartMenu->sTimeWindowId = 0;
   sHeatStartMenu->sMapNameWindowId = 0;
   sHeatStartMenu->flag = 0;
-
-  if (GetSafariZoneFlag() == FALSE)
+  
+  SetInitialSelectedOption();
+  HeatStartMenu_LoadSprites();
+  HeatStartMenu_CreateSprites();
+  HeatStartMenu_LoadBgGfx();
+  if (GetSafariZoneFlag())
   {
-    if (HSM_POKETCH_ENABLED == FALSE && menuSelected == 0)
-    {
-      menuSelected = 255;
-    }
-
-    if (menuSelected == MENU_FLAG)
-    {
-      menuSelected = MENU_POKEDEX;
-    }
-
-    if (menuSelected == 255)
-    {
-      SetSelectedMenu();
-    }
-
-    HeatStartMenu_LoadSprites();
-    HeatStartMenu_CreateSprites();
-    HeatStartMenu_LoadBgGfx();
-    HeatStartMenu_ShowTimeWindow();
-    HeatStartMenu_ShowMapNameWindow();
-    sHeatStartMenu->sMenuNameWindowId = AddWindow(&sWindowTemplate_MenuName);
-    HeatStartMenu_UpdateMenuName();
-    CreateTask(Task_HeatStartMenu_HandleMainInput, 0);
-  }
-  else
-  {
-    if (menuSelected == 255 || menuSelected == MENU_POKETCH || menuSelected == MENU_SAVE)
-    {
-      menuSelected = MENU_FLAG;
-    }
-
-    HeatStartMenu_LoadSprites();
-    HeatStartMenu_SafariZone_CreateSprites();
-    HeatStartMenu_LoadBgGfx();
     ShowSafariBallsWindow();
-    HeatStartMenu_ShowMapNameWindow();
-    sHeatStartMenu->sMenuNameWindowId = AddWindow(&sWindowTemplate_MenuName);
-    HeatStartMenu_UpdateMenuName();
-    CreateTask(Task_HeatStartMenu_SafariZone_HandleMainInput, 0);
-  }
-}
-
-static void SetSelectedMenu(void)
-{
-  if (HSM_POKETCH_ENABLED)
-  {
-    menuSelected = MENU_POKETCH;
-  }
-  else if (HSM_POKEDEX_ENABLED)
-  {
-    menuSelected = MENU_POKEDEX;
-  }
-  else if (FlagGet(FLAG_SYS_POKEMON_GET) == TRUE)
-  {
-    menuSelected = MENU_PARTY;
   }
   else
   {
-    menuSelected = MENU_BAG;
+    HeatStartMenu_ShowTimeWindow();
   }
+  HeatStartMenu_ShowMapNameWindow();
+  sHeatStartMenu->sMenuNameWindowId = AddWindow(&sWindowTemplate_MenuName);
+  HeatStartMenu_UpdateMenuName();
+  CreateTask(Task_HeatStartMenu_HandleMainInput, 0);
 }
 
+static void SetInitialSelectedOption(void)
+{
+  u8 m;
+  for(m = 0; m < HSMO_COUNT; m++)
+  {
+    if (IsMenuOptionShown(m))
+    {
+      menuSelected = m;
+      return;
+    }
+  }
+  menuSelected = HSMO_BAG; // Fallback, should never happen
+}
+
+// change these configs to toggle showing/hiding certain menu options
+// note that some options are also dependent on flags or other conditions
+// e.g. Pokedex requires the Pokedex flag to be set, 
+// while Poketch requires Pokenav flag to be set and Safari Zone to be off
+#define HSM_CONFIG_SHOW_POKEDEX TRUE
+#define HSM_CONFIG_SHOW_PARTY TRUE
+#define HSM_CONFIG_SHOW_BAG TRUE
+#define HSM_CONFIG_SHOW_POKETCH TRUE
+#define HSM_CONFIG_SHOW_TRAINER_CARD TRUE
+#define HSM_CONFIG_SHOW_OPTIONS TRUE
+
+static bool8 IsMenuOptionShown(u8 menu)
+{
+  switch (menu)
+  {
+  case HSMO_POKEDEX:
+    return FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE && HSM_CONFIG_SHOW_POKEDEX;
+  case HSMO_PARTY:
+    return FlagGet(FLAG_SYS_POKEMON_GET) && HSM_CONFIG_SHOW_PARTY;
+  case HSMO_BAG:
+    return HSM_CONFIG_SHOW_BAG;
+  case HSMO_POKETCH:
+    return GetSafariZoneFlag() == FALSE && FlagGet(FLAG_SYS_POKENAV_GET) == TRUE && HSM_CONFIG_SHOW_POKETCH;
+  case HSMO_TRAINER_CARD:
+    return HSM_CONFIG_SHOW_TRAINER_CARD;
+  case HSMO_SAVE:
+    return GetSafariZoneFlag() == FALSE;
+  case HSMO_OPTIONS:
+    return HSM_CONFIG_SHOW_OPTIONS;
+  case HSMO_FLAG:
+    return GetSafariZoneFlag() == TRUE;
+  default:
+    return FALSE; // Fallback, should never happen
+  }
+  return FALSE; // Fallback, should never happen
+}
+
+static u8 HowManyOptionsShown(void)
+{
+  u8 count = 0;
+  u8 m;
+  for(m = 0; m < HSMO_COUNT; m++)
+  {
+    if (IsMenuOptionShown(m))
+    {
+      count++;
+    }
+  }
+  return count;
+}
+
+static u8 IndexToShownOption(u8 index)
+{
+  u8 count = 0;
+  u8 m;
+  for(m = 0; m < HSMO_COUNT; m++)
+  {
+    if (IsMenuOptionShown(m))
+    {
+      if(count == index)
+      {
+        return m;
+      }
+      count++;
+    }
+  }
+  // if the index was out of bounds for the shown options, return the first shown option
+  for(m = 0; m < HSMO_COUNT; m++)
+  {
+    if (IsMenuOptionShown(m))
+    {
+        return m;
+    }
+  }
+  return HSMO_BAG; // Fallback, should never happen
+}
+
+static u8 ShownOptionToIndex(u8 option)
+{
+  u8 count = 0;
+  u8 m;
+  for(m = 0; m < HSMO_COUNT; m++)
+  {
+    if (IsMenuOptionShown(m))
+    {
+      if(m == option)
+      {
+        return count;
+      }
+      count++;
+    }
+  }
+  return 0; // Fallback, should never happen
+}
+   
 ///// =====================================================================================
 ///// ============== Background and sprites ===============================================
 ///// =====================================================================================
@@ -686,13 +761,53 @@ static void HeatStartMenu_LoadBgGfx(void)
   u8 *buf = GetBgTilemapBuffer(0);
   LoadBgTilemap(0, 0, 0, 0);
   DecompressAndCopyTileDataToVram(0, sStartMenuTiles, 0, 0, 0); // Keep as sStartMenuTiles (u32)
-  if (GetSafariZoneFlag() == FALSE)
+  if (GetSafariZoneFlag())
   {
-    DecompressDataWithHeaderWram(sStartMenuTilemap, buf);
+    switch (HowManyOptionsShown())
+    {
+    case 2:
+      DecompressDataWithHeaderWram(sStartMenuTilemapSafari2, buf);
+      break;
+    case 3:
+      DecompressDataWithHeaderWram(sStartMenuTilemapSafari3, buf);
+      break;
+    case 4:
+      DecompressDataWithHeaderWram(sStartMenuTilemapSafari4, buf);
+      break;
+    case 5:
+      DecompressDataWithHeaderWram(sStartMenuTilemapSafari5, buf);
+      break;
+    case 6:
+      DecompressDataWithHeaderWram(sStartMenuTilemapSafari6, buf);
+      break;
+    default:
+      DecompressDataWithHeaderWram(sStartMenuTilemapSafari7, buf);
+      break;
+    }
   }
   else
   {
-    DecompressDataWithHeaderWram(sStartMenuTilemapSafari, buf);
+    switch (HowManyOptionsShown())
+    {
+    case 2:
+      DecompressDataWithHeaderWram(sStartMenuTilemap2, buf);
+      break;
+    case 3:
+      DecompressDataWithHeaderWram(sStartMenuTilemap3, buf);
+      break;
+    case 4:
+      DecompressDataWithHeaderWram(sStartMenuTilemap4, buf);
+      break;
+    case 5:
+      DecompressDataWithHeaderWram(sStartMenuTilemap5, buf);
+      break;
+    case 6:
+      DecompressDataWithHeaderWram(sStartMenuTilemap6, buf);
+      break;
+    default:
+      DecompressDataWithHeaderWram(sStartMenuTilemap7, buf);
+      break;
+    }
   }
 
   // Load the standard menu palette
@@ -718,57 +833,78 @@ static void HeatStartMenu_CreateSprites(void)
 {
   u32 x = 224;
 
-  if (HSM_POKETCH_ENABLED)
+  u8 count = HowManyOptionsShown();
+
+  // perfect for the sweet spot of 5 options
+  u32 start = 16;
+  u32 delta = 32;
+  u32 last = 18*8;
+
+  switch (count)
   {
-    sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x - 1, 14 - 2, 0);
-    sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, 38 - 3, 0);
-    sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBag, x, 60 - 2, 0);
-    sHeatStartMenu->spriteIdPoketch = CreateSprite(&gSpriteIconPoketch, x, 84 + 1, 0);
-    sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCard, x, 109, 0);
-    sHeatStartMenu->spriteIdSave = CreateSprite(&gSpriteIconSave, x, 130, 0);
-    sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, 150, 0);
-    return;
+  case 2:
+    start += 24;
+    delta += 8;
+    last -= 24;
+    break;
+  case 3:
+    start += 8;
+    delta += 8;
+    last -= 16;
+    break;
+  case 4:
+    delta += 8;
+    break;
+  case 6:
+    delta -= 8;
+    break;
+  case 7:
+  start -= 4;
+    delta -= 9;
+    last += 4;
+    break;
+  default:
+    break;
   }
-  else if (HSM_POKEDEX_ENABLED)
-  {
-    sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x - 1, 14, 0);
-    sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, 38 - 1, 0);
-    sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBag, x, 60 + 1, 0);
-    sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCard, x, 84 + 2, 0);
-    sHeatStartMenu->spriteIdSave = CreateSprite(&gSpriteIconSave, x, 109 - 1, 0);
-    sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, 130 - 2, 0);
-    return;
+
+  u8 i;
+  for(i = 0; i < count; i++){
+    u8 menu = IndexToShownOption(i);
+    HeatStartMenu_CreateSprite(menu, x, i==count-1 ? last : start + (i * delta));
   }
-  else if (FlagGet(FLAG_SYS_POKEMON_GET) == TRUE)
-  {
-    sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, 0 + 16, 0);
-    sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBag, x, 32 + 16, 0);
-    sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCard, x, 32*2 + 16, 0);
-    sHeatStartMenu->spriteIdSave = CreateSprite(&gSpriteIconSave, x, 32*3 + 16, 0);
-    sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, 32*4 + 16, 0);
-    return;
-  }
-  else
-  {
-    sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBag, x, 14, 0);
-    sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCard, x, 38 + 1, 0);
-    sHeatStartMenu->spriteIdSave = CreateSprite(&gSpriteIconSave, x, 60 + 3, 0);
-    sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, 84 + 1, 0);
-  }
+
 }
 
-static void HeatStartMenu_SafariZone_CreateSprites(void)
+static void HeatStartMenu_CreateSprite(u8 menu, u32 x, u32 y)
 {
-  u32 x = 224;
-
-  sHeatStartMenu->spriteIdFlag = CreateSprite(&gSpriteIconFlag, x, 14, 0);
-  sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x - 1, 38, 0);
-  sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, 60, 0);
-  sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBag, x, 84, 0);
-  sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCard, x, 109, 0);
-  sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, 130, 0);
+  switch (menu)
+  {
+  case HSMO_POKEDEX:
+    sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x, y, 0);
+    break;
+  case HSMO_PARTY:
+    sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconParty, x, y, 0);
+    break;
+  case HSMO_BAG:
+    sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBag, x, y, 0);
+    break;
+  case HSMO_POKETCH:
+    sHeatStartMenu->spriteIdPoketch = CreateSprite(&gSpriteIconPoketch, x, y, 0);
+    break;
+  case HSMO_TRAINER_CARD:
+    sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCard, x, y, 0);
+    break;
+  case HSMO_SAVE:
+    sHeatStartMenu->spriteIdSave = CreateSprite(&gSpriteIconSave, x, y, 0);
+    break;
+  case HSMO_OPTIONS:
+    sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptions, x, y, 0);
+    break;
+  case HSMO_FLAG:
+    sHeatStartMenu->spriteIdFlag = CreateSprite(&gSpriteIconFlag, x, y, 0);
+    break;
+  }
 }
-
 
 ////// =======================================================================
 ////// ================== All text windows  ==================================
@@ -1012,28 +1148,28 @@ static void HeatStartMenu_UpdateMenuName(void)
 
   switch (menuSelected)
   {
-  case MENU_POKETCH:
+  case HSMO_POKETCH:
     menuNameString = gText_Poketch;
     break;
-  case MENU_POKEDEX:
+  case HSMO_POKEDEX:
     menuNameString = gText_Pokedex;
     break;
-  case MENU_PARTY:
+  case HSMO_PARTY:
     menuNameString = gText_Party;
     break;
-  case MENU_BAG:
+  case HSMO_BAG:
     menuNameString = gText_Bag;
     break;
-  case MENU_TRAINER_CARD:
+  case HSMO_TRAINER_CARD:
     menuNameString = gText_Trainer;
     break;
-  case MENU_SAVE:
+  case HSMO_SAVE:
     menuNameString = gText_Save;
     break;
-  case MENU_OPTIONS:
+  case HSMO_OPTIONS:
     menuNameString = gText_Options;
     break;
-  case MENU_FLAG:
+  case HSMO_FLAG:
     menuNameString = gText_Flag;
     break;
   default:
@@ -1063,35 +1199,20 @@ static void HeatStartMenu_HandleInput_DPADDOWN(void)
   // Needs to be set to 0 so that the selected icons change in the frontend
   sHeatStartMenu->flag = 0;
 
-  switch (menuSelected)
+  u8 index = ShownOptionToIndex(menuSelected);
+  u8 count = HowManyOptionsShown();
+
+  if(index >= count-1)
   {
-  case MENU_OPTIONS:
-    if (HSM_POKEDEX_ENABLED)
-    {
-      menuSelected = MENU_POKEDEX;
-    }
-    else if (FlagGet(FLAG_SYS_POKEMON_GET) == TRUE)
-    {
-      menuSelected = MENU_PARTY;
-    }
-    else
-    {
-      menuSelected = MENU_BAG;
-    }
-    break;
-  default:
-    menuSelected++;
-    PlaySE(SE_SELECT);
-    if (HSM_POKETCH_ENABLED == FALSE && menuSelected == MENU_POKETCH)
-    {
-      menuSelected++;
-    }
-    else if (FlagGet(FLAG_SYS_POKEMON_GET) == FALSE && menuSelected == MENU_PARTY)
-    {
-      menuSelected++;
-    }
-    break;
+    index = 0;
   }
+  else {
+    index++;
+  }
+
+  PlaySE(SE_SELECT);
+  menuSelected = IndexToShownOption(index);
+
   HeatStartMenu_UpdateMenuName();
 }
 
@@ -1099,28 +1220,20 @@ static void HeatStartMenu_HandleInput_DPADUP(void)
 {
   sHeatStartMenu->flag = 0;
 
-  switch (menuSelected)
+  u8 index = ShownOptionToIndex(menuSelected);
+  u8 count = HowManyOptionsShown();
+
+  if(index <= 0)
   {
-  case MENU_POKEDEX:
-    menuSelected = MENU_OPTIONS;
-    break;
-  default:
-    PlaySE(SE_SELECT);
-    if (HSM_POKETCH_ENABLED == FALSE && menuSelected == MENU_TRAINER_CARD)
-    {
-      menuSelected -= 2;
-    }
-    else if ((FlagGet(FLAG_SYS_POKEMON_GET) == FALSE && menuSelected == MENU_BAG) || (HSM_POKEDEX_ENABLED == FALSE && menuSelected == MENU_PARTY))
-    {
-      menuSelected = MENU_OPTIONS;
-      break;
-    }
-    else
-    {
-      menuSelected--;
-    }
-    break;
+    index = count - 1;
   }
+  else {
+    index--;
+  }
+
+  PlaySE(SE_SELECT);
+  menuSelected = IndexToShownOption(index);
+
   HeatStartMenu_UpdateMenuName();
 }
 
@@ -1141,7 +1254,7 @@ static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
     PlaySE(SE_SELECT);
     if (sHeatStartMenu->loadState == 0)
     {
-      if (menuSelected != MENU_SAVE)
+      if (menuSelected != HSMO_SAVE)
       {
         FadeScreen(FADE_TO_BLACK, 0);
       }
@@ -1164,129 +1277,20 @@ static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
   }
   else if (sHeatStartMenu->loadState == 1)
   {
-    if (menuSelected != MENU_SAVE)
-    {
-      HeatStartMenu_OpenMenu();
-    }
-    else
-    {
-      DoCleanUpAndStartSaveMenu();
-    }
-  }
-}
-
-static void HeatStartMenu_SafariZone_HandleInput_DPADDOWN(void)
-{
-  sHeatStartMenu->flag = 0;
-
-  switch (menuSelected)
-  {
-  case MENU_OPTIONS:
-    menuSelected = MENU_FLAG;
-    break;
-  default:
-    PlaySE(SE_SELECT);
-    if (menuSelected == MENU_FLAG)
-    {
-      menuSelected = MENU_POKEDEX;
-    }
-    else if (menuSelected == MENU_BAG)
-    {
-      menuSelected = MENU_TRAINER_CARD;
-    }
-    else if (menuSelected == MENU_TRAINER_CARD)
-    {
-      menuSelected = MENU_OPTIONS;
-    }
-    else
-    {
-      menuSelected++;
-    }
-    break;
-  }
-  HeatStartMenu_UpdateMenuName();
-}
-
-static void HeatStartMenu_SafariZone_HandleInput_DPADUP(void)
-{
-  sHeatStartMenu->flag = 0;
-
-  switch (menuSelected)
-  {
-  case MENU_FLAG:
-    menuSelected = MENU_OPTIONS;
-    break;
-  default:
-    PlaySE(SE_SELECT);
-    if (menuSelected == MENU_POKEDEX)
-    {
-      menuSelected = MENU_FLAG;
-    }
-    else if (menuSelected == MENU_OPTIONS)
-    {
-      menuSelected = MENU_TRAINER_CARD;
-    }
-    else if (menuSelected == MENU_TRAINER_CARD)
-    {
-      menuSelected = MENU_BAG;
-    }
-    else
-    {
-      menuSelected--;
-    }
-    break;
-  }
-  HeatStartMenu_UpdateMenuName();
-}
-
-static void Task_HeatStartMenu_SafariZone_HandleMainInput(u8 taskId)
-{
-  u32 index;
-  if (sHeatStartMenu->loadState == 0 && !gPaletteFade.active)
-  {
-    index = IndexOfSpritePaletteTag(TAG_ICON_PAL);
-    LoadPalette(sIconPal, OBJ_PLTT_ID(index), PLTT_SIZE_4BPP);
-  }
-
-  HeatStartMenu_UpdateClockDisplay();
-  if (JOY_NEW(A_BUTTON))
-  {
-    if (sHeatStartMenu->loadState == 0)
-    {
-      if (menuSelected != MENU_FLAG)
-      {
-        FadeScreen(FADE_TO_BLACK, 0);
-      }
-      sHeatStartMenu->loadState = 1;
-    }
-  }
-  else if (JOY_NEW(B_BUTTON) && sHeatStartMenu->loadState == 0)
-  {
-    PlaySE(SE_SELECT);
-    HeatStartMenu_ExitAndClearTilemap();
-    DestroyTask(taskId);
-  }
-  else if (gMain.newKeys & DPAD_DOWN && sHeatStartMenu->loadState == 0)
-  {
-    HeatStartMenu_SafariZone_HandleInput_DPADDOWN();
-  }
-  else if (gMain.newKeys & DPAD_UP && sHeatStartMenu->loadState == 0)
-  {
-    HeatStartMenu_SafariZone_HandleInput_DPADUP();
-  }
-  else if (sHeatStartMenu->loadState == 1)
-  {
-    if (menuSelected != MENU_FLAG)
-    {
-      HeatStartMenu_OpenMenu();
-    }
-    else
+    if (menuSelected == HSMO_FLAG)
     {
       DoCleanUpAndStartSafariZoneRetire();
     }
+    else if (menuSelected == HSMO_SAVE)
+    {
+      DoCleanUpAndStartSaveMenu();
+    }
+    else
+    {
+      HeatStartMenu_OpenMenu();
+    }
   }
 }
-
 
 ///// =================================================================================
 ///// ============ menu actions =======================================================
@@ -1570,7 +1574,7 @@ static void ShowSaveInfoWindow(void)
   const u8 *suffix;
   u8 *alignedSuffix = gStringVar3;
 
-  if (!HSM_POKEDEX_ENABLED)
+  if (FlagGet(FLAG_SYS_POKEDEX_GET) == FALSE)
   {
     saveInfoWindow.height -= 2;
   }
@@ -1605,7 +1609,7 @@ static void ShowSaveInfoWindow(void)
   xOffset = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 0x70);
   AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gStringVar4, xOffset, yOffset, TEXT_SKIP_DRAW, NULL);
 
-  if (HSM_POKEDEX_ENABLED)
+  if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
   {
     // Print pokedex count
     yOffset += 16;
@@ -1695,7 +1699,7 @@ static void DoCleanUpAndStartSafariZoneRetire(void)
     HeatStartMenu_ExitAndClearTilemap();
     FreezeObjectEvents();
     LockPlayerFieldControls();
-    DestroyTask(FindTaskIdByFunc(Task_HeatStartMenu_SafariZone_HandleMainInput));
+    DestroyTask(FindTaskIdByFunc(Task_HeatStartMenu_HandleMainInput));
     SafariZoneRetirePrompt();
   }
 }
@@ -1704,22 +1708,22 @@ static void HeatStartMenu_OpenMenu(void)
 {
   switch (menuSelected)
   {
-  case MENU_POKETCH:
+  case HSMO_POKETCH:
     DoCleanUpAndChangeCallback(CB2_InitPokeNav);
     break;
-  case MENU_POKEDEX:
+  case HSMO_POKEDEX:
     DoCleanUpAndChangeCallback(CB2_OpenPokedex);
     break;
-  case MENU_PARTY:
+  case HSMO_PARTY:
     DoCleanUpAndChangeCallback(CB2_PartyMenuFromStartMenu);
     break;
-  case MENU_BAG:
+  case HSMO_BAG:
     DoCleanUpAndChangeCallback(CB2_BagMenuFromStartMenu);
     break;
-  case MENU_TRAINER_CARD:
+  case HSMO_TRAINER_CARD:
     DoCleanUpAndOpenTrainerCard();
     break;
-  case MENU_OPTIONS:
+  case HSMO_OPTIONS:
     DoCleanUpAndChangeCallback(CB2_InitOptionMenu);
     break;
   }
@@ -1734,75 +1738,34 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
   u32 i;
   u8 *buf = GetBgTilemapBuffer(0);
 
-  FillWindowPixelBuffer(sHeatStartMenu->sMenuNameWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-  FillWindowPixelBuffer(sHeatStartMenu->sMapNameWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-  
-  ClearWindowTilemap(sHeatStartMenu->sMenuNameWindowId);
-  ClearWindowTilemap(sHeatStartMenu->sMapNameWindowId);
-  
-  CopyWindowToVram(sHeatStartMenu->sMenuNameWindowId, COPYWIN_GFX);
-  CopyWindowToVram(sHeatStartMenu->sMapNameWindowId, COPYWIN_GFX);
-  
-  RemoveWindow(sHeatStartMenu->sMenuNameWindowId);
-  RemoveWindow(sHeatStartMenu->sMapNameWindowId);
-  
+  // remove text windows
+  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sMenuNameWindowId);
+  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sMapNameWindowId);
   if (GetSafariZoneFlag() == TRUE)
   {
-    FillWindowPixelBuffer(sHeatStartMenu->sSafariBallsWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-    ClearWindowTilemap(sHeatStartMenu->sSafariBallsWindowId);
-    CopyWindowToVram(sHeatStartMenu->sSafariBallsWindowId, COPYWIN_GFX);
-    RemoveWindow(sHeatStartMenu->sSafariBallsWindowId);
+    HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sSafariBallsWindowId);
   } else {
-    FillWindowPixelBuffer(sHeatStartMenu->sDayWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-    FillWindowPixelBuffer(sHeatStartMenu->sTimeWindowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
-    ClearWindowTilemap(sHeatStartMenu->sDayWindowId);
-    ClearWindowTilemap(sHeatStartMenu->sTimeWindowId);
-    CopyWindowToVram(sHeatStartMenu->sDayWindowId, COPYWIN_GFX);
-    CopyWindowToVram(sHeatStartMenu->sTimeWindowId, COPYWIN_GFX);
-    RemoveWindow(sHeatStartMenu->sDayWindowId);
-    RemoveWindow(sHeatStartMenu->sTimeWindowId);
+    HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sDayWindowId);
+    HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sTimeWindowId);
   }
 
+  // clear tilemap
   for (i = 0; i < 2048; i++)
   {
     buf[i] = 0;
   }
   ScheduleBgCopyTilemapToVram(0);
 
-  if (HSM_POKEDEX_ENABLED)
+  u8 m;
+  for (m = 0; m < HSMO_COUNT; m++)
   {
-    FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdPokedex]);
-    DestroySprite(&gSprites[sHeatStartMenu->spriteIdPokedex]);
-  }
-  if (FlagGet(FLAG_SYS_POKEMON_GET) == TRUE)
-  {
-    FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdParty]);
-    DestroySprite(&gSprites[sHeatStartMenu->spriteIdParty]);
-  }
-
-  if (GetSafariZoneFlag() == FALSE)
-  {
-    FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdSave]);
-    DestroySprite(&gSprites[sHeatStartMenu->spriteIdSave]);
-    if (HSM_POKETCH_ENABLED)
+    if(IsMenuOptionShown(m))
     {
-      FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdPoketch]);
-      DestroySprite(&gSprites[sHeatStartMenu->spriteIdPoketch]);
+      HeatStartMenu_CleanupSpriteFromMenuOption(m);
     }
   }
-  else
-  {
-    FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdFlag]);
-    DestroySprite(&gSprites[sHeatStartMenu->spriteIdFlag]);
-  }
 
-  FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdBag]);
-  FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdTrainerCard]);
-  FreeSpriteOamMatrix(&gSprites[sHeatStartMenu->spriteIdOptions]);
-  DestroySprite(&gSprites[sHeatStartMenu->spriteIdBag]);
-  DestroySprite(&gSprites[sHeatStartMenu->spriteIdTrainerCard]);
-  DestroySprite(&gSprites[sHeatStartMenu->spriteIdOptions]);
-
+  // finishing touches
   if (sHeatStartMenu != NULL)
   {
     FreeSpriteTilesByTag(TAG_ICON_GFX);
@@ -1812,4 +1775,51 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
 
   ScriptUnfreezeObjectEvents();
   UnlockPlayerFieldControls();
+}
+
+static void HeatStartMenu_CleanupTextWindow(u32 windowId)
+{
+  FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_TRANSPARENT));
+  ClearWindowTilemap(windowId);
+  CopyWindowToVram(windowId, COPYWIN_GFX);
+  RemoveWindow(windowId);
+}
+
+static void HeatStartMenu_CleanupSpriteFromMenuOption(u8 menu)
+{
+  switch (menu)
+  {
+  case HSMO_POKEDEX:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdPokedex]);
+    break;
+  case HSMO_PARTY:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdParty]);
+    break;
+  case HSMO_BAG:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdBag]);    
+    break;
+  case HSMO_POKETCH:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdPoketch]);
+    break;
+  case HSMO_TRAINER_CARD:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdTrainerCard]);
+    break;
+  case HSMO_SAVE:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdSave]);
+    break;
+  case HSMO_OPTIONS:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdOptions]);
+    break;
+  case HSMO_FLAG:
+    HeatStartMenu_CleanupSprite(&gSprites[sHeatStartMenu->spriteIdFlag]);
+    break;
+  default:
+    break;
+  }
+}
+
+static void HeatStartMenu_CleanupSprite(struct Sprite *sprite)
+{
+  FreeSpriteOamMatrix(sprite);
+  DestroySprite(sprite);
 }
