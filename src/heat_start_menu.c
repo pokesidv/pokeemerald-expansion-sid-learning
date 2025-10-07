@@ -80,6 +80,7 @@ static void Task_HandleSave(u8 taskId);
 static void HeatStartMenu_LoadSprites(void);
 static void HeatStartMenu_CreateSprites(void);
 static void HeatStartMenu_CreateSprite(u8 menu, u32 x, u32 y);
+static void HeatStartMenu_CreateStaticSprite(u8 menu, u32 x, u32 y);
 static void HeatStartMenu_LoadBgGfx(void);
 static void HeatStartMenu_ShowTimeWindow(void);
 static void HeatStartMenu_UpdateClockDisplay(void);
@@ -129,6 +130,21 @@ enum MENU
   HSMO_COUNT,
 };
 
+// change these configs to toggle showing/hiding certain menu options
+// note that some options are also dependent on flags or other conditions
+// e.g. Pokedex requires the Pokedex flag to be set, 
+// while Poketch requires Pokenav flag to be set and Safari Zone to be off
+#define HSM_CONFIG_SHOW_POKEDEX FALSE
+#define HSM_CONFIG_SHOW_PARTY TRUE
+#define HSM_CONFIG_SHOW_BAG TRUE
+#define HSM_CONFIG_SHOW_POKETCH FALSE
+#define HSM_CONFIG_SHOW_TRAINER_CARD TRUE
+#define HSM_CONFIG_SHOW_OPTIONS TRUE
+
+// shortcut to open a menu with the L button without having it show up on one of the options
+// if you want to disable the L button shortcut, set this to HSMO_COUNT
+#define HSM_CONFIG_L_SHORTCUT HSMO_POKETCH
+
 enum FLAG_VALUES
 {
   FLAG_VALUE_NOT_SET,
@@ -173,18 +189,32 @@ static EWRAM_DATA u8 sSaveInfoWindowId = 0;
 
 // --BG-GFX--
 static const u32 sStartMenuTiles[] = INCBIN_U32("graphics/heat_start_menu/bg.4bpp.lz");
-static const u32 sStartMenuTilemap2[] = INCBIN_U32("graphics/heat_start_menu/bg_2slots.bin.lz");
-static const u32 sStartMenuTilemap3[] = INCBIN_U32("graphics/heat_start_menu/bg_3slots.bin.lz");
-static const u32 sStartMenuTilemap4[] = INCBIN_U32("graphics/heat_start_menu/bg_4slots.bin.lz");
-static const u32 sStartMenuTilemap5[] = INCBIN_U32("graphics/heat_start_menu/bg_5slots.bin.lz");
-static const u32 sStartMenuTilemap6[] = INCBIN_U32("graphics/heat_start_menu/bg_6slots.bin.lz");
-static const u32 sStartMenuTilemap7[] = INCBIN_U32("graphics/heat_start_menu/bg_7slots.bin.lz");
+
+static const u32 sStartMenuTilemap2[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_2slots.bin.lz");
+static const u32 sStartMenuTilemap3[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_3slots.bin.lz");
+static const u32 sStartMenuTilemap4[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_4slots.bin.lz");
+static const u32 sStartMenuTilemap5[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_5slots.bin.lz");
+static const u32 sStartMenuTilemap6[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_6slots.bin.lz");
+static const u32 sStartMenuTilemap7[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_7slots.bin.lz");
 static const u32 sStartMenuTilemapSafari2[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_2slots.bin.lz");
 static const u32 sStartMenuTilemapSafari3[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_2slots.bin.lz");
 static const u32 sStartMenuTilemapSafari4[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_4slots.bin.lz");
 static const u32 sStartMenuTilemapSafari5[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_5slots.bin.lz");
 static const u32 sStartMenuTilemapSafari6[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_6slots.bin.lz");
 static const u32 sStartMenuTilemapSafari7[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_7slots.bin.lz");
+static const u32 sStartMenuTilemapL2[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_2slots.bin.lz");
+static const u32 sStartMenuTilemapL3[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_3slots.bin.lz");
+static const u32 sStartMenuTilemapL4[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_4slots.bin.lz");
+static const u32 sStartMenuTilemapL5[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_5slots.bin.lz");
+static const u32 sStartMenuTilemapL6[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_6slots.bin.lz");
+static const u32 sStartMenuTilemapL7[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_7slots.bin.lz");
+static const u32 sStartMenuTilemapLSafari2[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_2slots.bin.lz");
+static const u32 sStartMenuTilemapLSafari3[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_2slots.bin.lz");
+static const u32 sStartMenuTilemapLSafari4[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_4slots.bin.lz");
+static const u32 sStartMenuTilemapLSafari5[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_5slots.bin.lz");
+static const u32 sStartMenuTilemapLSafari6[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_6slots.bin.lz");
+static const u32 sStartMenuTilemapLSafari7[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_7slots.bin.lz");
+
 static const u16 sStartMenuPalette[] = INCBIN_U16("graphics/heat_start_menu/bg.gbapal");
 const u16 gStandardMenuPalette[] = INCBIN_U16("graphics/interface/std_menu.gbapal");
 
@@ -264,6 +294,8 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
     .paletteNum = 15,
     .baseBlock = 0x30 + (7 * 2) + (14 * 2)};
 
+    
+
 
 ///// =====================================================================================
 ///// ============== Sprite data ==========================================================
@@ -315,6 +347,9 @@ static const union AnimCmd *const gIconPoketchAnim[] = {
     gAnimCmdPoketch_NotSelected,
     gAnimCmdPoketch_Selected,
 };
+static const union AnimCmd *const gIconPoketchAnimStatic[] = {
+    gAnimCmdPoketch_Selected,
+};
 
 static const union AnimCmd gAnimCmdPokedex_NotSelected[] = {
     ANIMCMD_FRAME(128, 0),
@@ -328,6 +363,9 @@ static const union AnimCmd gAnimCmdPokedex_Selected[] = {
 
 static const union AnimCmd *const gIconPokedexAnim[] = {
     gAnimCmdPokedex_NotSelected,
+    gAnimCmdPokedex_Selected,
+};
+static const union AnimCmd *const gIconPokedexAnimStatic[] = {
     gAnimCmdPokedex_Selected,
 };
 
@@ -345,6 +383,9 @@ static const union AnimCmd *const gIconPartyAnim[] = {
     gAnimCmdParty_NotSelected,
     gAnimCmdParty_Selected,
 };
+static const union AnimCmd *const gIconPartyAnimStatic[] = {
+    gAnimCmdParty_Selected,
+};
 
 static const union AnimCmd gAnimCmdBag_NotSelected[] = {
     ANIMCMD_FRAME(160, 0),
@@ -358,6 +399,9 @@ static const union AnimCmd gAnimCmdBag_Selected[] = {
 
 static const union AnimCmd *const gIconBagAnim[] = {
     gAnimCmdBag_NotSelected,
+    gAnimCmdBag_Selected,
+};
+static const union AnimCmd *const gIconBagAnimStatic[] = {
     gAnimCmdBag_Selected,
 };
 
@@ -375,6 +419,9 @@ static const union AnimCmd *const gIconTrainerCardAnim[] = {
     gAnimCmdTrainerCard_NotSelected,
     gAnimCmdTrainerCard_Selected,
 };
+static const union AnimCmd *const gIconTrainerCardAnimStatic[] = {
+    gAnimCmdTrainerCard_Selected,
+};
 
 static const union AnimCmd gAnimCmdSave_NotSelected[] = {
     ANIMCMD_FRAME(192, 0),
@@ -388,6 +435,9 @@ static const union AnimCmd gAnimCmdSave_Selected[] = {
 
 static const union AnimCmd *const gIconSaveAnim[] = {
     gAnimCmdSave_NotSelected,
+    gAnimCmdSave_Selected,
+};
+static const union AnimCmd *const gIconSaveAnimStatic[] = {
     gAnimCmdSave_Selected,
 };
 
@@ -405,6 +455,9 @@ static const union AnimCmd *const gIconOptionsAnim[] = {
     gAnimCmdOptions_NotSelected,
     gAnimCmdOptions_Selected,
 };
+static const union AnimCmd *const gIconOptionsAnimStatic[] = {
+    gAnimCmdOptions_Selected,
+};
 
 static const union AnimCmd gAnimCmdFlag_NotSelected[] = {
     ANIMCMD_FRAME(240, 0),
@@ -418,6 +471,9 @@ static const union AnimCmd gAnimCmdFlag_Selected[] = {
 
 static const union AnimCmd *const gIconFlagAnim[] = {
     gAnimCmdFlag_NotSelected,
+    gAnimCmdFlag_Selected,
+};
+static const union AnimCmd *const gIconFlagAnimStatic[] = {
     gAnimCmdFlag_Selected,
 };
 
@@ -533,6 +589,87 @@ static const struct SpriteTemplate gSpriteIconFlag = {
     .affineAnims = sAffineAnimsIcon,
     .callback = SpriteCB_IconFlag,
 };
+
+static const struct SpriteTemplate gSpriteIconPoketchStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconPoketchAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconPokedexStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconPokedexAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconPartyStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconPartyAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconBagStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconBagAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconTrainerCardStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconTrainerCardAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconSaveStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconSaveAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconOptionsStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconOptionsAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static const struct SpriteTemplate gSpriteIconFlagStatic = {
+    .tileTag = TAG_ICON_GFX,
+    .paletteTag = TAG_ICON_PAL,
+    .oam = &gOamIcon,
+    .anims = gIconFlagAnimStatic,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
 
 // sprite animation callbacks for each icon
 static void SpriteCB_IconPoketch(struct Sprite *sprite)
@@ -657,19 +794,14 @@ static void SetInitialSelectedOption(void)
   menuSelected = HSMO_BAG; // Fallback, should never happen
 }
 
-// change these configs to toggle showing/hiding certain menu options
-// note that some options are also dependent on flags or other conditions
-// e.g. Pokedex requires the Pokedex flag to be set, 
-// while Poketch requires Pokenav flag to be set and Safari Zone to be off
-#define HSM_CONFIG_SHOW_POKEDEX TRUE
-#define HSM_CONFIG_SHOW_PARTY TRUE
-#define HSM_CONFIG_SHOW_BAG TRUE
-#define HSM_CONFIG_SHOW_POKETCH TRUE
-#define HSM_CONFIG_SHOW_TRAINER_CARD TRUE
-#define HSM_CONFIG_SHOW_OPTIONS TRUE
 
 static bool8 IsMenuOptionShown(u8 menu)
 {
+  if(menu == HSM_CONFIG_L_SHORTCUT)
+  {
+    return FALSE;
+  }
+
   switch (menu)
   {
   case HSMO_POKEDEX:
@@ -761,52 +893,107 @@ static void HeatStartMenu_LoadBgGfx(void)
   u8 *buf = GetBgTilemapBuffer(0);
   LoadBgTilemap(0, 0, 0, 0);
   DecompressAndCopyTileDataToVram(0, sStartMenuTiles, 0, 0, 0); // Keep as sStartMenuTiles (u32)
-  if (GetSafariZoneFlag())
+
+  if (HSM_CONFIG_L_SHORTCUT == HSMO_COUNT)
   {
-    switch (HowManyOptionsShown())
+    if (GetSafariZoneFlag())
     {
-    case 2:
-      DecompressDataWithHeaderWram(sStartMenuTilemapSafari2, buf);
-      break;
-    case 3:
-      DecompressDataWithHeaderWram(sStartMenuTilemapSafari3, buf);
-      break;
-    case 4:
-      DecompressDataWithHeaderWram(sStartMenuTilemapSafari4, buf);
-      break;
-    case 5:
-      DecompressDataWithHeaderWram(sStartMenuTilemapSafari5, buf);
-      break;
-    case 6:
-      DecompressDataWithHeaderWram(sStartMenuTilemapSafari6, buf);
-      break;
-    default:
-      DecompressDataWithHeaderWram(sStartMenuTilemapSafari7, buf);
-      break;
+      switch (HowManyOptionsShown())
+      {
+      case 2:
+        DecompressDataWithHeaderWram(sStartMenuTilemapSafari2, buf);
+        break;
+      case 3:
+        DecompressDataWithHeaderWram(sStartMenuTilemapSafari3, buf);
+        break;
+      case 4:
+        DecompressDataWithHeaderWram(sStartMenuTilemapSafari4, buf);
+        break;
+      case 5:
+        DecompressDataWithHeaderWram(sStartMenuTilemapSafari5, buf);
+        break;
+      case 6:
+        DecompressDataWithHeaderWram(sStartMenuTilemapSafari6, buf);
+        break;
+      default:
+        DecompressDataWithHeaderWram(sStartMenuTilemapSafari7, buf);
+        break;
+      }
+    }
+    else
+    {
+      switch (HowManyOptionsShown())
+      {
+      case 2:
+        DecompressDataWithHeaderWram(sStartMenuTilemap2, buf);
+        break;
+      case 3:
+        DecompressDataWithHeaderWram(sStartMenuTilemap3, buf);
+        break;
+      case 4:
+        DecompressDataWithHeaderWram(sStartMenuTilemap4, buf);
+        break;
+      case 5:
+        DecompressDataWithHeaderWram(sStartMenuTilemap5, buf);
+        break;
+      case 6:
+        DecompressDataWithHeaderWram(sStartMenuTilemap6, buf);
+        break;
+      default:
+        DecompressDataWithHeaderWram(sStartMenuTilemap7, buf);
+        break;
+      }
     }
   }
   else
   {
-    switch (HowManyOptionsShown())
+    if (GetSafariZoneFlag())
     {
-    case 2:
-      DecompressDataWithHeaderWram(sStartMenuTilemap2, buf);
-      break;
-    case 3:
-      DecompressDataWithHeaderWram(sStartMenuTilemap3, buf);
-      break;
-    case 4:
-      DecompressDataWithHeaderWram(sStartMenuTilemap4, buf);
-      break;
-    case 5:
-      DecompressDataWithHeaderWram(sStartMenuTilemap5, buf);
-      break;
-    case 6:
-      DecompressDataWithHeaderWram(sStartMenuTilemap6, buf);
-      break;
-    default:
-      DecompressDataWithHeaderWram(sStartMenuTilemap7, buf);
-      break;
+      switch (HowManyOptionsShown())
+      {
+      case 2:
+        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari2, buf);
+        break;
+      case 3:
+        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari3, buf);
+        break;
+      case 4:
+        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari4, buf);
+        break;
+      case 5:
+        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari5, buf);
+        break;
+      case 6:
+        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari6, buf);
+        break;
+      default:
+        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari7, buf);
+        break;
+      }
+    }
+    else
+    {
+      switch (HowManyOptionsShown())
+      {
+      case 2:
+        DecompressDataWithHeaderWram(sStartMenuTilemapL2, buf);
+        break;
+      case 3:
+        DecompressDataWithHeaderWram(sStartMenuTilemapL3, buf);
+        break;
+      case 4:
+        DecompressDataWithHeaderWram(sStartMenuTilemapL4, buf);
+        break;
+      case 5:
+        DecompressDataWithHeaderWram(sStartMenuTilemapL5, buf);
+        break;
+      case 6:
+        DecompressDataWithHeaderWram(sStartMenuTilemapL6, buf);
+        break;
+      default:
+        DecompressDataWithHeaderWram(sStartMenuTilemapL7, buf);
+        break;
+      }
     }
   }
 
@@ -873,6 +1060,11 @@ static void HeatStartMenu_CreateSprites(void)
     HeatStartMenu_CreateSprite(menu, x, i==count-1 ? last : start + (i * delta));
   }
 
+  if(HSM_CONFIG_L_SHORTCUT != HSMO_COUNT)
+  {
+    HeatStartMenu_CreateStaticSprite(HSM_CONFIG_L_SHORTCUT, 2*8, 8*8);
+  }
+
 }
 
 static void HeatStartMenu_CreateSprite(u8 menu, u32 x, u32 y)
@@ -902,6 +1094,37 @@ static void HeatStartMenu_CreateSprite(u8 menu, u32 x, u32 y)
     break;
   case HSMO_FLAG:
     sHeatStartMenu->spriteIdFlag = CreateSprite(&gSpriteIconFlag, x, y, 0);
+    break;
+  }
+}
+
+static void HeatStartMenu_CreateStaticSprite(u8 menu, u32 x, u32 y)
+{
+  switch (menu)
+  {
+  case HSMO_POKEDEX:
+    sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedexStatic, x, y, 0);
+    break;
+  case HSMO_PARTY:
+    sHeatStartMenu->spriteIdParty = CreateSprite(&gSpriteIconPartyStatic, x, y, 0);
+    break;
+  case HSMO_BAG:
+    sHeatStartMenu->spriteIdBag = CreateSprite(&gSpriteIconBagStatic, x, y, 0);
+    break;
+  case HSMO_POKETCH:
+    sHeatStartMenu->spriteIdPoketch = CreateSprite(&gSpriteIconPoketchStatic, x, y, 0);
+    break;
+  case HSMO_TRAINER_CARD:
+    sHeatStartMenu->spriteIdTrainerCard = CreateSprite(&gSpriteIconTrainerCardStatic, x, y, 0);
+    break;
+  case HSMO_SAVE:
+    sHeatStartMenu->spriteIdSave = CreateSprite(&gSpriteIconSaveStatic, x, y, 0);
+    break;
+  case HSMO_OPTIONS:
+    sHeatStartMenu->spriteIdOptions = CreateSprite(&gSpriteIconOptionsStatic, x, y, 0);
+    break;
+  case HSMO_FLAG:
+    sHeatStartMenu->spriteIdFlag = CreateSprite(&gSpriteIconFlagStatic, x, y, 0);
     break;
   }
 }
@@ -1087,6 +1310,18 @@ static const u8 *const sBattlePyramid_MapHeaderStrings[FRONTIER_STAGES_PER_CHALL
     sText_Pyramid,
 };
 
+static const u8 gTextLShortcut[]    = _("{L_BUTTON}");
+
+enum {
+    COLORID_L,
+};
+
+static const u8 sTextColorTable[][3] =
+{
+    [COLORID_L]        = {2,       5,        6},
+};
+
+
 static void HeatStartMenu_ShowMapNameWindow(void)
 {
     u8 mapDisplayHeader[24];
@@ -1255,6 +1490,20 @@ static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
     if (sHeatStartMenu->loadState == 0)
     {
       if (menuSelected != HSMO_SAVE)
+      {
+        FadeScreen(FADE_TO_BLACK, 0);
+      }
+      sHeatStartMenu->loadState = 1;
+    }
+  }
+  else if (JOY_NEW(L_BUTTON))
+  {
+    if(HSM_CONFIG_L_SHORTCUT != HSMO_COUNT && sHeatStartMenu->loadState == 0)
+    {
+      menuSelected = HSM_CONFIG_L_SHORTCUT;
+      HeatStartMenu_UpdateMenuName();
+      PlaySE(SE_SELECT);
+      if (HSM_CONFIG_L_SHORTCUT != HSMO_SAVE)
       {
         FadeScreen(FADE_TO_BLACK, 0);
       }
@@ -1741,6 +1990,7 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
   // remove text windows
   HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sMenuNameWindowId);
   HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sMapNameWindowId);
+
   if (GetSafariZoneFlag() == TRUE)
   {
     HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sSafariBallsWindowId);
@@ -1763,6 +2013,11 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
     {
       HeatStartMenu_CleanupSpriteFromMenuOption(m);
     }
+  }
+
+  if(HSM_CONFIG_L_SHORTCUT != HSMO_COUNT)
+  {
+    HeatStartMenu_CleanupSpriteFromMenuOption(HSM_CONFIG_L_SHORTCUT);
   }
 
   // finishing touches
