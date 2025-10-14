@@ -11,6 +11,7 @@
 #include "event_object_movement.h"
 #include "event_object_lock.h"
 #include "event_scripts.h"
+#include "tv.h"
 #include "fieldmap.h"
 #include "field_effect.h"
 #include "field_player_avatar.h"
@@ -33,6 +34,7 @@
 #include "palette.h"
 #include "party_menu.h"
 #include "pokedex.h"
+#include "pokevial.h"
 #include "pokenav.h"
 #include "region_map.h"
 #include "safari_zone.h"
@@ -124,7 +126,7 @@ enum SELECT_MENU_MODES
 struct HeatSelectMenu
 {
     MainCallback savedCallback; // The callback to return to when exiting the menu
-    u32 loadState;              // used to initiate a fade before performing a menu action
+    u32 inputDelay;              // input delay to prevent the button that opened the menu from being processed immediately
     u32 sTopTextWindowId;       // window ID for the top box
     u32 sLTextWindowId;      // window ID for the left box
     u32 sRTextWindowId;     // window ID for the right box
@@ -172,7 +174,7 @@ void HeatSelectMenu_Init(void)
     }
 
     sHeatSelectMenu->savedCallback = CB2_ReturnToFieldWithOpenSelectMenu;
-    sHeatSelectMenu->loadState = 0;
+    sHeatSelectMenu->inputDelay = 1;
     sHeatSelectMenu->mode = HSELM_MODE_MAIN;
     sHeatSelectMenu->registeredItemIndex = 0;
     sHeatSelectMenu->spriteIdRegisteredKeyItem = SPRITE_NONE;
@@ -213,8 +215,7 @@ bool8 HSelM_LSectionState(void)
     }
     else
     {
-        // TODO: implement L button state in main mode
-        return FALSE;
+        return PokevialGetDose() > 0;
     }
 }
 bool8 HSelM_RSectionState(void){
@@ -226,8 +227,7 @@ bool8 HSelM_RSectionState(void){
     }
     else
     {
-        // TODO: implement R button state in main mode
-        return FALSE;
+        return TRUE; // R activates time picking mode
     }
 }
 bool8 HSelM_SelectSectionState(void){
@@ -239,8 +239,7 @@ bool8 HSelM_SelectSectionState(void){
     }
     else
     {
-        // TODO: implement Select button state in main mode
-        return FALSE;
+        return FlagGet(FLAG_SID_REPEL);
     }
 }
 bool8 HSelM_StartSectionState(void){
@@ -252,8 +251,7 @@ bool8 HSelM_StartSectionState(void){
     }
     else
     {
-        // TODO: implement Start button state in main mode
-        return TRUE;
+        return FlagGet(FLAG_I_EXP_SHARE);
     }
 }
 
@@ -263,22 +261,20 @@ bool8 HSelM_StartSectionState(void){
 
 static void Task_HSelM_HandleMainInput(u8 taskId)
 {
-    if (sHeatSelectMenu->loadState == 0 && !gPaletteFade.active)
-    {
-        HSelM_UpdateSpritePalettes();
-    }
-
+    // if (!gPaletteFade.active)
+    // {
+    //     HSelM_UpdateSpritePalettes();
+    // }
     // no need to update text windows here to refresh every tick. only update texts when we perform actions that make them change
 
-    if (sHeatSelectMenu->loadState == 1)
+    // Handle input delay to prevent immediate processing of the button that opened the menu
+    if (sHeatSelectMenu->inputDelay > 0)
     {
-        // HSelM_OpenMenu(); // TODO (vi): this remains from the start menu where pressing A just sets the loadState to 1 and waits for the next handleMainInput to notice it and open the selected menu, idk why we can't just trigger the appropriate action right away
-    }
-    else if (sHeatSelectMenu->loadState != 0)
-    {
+        sHeatSelectMenu->inputDelay--;
         return;
     }
-    else if (JOY_NEW(A_BUTTON))
+    
+    if (JOY_NEW(A_BUTTON))
     {
         HSelM_Handle_ABUTTON();
     }
@@ -308,6 +304,13 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     }
     else if (JOY_NEW(B_BUTTON))
     {
+        if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+        {
+            sHeatSelectMenu->mode = HSELM_MODE_MAIN;
+            HSelM_RefreshTilemap();
+            HSelM_UpdateTextWindows();
+            return;
+        }
         PlaySE(SE_SELECT);
         HSelM_ExitAndCleanup();
         DestroyTask(taskId);
@@ -373,16 +376,69 @@ static void HSelM_Handle_ABUTTON(void)
     // TODO (vi): implement using the registered item
 }
 static void HSelM_Handle_LBUTTON(void){
-    // implement
+    if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+    {
+        if(AccurateTimeOfDay() == TIME_MORNING) return; // already morning, do nothing
+        PlaySE(SE_SELECT);
+        HSelM_ExitAndCleanup();
+        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        WaitTillMorning();
+        return;
+    } else {
+        if(PokevialGetDose() <= 0) return; // vial is empty, do nothing
+        PlaySE(SE_SELECT);
+        HSelM_ExitAndCleanup();
+        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        PokeVialTryUse();
+    }
 }
 static void HSelM_Handle_RBUTTON(void){
-    // implement
+    if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+    {
+        if(AccurateTimeOfDay() == TIME_DAY) return; // already day, do nothing
+        PlaySE(SE_SELECT);
+        HSelM_ExitAndCleanup();
+        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        WaitTillDay();
+        return;
+    } else {
+        PlaySE(SE_SELECT);
+        sHeatSelectMenu->mode = HSELM_MODE_TIME_PICKER; 
+        HSelM_RefreshTilemap();
+        HSelM_UpdateTextWindows();
+    }
 }
 static void HSelM_Handle_SELECTBUTTON(void){
-    // implement
+    if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+    {
+        if(AccurateTimeOfDay() == TIME_EVENING) return; // already evening, do nothing
+        PlaySE(SE_SELECT);
+        HSelM_ExitAndCleanup();
+        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        WaitTillEvening();
+        return;
+    } else {
+        PlaySE(SE_SELECT);
+        FlagToggle(FLAG_SID_REPEL);
+        HSelM_RefreshTilemap();
+        HSelM_UpdateTextWindows();
+    }
 }
 static void HSelM_Handle_STARTBUTTON(void){
-    // implement
+    if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+    {
+        if(AccurateTimeOfDay() == TIME_NIGHT) return; // already night, do nothing
+        PlaySE(SE_SELECT);
+        HSelM_ExitAndCleanup();
+        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        WaitTillNight();
+        return;
+    } else {
+        PlaySE(SE_SELECT);
+        FlagToggle(FLAG_I_EXP_SHARE);
+        HSelM_RefreshTilemap();
+        HSelM_UpdateTextWindows();
+    }
 }
 
 // used by some of the menu options to exit the select menu and either return to field or start that menu option
@@ -637,16 +693,27 @@ static void HSelM_PrintCenteredStringVar4Background(u8 windowId, u32 fontId, u16
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
-// TODO (vi): real registered item names
+static const u8 gText_WaitTime[]    = _("Wait until...");
 static const u8 gText_Friday[]    = _("Bicycleeee");
+static const u8 gText_NoRegisteredItem[]    = _("No reg. item");
 static const u8 gText_SelectedItem[] = _("{STR_VAR_3}");
 static void HSelM_UpdateTopTextWindow(void)
 {
     HSelM_CleanWhiteWindow(sHeatSelectMenu->sTopTextWindowId);
     
-    // placeholder code for now
-    StringCopy(gStringVar3, gText_Friday); // TODO (vi): replace with the name of the registered item at index sHeatSelectMenu->registeredItemIndex
-    StringExpandPlaceholders(gStringVar4, gText_Friday);
+    if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+    {
+        StringExpandPlaceholders(gStringVar4, gText_WaitTime);
+    }
+    else
+    {
+        if(HSelM_AreThereRegisteredItems()){
+            // TODO (vi): replace with the name of the registered item at index sHeatSelectMenu->registeredItemIndex
+            StringExpandPlaceholders(gStringVar4, gText_Friday);
+        } else {
+            StringExpandPlaceholders(gStringVar4, gText_NoRegisteredItem);
+        }
+    }
     
     HSelM_PrintCenteredStringVar4(sHeatSelectMenu->sTopTextWindowId, FONT_SMALL, HSelM_GetTopWindowTemplate()->width);
 }
@@ -654,7 +721,7 @@ static void HSelM_UpdateTopTextWindow(void)
 // TODO (vi): real L text
 static const u8 gText_On[]    = _("On");
 static const u8 gText_Off[]    = _("Off");
-static const u8 gText_L[] = _("{STR_VAR_3}");
+static const u8 gText_Pokevial_Dose_Count[] = _("{STR_VAR_1}/{STR_VAR_2}");
 static const u8 gText_WaitTime_Morning[] = _("Morning");
 static void HSelM_UpdateLTextWindow(void)
 {
@@ -662,15 +729,17 @@ static void HSelM_UpdateLTextWindow(void)
 
     HSelM_CleanBackgroundWindow(sHeatSelectMenu->sLTextWindowId, state);
     
-    // placeholder code for now
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         StringExpandPlaceholders(gStringVar4, gText_WaitTime_Morning);
     }
     else
     {
-        StringCopy(gStringVar3, state? gText_On : gText_Off); // TODO (vi): replace with pokevial dose count
-        StringExpandPlaceholders(gStringVar4, gText_L);
+        u32 dose = PokevialGetDose();
+        ConvertIntToDecimalStringN(gStringVar1, dose, STR_CONV_MODE_LEADING_ZEROS, CountDigits(dose));
+        u32 size = PokevialGetSize();
+        ConvertIntToDecimalStringN(gStringVar2, size, STR_CONV_MODE_LEADING_ZEROS, CountDigits(size));
+        StringExpandPlaceholders(gStringVar4, gText_Pokevial_Dose_Count);
     }
     
 
@@ -693,7 +762,6 @@ static void HSelM_UpdateRTextWindow(void)
     {
         StringExpandPlaceholders(gStringVar4, gText_Wait);
     }
-    
 
     HSelM_PrintCenteredStringVar4Background(sHeatSelectMenu->sRTextWindowId, FONT_SMALL, sWindowTemplate_R.width, state);
 }
