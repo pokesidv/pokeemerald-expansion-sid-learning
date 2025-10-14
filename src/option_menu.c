@@ -3,6 +3,7 @@
 #include "bg.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
+#include "heat_menu_palettes.h"
 #include "main.h"
 #include "menu.h"
 #include "palette.h"

@@ -173,6 +173,7 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
 }
 
 #include "heat_start_menu.h"
+#include "heat_select_menu.h"
 int ProcessPlayerFieldInput(struct FieldInput *input)
 {
     struct MapPosition position;
@@ -248,8 +249,16 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->tookStep && TryFindHiddenPokemon())
         return TRUE;
 
-    if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
+        // TODO (vi): reimplement registered item usage
+    // if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
+    //     return TRUE;
+    if (input->pressedSelectButton)
+    {
+        PlaySE(SE_WIN_OPEN);
+        HideMapNamePopUpWindow();
+        HeatSelectMenu_Init();
         return TRUE;
+    }
 
     if (input->pressedLButton && FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
     {

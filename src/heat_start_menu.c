@@ -1,5 +1,6 @@
 #include "option_menu.h"
 #include "heat_start_menu.h"
+#include "heat_menu_palettes.h"
 #include "global.h"
 #include "battle_pike.h"
 #include "battle_pyramid.h"
@@ -214,27 +215,6 @@ static const u32 sStartMenuTilemapLSafari4[] = INCBIN_U32("graphics/heat_start_m
 static const u32 sStartMenuTilemapLSafari5[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_5slots.bin.lz");
 static const u32 sStartMenuTilemapLSafari6[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_6slots.bin.lz");
 static const u32 sStartMenuTilemapLSafari7[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_7slots.bin.lz");
-
-static const u16 sStartMenuPalette[] = INCBIN_U16("graphics/heat_start_menu/bg.gbapal");
-const u16 gStandardMenuPalette[] = INCBIN_U16("graphics/interface/std_menu.gbapal");
-
-// --alternate BG pals--
-static const u16 sStartMenuPalettes[MENU_PAL_COUNT][16] = {
-    INCBIN_U16("graphics/heat_start_menu/bg.gbapal"),
-    INCBIN_U16("graphics/heat_start_menu/bg1.gbapal"),
-    INCBIN_U16("graphics/heat_start_menu/bg2.gbapal"),
-    INCBIN_U16("graphics/heat_start_menu/bg3.gbapal"),
-
-};
-#define MENU_PAL_COUNT 4
-
-const u16 *GetStartMenuPalette(u8 id)
-{
-  if (id >= MENU_PAL_COUNT)
-    return sStartMenuPalettes[0]; // Return the default if ID is out of bounds
-  else
-    return sStartMenuPalettes[id];
-}
 
 ///// =====================================================================================
 ///// ============== Text window templates ================================================
@@ -997,12 +977,7 @@ static void HeatStartMenu_LoadBgGfx(void)
     }
   }
 
-  // Load the standard menu palette
-  LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
-
-  // Load the start menu palette based on the persistent setting
-  const u16 *selectedPalette = GetStartMenuPalette(gSaveBlock2Ptr->optionsStartMenuPalette);
-  LoadPalette(selectedPalette, BG_PLTT_ID(14), PLTT_SIZE_4BPP);
+  HeatMenus_LoadPalettes();
 
   ScheduleBgCopyTilemapToVram(0);
 }
@@ -1310,18 +1285,6 @@ static const u8 *const sBattlePyramid_MapHeaderStrings[FRONTIER_STAGES_PER_CHALL
     sText_Pyramid,
 };
 
-static const u8 gTextLShortcut[]    = _("{L_BUTTON}");
-
-enum {
-    COLORID_L,
-};
-
-static const u8 sTextColorTable[][3] =
-{
-    [COLORID_L]        = {2,       5,        6},
-};
-
-
 static void HeatStartMenu_ShowMapNameWindow(void)
 {
     u8 mapDisplayHeader[24];
@@ -1424,10 +1387,7 @@ static void HeatStartMenu_UpdateMenuName(void)
 ///// ============ navigation and input handling ======================================
 ///// =================================================================================
 
-void GoToHandleInput(void)
-{
-  CreateTask(Task_HeatStartMenu_HandleMainInput, 80);
-}
+
 
 static void HeatStartMenu_HandleInput_DPADDOWN(void)
 {

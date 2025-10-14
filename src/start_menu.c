@@ -146,6 +146,7 @@ static void SaveGameTask(u8 taskId);
 static void Task_SaveAfterLinkBattle(u8 taskId);
 static void Task_WaitForBattleTowerLinkSave(u8 taskId);
 static bool8 FieldCB_ReturnToFieldStartMenu(void);
+static bool8 FieldCB_ReturnToFieldSelectMenu(void);
 
 static const struct WindowTemplate sWindowTemplate_SafariBalls = {
     .bg = 0,
@@ -686,6 +687,7 @@ static void CreateStartMenuTask(TaskFunc followupFunc)
 }
 
 #include "heat_start_menu.h"
+#include "heat_select_menu.h"
 static bool8 FieldCB_ReturnToFieldStartMenu(void)
 {
     //if (InitStartMenuStep() == FALSE)
@@ -698,11 +700,27 @@ static bool8 FieldCB_ReturnToFieldStartMenu(void)
     return TRUE;
 }
 
+static bool8 FieldCB_ReturnToFieldSelectMenu(void)
+{
+
+    HeatSelectMenu_Init();
+
+    ReturnToFieldOpenSelectMenu();
+    return TRUE;
+}
+
 void ShowReturnToFieldStartMenu(void)
 {
     sInitStartMenuData[0] = 0;
     sInitStartMenuData[1] = 0;
     gFieldCallback2 = FieldCB_ReturnToFieldStartMenu;
+}
+
+void ShowReturnToFieldOpenSelectMenu(void)
+{
+    sInitStartMenuData[0] = 0;
+    sInitStartMenuData[1] = 0;
+    gFieldCallback2 = FieldCB_ReturnToFieldSelectMenu;
 }
 
 void Task_ShowStartMenu(u8 taskId)
