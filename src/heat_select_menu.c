@@ -108,12 +108,12 @@ static void HSelM_CleanupTextWindow(u32 windowId);
 static void HSelM_CleanupSprites(void);
 static void HSelM_CleanupSprite(struct Sprite *sprite);
 
-
 // the menu has a top section that shows the registered items if there is any, and below it there are L, R, Select, and Start buttons
 // in time picker mode, the top section shows a prompt to pick a time of day, and the L, R, Select, and Start buttons set the time to morning, day, evening, and night respectively
 
 // in main mode, the L, R, SELECT, and START buttons are mapped to different menu options
 // in time picker mode, they are mapped to changing the time to a specific time of day if it's different than the current time of day
+
 enum SELECT_MENU_MODES
 {
   HSELM_MODE_MAIN,
@@ -121,7 +121,6 @@ enum SELECT_MENU_MODES
   HSELM_MODE_COUNT,
 };
 
-// /* STRUCTs */
 struct HeatSelectMenu
 {
     MainCallback savedCallback; // The callback to return to when exiting the menu
