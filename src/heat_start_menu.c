@@ -2,6 +2,7 @@
 #include "heat_start_menu.h"
 #include "heat_menu_palettes.h"
 #include "global.h"
+#include "debug.h"
 #include "battle_pike.h"
 #include "battle_pyramid.h"
 #include "battle_pyramid_bag.h"
@@ -109,7 +110,7 @@ static u8 HowManyOptionsShown(void);
 static u8 IndexToShownOption(u8 index);
 static u8 ShownOptionToIndex(u8 option);
 static void ShowSafariBallsWindow(void);
-static void HeatStartMenu_ExitAndClearTilemap(void);
+static void HeatStartMenu_ExitAndClearTilemap(bool8 enableMovement);
 static void HeatStartMenu_CleanupTextWindow(u32 windowId);
 static void HeatStartMenu_CleanupSprite(struct Sprite *sprite);
 static void HeatStartMenu_CleanupSpriteFromMenuOption(u8 menu);
@@ -145,6 +146,8 @@ enum MENU
 // shortcut to open a menu with the L button without having it show up on one of the options
 // if you want to disable the L button shortcut, set this to HSMO_COUNT
 #define HSM_CONFIG_L_SHORTCUT HSMO_POKETCH
+
+#define HSM_CONFIG_R_DEBUG TRUE
 
 enum FLAG_VALUES
 {
@@ -1470,10 +1473,21 @@ static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
       sHeatStartMenu->loadState = 1;
     }
   }
+  else if (JOY_NEW(R_BUTTON) && HSM_CONFIG_R_DEBUG && sHeatStartMenu->loadState == 0)
+  {
+    if (DEBUG_OVERWORLD_MENU)
+    {
+      PlaySE(SE_SELECT);
+      HeatStartMenu_ExitAndClearTilemap(FALSE);
+      DestroyTask(taskId);
+      FreezeObjectEvents();
+      Debug_ShowMainMenu();
+    }
+  }
   else if (JOY_NEW(B_BUTTON) && sHeatStartMenu->loadState == 0)
   {
     PlaySE(SE_SELECT);
-    HeatStartMenu_ExitAndClearTilemap();
+    HeatStartMenu_ExitAndClearTilemap(TRUE);
     DestroyTask(taskId);
   }
   else if (gMain.newKeys & DPAD_DOWN && sHeatStartMenu->loadState == 0)
@@ -1512,7 +1526,7 @@ static void DoCleanUpAndChangeCallback(MainCallback callback)
   {
     DestroyTask(FindTaskIdByFunc(Task_HeatStartMenu_HandleMainInput));
     PlayRainStoppingSoundEffect();
-    HeatStartMenu_ExitAndClearTilemap();
+    HeatStartMenu_ExitAndClearTilemap(TRUE);
     CleanupOverworldWindowsAndTilemaps();
     SetMainCallback2(callback);
     gMain.savedCallback = CB2_ReturnToFieldWithOpenMenu;
@@ -1524,7 +1538,7 @@ static void DoCleanUpAndOpenTrainerCard(void)
   if (!gPaletteFade.active)
   {
     PlayRainStoppingSoundEffect();
-    HeatStartMenu_ExitAndClearTilemap();
+    HeatStartMenu_ExitAndClearTilemap(TRUE);
     CleanupOverworldWindowsAndTilemaps();
     if (IsOverworldLinkActive() || InUnionRoom())
     {
@@ -1891,7 +1905,7 @@ static void DoCleanUpAndStartSaveMenu(void)
 {
   if (!gPaletteFade.active)
   {
-    HeatStartMenu_ExitAndClearTilemap();
+    HeatStartMenu_ExitAndClearTilemap(TRUE);
     FreezeObjectEvents();
     LoadUserWindowBorderGfx(sSaveInfoWindowId, STD_WINDOW_BASE_TILE_NUM, BG_PLTT_ID(STD_WINDOW_PALETTE_NUM));
     LockPlayerFieldControls();
@@ -1905,7 +1919,7 @@ static void DoCleanUpAndStartSafariZoneRetire(void)
 {
   if (!gPaletteFade.active)
   {
-    HeatStartMenu_ExitAndClearTilemap();
+    HeatStartMenu_ExitAndClearTilemap(TRUE);
     FreezeObjectEvents();
     LockPlayerFieldControls();
     DestroyTask(FindTaskIdByFunc(Task_HeatStartMenu_HandleMainInput));
@@ -1942,7 +1956,7 @@ static void HeatStartMenu_OpenMenu(void)
 /////// ============ exit and cleanup ===================================================
 /////// =================================================================================
 
-static void HeatStartMenu_ExitAndClearTilemap(void)
+static void HeatStartMenu_ExitAndClearTilemap(bool8 enableMovement)
 {
   u32 i;
   u8 *buf = GetBgTilemapBuffer(0);
@@ -1988,8 +2002,11 @@ static void HeatStartMenu_ExitAndClearTilemap(void)
     sHeatStartMenu = NULL;
   }
 
-  ScriptUnfreezeObjectEvents();
-  UnlockPlayerFieldControls();
+  if(enableMovement)
+  {
+    ScriptUnfreezeObjectEvents();
+    UnlockPlayerFieldControls();
+  }
 }
 
 static void HeatStartMenu_CleanupTextWindow(u32 windowId)
