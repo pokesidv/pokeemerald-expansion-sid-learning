@@ -176,7 +176,7 @@ void HeatSelectMenu_Init(void)
     sHeatSelectMenu->savedCallback = CB2_ReturnToFieldWithOpenSelectMenu;
     sHeatSelectMenu->inputDelay = 1;
     sHeatSelectMenu->mode = HSELM_MODE_MAIN;
-    sHeatSelectMenu->registeredItemIndex = 0;
+    sHeatSelectMenu->registeredItemIndex = gSaveBlock1Ptr->registeredItemLastSelected;
     sHeatSelectMenu->spriteIdRegisteredKeyItem = SPRITE_NONE;
     sHeatSelectMenu->spriteIdLeft = SPRITE_NONE;
     sHeatSelectMenu->spriteIdRight = SPRITE_NONE;

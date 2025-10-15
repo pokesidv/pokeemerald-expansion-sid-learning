@@ -2275,6 +2275,7 @@ bool8 UseRegisteredKeyItemOnField(u8 index)
             FreezeObjectEvents();
             PlayerFreeze();
             StopPlayerAvatar();
+            gSaveBlock1Ptr->registeredItemLastSelected = index;
             gSpecialVar_ItemId = registeredItem;
             taskId = CreateTask(GetItemFieldFunc(registeredItem), 8);
             gTasks[taskId].tUsingRegisteredKeyItem = TRUE;
