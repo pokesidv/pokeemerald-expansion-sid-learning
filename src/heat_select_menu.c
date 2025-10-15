@@ -19,6 +19,7 @@
 #include "field_weather.h"
 #include "field_screen_effect.h"
 #include "frontier_pass.h"
+#include "item_icon.h"
 #include "frontier_util.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
@@ -73,9 +74,10 @@ static bool8 HSelM_StartSectionState(void);
 
 // NAVIGATION AND INPUT HANDLING
 static void Task_HSelM_HandleMainInput(u8 taskId);
+static void HSelM_RefreshUI(void);
 static void HSelM_Handle_ABUTTON(void);
-static void HSelM_Handle_DPADRIGHT(void);
-static void HSelM_Handle_DPADLEFT(void);
+static void HSelM_Handle_DPADDOWN(void);
+static void HSelM_Handle_DPADUP(void);
 static void HSelM_Handle_LBUTTON(void);
 static void HSelM_Handle_RBUTTON(void);
 static void HSelM_Handle_SELECTBUTTON(void);
@@ -89,13 +91,16 @@ static void HSelM_LoadBackground(void);
 static void HSelM_RefreshTilemap(void);
 
 // SPRITES
+static void HSelM_PrintItemIcon(u16 itemId);
+static void HSelM_PrintStartIcon(void);
+static void HSelM_PrintSelectIcon(void);
+static void HSelM_PrintLeftIcon(void);
 static void HSelM_CreateSprites(void);
 static void HSelM_UpdateSpritePalettes(void); // called in handle input as well for when we return from other screens and the sprite palettes could be blended with the OW?
 
 // TEXT WINDOWS
 static void HSelM_CreateTextWindows(void);
 static const struct WindowTemplate *HSelM_GetTopWindowTemplate(void); // a different window is created depending on whether there are registered items or not or if we are in time picker mode
-static void HSelM_RefreshTextWindows(void);
 static void HSelM_UpdateTopTextWindow(void);
 static void HSelM_UpdateLTextWindow(void);
 static void HSelM_UpdateRTextWindow(void);
@@ -109,6 +114,10 @@ static void HSelM_ExitAndCleanup(void);
 static void HSelM_CleanupTextWindow(u32 windowId);
 static void HSelM_CleanupSprites(void);
 static void HSelM_CleanupSprite(struct Sprite *sprite);
+static void HSelM_RemoveItemIcon(void);
+static void HSelM_RemoveStartIcon(void);
+static void HSelM_RemoveSelectIcon(void);
+static void HSelM_RemoveLeftIcon(void);
 
 // the menu has a top section that shows the registered items if there is any, and below it there are L, R, Select, and Start buttons
 // in time picker mode, the top section shows a prompt to pick a time of day, and the L, R, Select, and Start buttons set the time to morning, day, evening, and night respectively
@@ -187,9 +196,9 @@ void HeatSelectMenu_Init(void)
     sHeatSelectMenu->sRTextWindowId = 0;
     sHeatSelectMenu->sSelectTextWindowId = 0;
     sHeatSelectMenu->sStartTextWindowId = 0;
-    HSelM_CreateSprites();
     HSelM_LoadBackground();
     HSelM_CreateTextWindows();
+    HSelM_CreateSprites();
     
     CreateTask(Task_HSelM_HandleMainInput, 0);
 }
@@ -285,13 +294,13 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     {
         HSelM_Handle_ABUTTON();
     }
-    else if (JOY_NEW(DPAD_RIGHT))
+    else if (JOY_NEW(DPAD_DOWN))
     {
-        HSelM_Handle_DPADRIGHT();
+        HSelM_Handle_DPADDOWN();
     }
-    else if (JOY_NEW(DPAD_LEFT))
+    else if (JOY_NEW(DPAD_UP))
     {
-        HSelM_Handle_DPADLEFT();
+        HSelM_Handle_DPADUP();
     }
     else if (JOY_NEW(L_BUTTON))
     {
@@ -314,7 +323,7 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
         if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
         {
             sHeatSelectMenu->mode = HSELM_MODE_MAIN;
-            HSelM_RefreshTextWindows();
+            HSelM_RefreshUI();
             return;
         }
         PlaySE(SE_SELECT);
@@ -323,7 +332,26 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     }
 }
 
-static void HSelM_Handle_DPADRIGHT(void)
+
+static void HSelM_RefreshUI(void)
+{
+    // top gets destroyed and recreated because it can change size depending on whether there are registered items or not or if we are in time picker mode
+    HSelM_CleanupTextWindow(sHeatSelectMenu->sTopTextWindowId);
+
+    HSelM_RefreshTilemap();
+
+    sHeatSelectMenu->sTopTextWindowId = AddWindow(HSelM_GetTopWindowTemplate());
+    HSelM_UpdateTopTextWindow();
+
+    HSelM_UpdateLTextWindow();
+    HSelM_UpdateRTextWindow();
+    HSelM_UpdateSelectTextWindow();
+    HSelM_UpdateStartTextWindow();
+
+    HSelM_CreateSprites();
+}
+
+static void HSelM_Handle_DPADDOWN(void)
 {
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
@@ -342,10 +370,12 @@ static void HSelM_Handle_DPADRIGHT(void)
     {
         sHeatSelectMenu->registeredItemIndex = 0;
     }
-    // the tilemap doesn't change, and the size of the text window doesn't change, but the text in the top box does
+    // the tilemap doesn't change, and the size of the text window doesn't change, 
+    // but the text in the top box does and the sprite in the top box does
+    HSelM_CreateSprites();
     HSelM_UpdateTopTextWindow();
 }
-static void HSelM_Handle_DPADLEFT(void)
+static void HSelM_Handle_DPADUP(void)
 {
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
@@ -367,7 +397,9 @@ static void HSelM_Handle_DPADLEFT(void)
     {
         sHeatSelectMenu->registeredItemIndex--;
     }
-    // the tilemap doesn't change, and the size of the text window doesn't change, but the text in the top box does
+    // the tilemap doesn't change, and the size of the text window doesn't change, 
+    // but the text in the top box does and the sprite in the top box does
+    HSelM_CreateSprites();
     HSelM_UpdateTopTextWindow();
 }
 static void HSelM_Handle_ABUTTON(void)
@@ -424,7 +456,7 @@ static void HSelM_Handle_RBUTTON(void){
     } else {
         PlaySE(SE_SELECT);
         sHeatSelectMenu->mode = HSELM_MODE_TIME_PICKER; 
-        HSelM_RefreshTextWindows();
+        HSelM_RefreshUI();
     }
 }
 static void HSelM_Handle_SELECTBUTTON(void){
@@ -439,7 +471,7 @@ static void HSelM_Handle_SELECTBUTTON(void){
     } else {
         PlaySE(SE_SELECT);
         FlagToggle(FLAG_SID_REPEL);
-        HSelM_RefreshTextWindows();
+        HSelM_RefreshUI();
     }
 }
 static void HSelM_Handle_STARTBUTTON(void){
@@ -454,7 +486,7 @@ static void HSelM_Handle_STARTBUTTON(void){
     } else {
         PlaySE(SE_SELECT);
         FlagToggle(FLAG_I_EXP_SHARE);
-        HSelM_RefreshTextWindows();
+        HSelM_RefreshUI();
     }
 }
 
@@ -477,42 +509,42 @@ static void HSelM_DoCleanUpAndChangeCallback(MainCallback callback)
 ///// ======================================================================================================================================
 
 // tiles 
-static const u32 sHSelMTiles[] = INCBIN_U32("graphics/heat_select_menu/qol_menu_tiles.4bpp.lz"); 
+static const u32 sHSelMTiles[] = INCBIN_U32("graphics/heat_select_menu/qol_menu_tiles_2.4bpp.lz"); 
 
 // tilemaps for every possible state of top, L, R, Select, and Start boxes (on/off for each of them so 32 total, encoded as 5 bits)
 // we will swap the tilemap based on which boxes are toggled on or off 
-static const u32 sHSelMTilemap00000[] = INCBIN_U32("graphics/heat_select_menu/cselm_00000.bin.lz");
-static const u32 sHSelMTilemap00001[] = INCBIN_U32("graphics/heat_select_menu/cselm_00001.bin.lz");
-static const u32 sHSelMTilemap00010[] = INCBIN_U32("graphics/heat_select_menu/cselm_00010.bin.lz");
-static const u32 sHSelMTilemap00011[] = INCBIN_U32("graphics/heat_select_menu/cselm_00011.bin.lz");
-static const u32 sHSelMTilemap00100[] = INCBIN_U32("graphics/heat_select_menu/cselm_00100.bin.lz");
-static const u32 sHSelMTilemap00101[] = INCBIN_U32("graphics/heat_select_menu/cselm_00101.bin.lz");
-static const u32 sHSelMTilemap00110[] = INCBIN_U32("graphics/heat_select_menu/cselm_00110.bin.lz");
-static const u32 sHSelMTilemap00111[] = INCBIN_U32("graphics/heat_select_menu/cselm_00111.bin.lz");
-static const u32 sHSelMTilemap01000[] = INCBIN_U32("graphics/heat_select_menu/cselm_01000.bin.lz");
-static const u32 sHSelMTilemap01001[] = INCBIN_U32("graphics/heat_select_menu/cselm_01001.bin.lz");
-static const u32 sHSelMTilemap01010[] = INCBIN_U32("graphics/heat_select_menu/cselm_01010.bin.lz");
-static const u32 sHSelMTilemap01011[] = INCBIN_U32("graphics/heat_select_menu/cselm_01011.bin.lz");
-static const u32 sHSelMTilemap01100[] = INCBIN_U32("graphics/heat_select_menu/cselm_01100.bin.lz");
-static const u32 sHSelMTilemap01101[] = INCBIN_U32("graphics/heat_select_menu/cselm_01101.bin.lz");
-static const u32 sHSelMTilemap01110[] = INCBIN_U32("graphics/heat_select_menu/cselm_01110.bin.lz");
-static const u32 sHSelMTilemap01111[] = INCBIN_U32("graphics/heat_select_menu/cselm_01111.bin.lz");
-static const u32 sHSelMTilemap10000[] = INCBIN_U32("graphics/heat_select_menu/cselm_10000.bin.lz");
-static const u32 sHSelMTilemap10001[] = INCBIN_U32("graphics/heat_select_menu/cselm_10001.bin.lz");
-static const u32 sHSelMTilemap10010[] = INCBIN_U32("graphics/heat_select_menu/cselm_10010.bin.lz");
-static const u32 sHSelMTilemap10011[] = INCBIN_U32("graphics/heat_select_menu/cselm_10011.bin.lz");
-static const u32 sHSelMTilemap10100[] = INCBIN_U32("graphics/heat_select_menu/cselm_10100.bin.lz");
-static const u32 sHSelMTilemap10101[] = INCBIN_U32("graphics/heat_select_menu/cselm_10101.bin.lz");
-static const u32 sHSelMTilemap10110[] = INCBIN_U32("graphics/heat_select_menu/cselm_10110.bin.lz");
-static const u32 sHSelMTilemap10111[] = INCBIN_U32("graphics/heat_select_menu/cselm_10111.bin.lz");
-static const u32 sHSelMTilemap11000[] = INCBIN_U32("graphics/heat_select_menu/cselm_11000.bin.lz");
-static const u32 sHSelMTilemap11001[] = INCBIN_U32("graphics/heat_select_menu/cselm_11001.bin.lz");
-static const u32 sHSelMTilemap11010[] = INCBIN_U32("graphics/heat_select_menu/cselm_11010.bin.lz");
-static const u32 sHSelMTilemap11011[] = INCBIN_U32("graphics/heat_select_menu/cselm_11011.bin.lz");
-static const u32 sHSelMTilemap11100[] = INCBIN_U32("graphics/heat_select_menu/cselm_11100.bin.lz");
-static const u32 sHSelMTilemap11101[] = INCBIN_U32("graphics/heat_select_menu/cselm_11101.bin.lz");
-static const u32 sHSelMTilemap11110[] = INCBIN_U32("graphics/heat_select_menu/cselm_11110.bin.lz");
-static const u32 sHSelMTilemap11111[] = INCBIN_U32("graphics/heat_select_menu/cselm_11111.bin.lz");
+static const u32 sHSelMTilemap00000[] = INCBIN_U32("graphics/heat_select_menu/hselm_00000.bin.lz");
+static const u32 sHSelMTilemap00001[] = INCBIN_U32("graphics/heat_select_menu/hselm_00001.bin.lz");
+static const u32 sHSelMTilemap00010[] = INCBIN_U32("graphics/heat_select_menu/hselm_00010.bin.lz");
+static const u32 sHSelMTilemap00011[] = INCBIN_U32("graphics/heat_select_menu/hselm_00011.bin.lz");
+static const u32 sHSelMTilemap00100[] = INCBIN_U32("graphics/heat_select_menu/hselm_00100.bin.lz");
+static const u32 sHSelMTilemap00101[] = INCBIN_U32("graphics/heat_select_menu/hselm_00101.bin.lz");
+static const u32 sHSelMTilemap00110[] = INCBIN_U32("graphics/heat_select_menu/hselm_00110.bin.lz");
+static const u32 sHSelMTilemap00111[] = INCBIN_U32("graphics/heat_select_menu/hselm_00111.bin.lz");
+static const u32 sHSelMTilemap01000[] = INCBIN_U32("graphics/heat_select_menu/hselm_01000.bin.lz");
+static const u32 sHSelMTilemap01001[] = INCBIN_U32("graphics/heat_select_menu/hselm_01001.bin.lz");
+static const u32 sHSelMTilemap01010[] = INCBIN_U32("graphics/heat_select_menu/hselm_01010.bin.lz");
+static const u32 sHSelMTilemap01011[] = INCBIN_U32("graphics/heat_select_menu/hselm_01011.bin.lz");
+static const u32 sHSelMTilemap01100[] = INCBIN_U32("graphics/heat_select_menu/hselm_01100.bin.lz");
+static const u32 sHSelMTilemap01101[] = INCBIN_U32("graphics/heat_select_menu/hselm_01101.bin.lz");
+static const u32 sHSelMTilemap01110[] = INCBIN_U32("graphics/heat_select_menu/hselm_01110.bin.lz");
+static const u32 sHSelMTilemap01111[] = INCBIN_U32("graphics/heat_select_menu/hselm_01111.bin.lz");
+static const u32 sHSelMTilemap10000[] = INCBIN_U32("graphics/heat_select_menu/hselm_10000.bin.lz");
+static const u32 sHSelMTilemap10001[] = INCBIN_U32("graphics/heat_select_menu/hselm_10001.bin.lz");
+static const u32 sHSelMTilemap10010[] = INCBIN_U32("graphics/heat_select_menu/hselm_10010.bin.lz");
+static const u32 sHSelMTilemap10011[] = INCBIN_U32("graphics/heat_select_menu/hselm_10011.bin.lz");
+static const u32 sHSelMTilemap10100[] = INCBIN_U32("graphics/heat_select_menu/hselm_10100.bin.lz");
+static const u32 sHSelMTilemap10101[] = INCBIN_U32("graphics/heat_select_menu/hselm_10101.bin.lz");
+static const u32 sHSelMTilemap10110[] = INCBIN_U32("graphics/heat_select_menu/hselm_10110.bin.lz");
+static const u32 sHSelMTilemap10111[] = INCBIN_U32("graphics/heat_select_menu/hselm_10111.bin.lz");
+static const u32 sHSelMTilemap11000[] = INCBIN_U32("graphics/heat_select_menu/hselm_11000.bin.lz");
+static const u32 sHSelMTilemap11001[] = INCBIN_U32("graphics/heat_select_menu/hselm_11001.bin.lz");
+static const u32 sHSelMTilemap11010[] = INCBIN_U32("graphics/heat_select_menu/hselm_11010.bin.lz");
+static const u32 sHSelMTilemap11011[] = INCBIN_U32("graphics/heat_select_menu/hselm_11011.bin.lz");
+static const u32 sHSelMTilemap11100[] = INCBIN_U32("graphics/heat_select_menu/hselm_11100.bin.lz");
+static const u32 sHSelMTilemap11101[] = INCBIN_U32("graphics/heat_select_menu/hselm_11101.bin.lz");
+static const u32 sHSelMTilemap11110[] = INCBIN_U32("graphics/heat_select_menu/hselm_11110.bin.lz");
+static const u32 sHSelMTilemap11111[] = INCBIN_U32("graphics/heat_select_menu/hselm_11111.bin.lz");
 
 // Array of all 32 tilemaps indexed by the 5-bit state combination
 static const u32 *const sHSelMTilemaps[32] = {
@@ -569,8 +601,123 @@ static void HSelM_RefreshTilemap(void)
 
 // TODO (vi): every sprite will have its own function to source the right sprite (some are item sprites, some we have to provide our own version of, etc.)
 
+#define TAG_ITEM_ICON       5110
+static void HSelM_PrintItemIcon(u16 itemId)
+{
+    u8 spriteId = MAX_SPRITES;
+    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdRegisteredKeyItem;
+
+    if (*spriteIdLoc == SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_ITEM_ICON);
+        FreeSpritePaletteByTag(TAG_ITEM_ICON);
+        spriteId = AddItemIconSprite(TAG_ITEM_ICON, TAG_ITEM_ICON, itemId);
+        
+        if (spriteId != MAX_SPRITES)
+        {
+            *spriteIdLoc = spriteId;
+            gSprites[spriteId].oam.priority = 0;
+            gSprites[spriteId].x2 = 2*8+4;
+            gSprites[spriteId].y2 = 2*8+4;
+        }
+    }
+}
+
+
+#define TAG_START_ICON       5111
+static void HSelM_PrintStartIcon(void)
+{
+    u8 spriteId = MAX_SPRITES;
+    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdStart;
+
+    if (*spriteIdLoc == SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_START_ICON);
+        FreeSpritePaletteByTag(TAG_START_ICON);
+        spriteId = AddItemIconSprite(TAG_START_ICON, TAG_START_ICON, ITEM_EXP_ALL);
+
+        if (spriteId != MAX_SPRITES)
+        {
+            *spriteIdLoc = spriteId;
+            gSprites[spriteId].oam.priority = 0;
+            gSprites[spriteId].x2 = 19*8+4;
+            gSprites[spriteId].y2 = 15*8+4;
+        }
+    }
+}
+#define TAG_SELECT_ICON       5112
+static void HSelM_PrintSelectIcon(void)
+{
+    u8 spriteId = MAX_SPRITES;
+    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdSelect;
+
+    if (*spriteIdLoc == SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_SELECT_ICON);
+        FreeSpritePaletteByTag(TAG_SELECT_ICON);
+        spriteId = AddItemIconSprite(TAG_SELECT_ICON, TAG_SELECT_ICON, ITEM_REPEL);
+
+        if (spriteId != MAX_SPRITES)
+        {
+            *spriteIdLoc = spriteId;
+            gSprites[spriteId].oam.priority = 0;
+            gSprites[spriteId].x2 = 4*8+4;
+            gSprites[spriteId].y2 = 15*8+4;
+        }
+    }
+}
+#define TAG_L_ICON       5113
+static void HSelM_PrintLeftIcon(void)
+{
+    u8 spriteId = MAX_SPRITES;
+    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdLeft;
+
+    if (*spriteIdLoc == SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_L_ICON);
+        FreeSpritePaletteByTag(TAG_L_ICON);
+        spriteId = AddItemIconSprite(TAG_L_ICON, TAG_L_ICON, ITEM_POKEVIAL);
+
+        if (spriteId != MAX_SPRITES)
+        {
+            *spriteIdLoc = spriteId;
+            gSprites[spriteId].oam.priority = 0;
+            gSprites[spriteId].x2 = 2*8+4;
+            gSprites[spriteId].y2 = 8*8+4;
+        }
+    }
+}
+
 static void HSelM_CreateSprites(void)
 {
+    HSelM_RemoveItemIcon();
+    if (HSelM_AreThereRegisteredItems() && sHeatSelectMenu->mode == HSELM_MODE_MAIN)
+    {
+        u16 registeredItem = gSaveBlock1Ptr->registeredItems[sHeatSelectMenu->registeredItemIndex].itemId;
+        HSelM_PrintItemIcon(registeredItem);
+    }
+    HSelM_RemoveStartIcon();
+    if(sHeatSelectMenu->mode == HSELM_MODE_MAIN){
+        HSelM_PrintStartIcon();
+    } else {
+        // in time picker mode, the start icon is a moon
+        // TODO (vi): create and print the moon sprite here
+    }
+    HSelM_RemoveSelectIcon();
+    if(sHeatSelectMenu->mode == HSELM_MODE_MAIN){
+        HSelM_PrintSelectIcon();
+    } else {
+        // in time picker mode, the select icon is a sun
+        // TODO (vi): create and print the sun sprite here
+    }
+    HSelM_RemoveLeftIcon();
+    if(sHeatSelectMenu->mode == HSELM_MODE_MAIN){
+        HSelM_PrintLeftIcon();
+    } else {
+        // in time picker mode, the L icon is a sun
+        // TODO (vi): create and print the sun sprite here
+    }
+
     // TODO (vi): do whatever to create the sprites of the top slot, left, right, select, start slots and the same for the time picking mode
     //     sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x, y, 0);
 }
@@ -591,46 +738,46 @@ static const struct WindowTemplate sWindowTemplate_L = {
     .bg = 0,
     .tilemapLeft = 5,
     .tilemapTop = 7,
-    .width = 4,
+    .width = 5,
     .height = 2,
     .paletteNum = 14, // palette 14 as it's on top of the menu BG not inside a white box like the top text window
     .baseBlock = 0x30};
 
 static const struct WindowTemplate sWindowTemplate_R = {
     .bg = 0,
-    .tilemapLeft = 25,
+    .tilemapLeft = 24,
     .tilemapTop = 7,
-    .width = 4,
+    .width = 5,
     .height = 2,
     .paletteNum = 14,
-    .baseBlock = 0x30 + (4 * 2 * 1)};
+    .baseBlock = 0x30 + (5 * 2 * 1)};
 
 static const struct WindowTemplate sWindowTemplate_Select = {
     .bg = 0,
     .tilemapLeft = 7,
     .tilemapTop = 14,
-    .width = 4,
+    .width = 5,
     .height = 2,
     .paletteNum = 14,
-    .baseBlock = 0x30 + (4 * 2 * 2)};
+    .baseBlock = 0x30 + (5 * 2 * 2)};
 
 static const struct WindowTemplate sWindowTemplate_Start = {
     .bg = 0,
-    .tilemapLeft = 23,
+    .tilemapLeft = 22,
     .tilemapTop = 14,
-    .width = 4,
+    .width = 5,
     .height = 2,
     .paletteNum = 14,
-    .baseBlock = 0x30 + (4 * 2 * 3)};
+    .baseBlock = 0x30 + (5 * 2 * 3)};
 
 static const struct WindowTemplate sWindowTemplate_TopItems = {
     .bg = 0,
-    .tilemapLeft = 9,
+    .tilemapLeft = 8,
     .tilemapTop = 1,
-    .width = 12,
+    .width = 14,
     .height = 2,
     .paletteNum = 15, // the top section has a white box around this text window so we use the standard text palette
-    .baseBlock = 0x30 + (4 * 2 * 4)};
+    .baseBlock = 0x30 + (5 * 2 * 4)};
 static const struct WindowTemplate sWindowTemplate_TopEmpty = {
     .bg = 0,
     .tilemapLeft = 7,
@@ -638,7 +785,7 @@ static const struct WindowTemplate sWindowTemplate_TopEmpty = {
     .width = 16,
     .height = 2,
     .paletteNum = 15, 
-    .baseBlock = 0x30 + (4 * 2 * 4)};
+    .baseBlock = 0x30 + (5 * 2 * 4)};
 
 static void HSelM_CreateTextWindows(void)
 {
@@ -655,21 +802,6 @@ static void HSelM_CreateTextWindows(void)
     HSelM_UpdateStartTextWindow();
 }
 
-static void HSelM_RefreshTextWindows(void)
-{
-    // top gets destroyed and recreated because it can change size depending on whether there are registered items or not or if we are in time picker mode
-    HSelM_CleanupTextWindow(sHeatSelectMenu->sTopTextWindowId);
-
-    HSelM_RefreshTilemap();
-
-    sHeatSelectMenu->sTopTextWindowId = AddWindow(HSelM_GetTopWindowTemplate());
-    HSelM_UpdateTopTextWindow();
-
-    HSelM_UpdateLTextWindow();
-    HSelM_UpdateRTextWindow();
-    HSelM_UpdateSelectTextWindow();
-    HSelM_UpdateStartTextWindow();
-}
 
 // Return pointer to the correct top-window template based on current state.
 // Returning a pointer avoids copying the struct and matches AddWindow's parameter.
@@ -881,35 +1013,77 @@ static void HSelM_CleanupTextWindow(u32 windowId)
 
 static void HSelM_CleanupSprites(void)
 {
-  if (sHeatSelectMenu->spriteIdRegisteredKeyItem != SPRITE_NONE)
-  {
-    HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdRegisteredKeyItem]);
-    sHeatSelectMenu->spriteIdRegisteredKeyItem = SPRITE_NONE;
-  }
-  if (sHeatSelectMenu->spriteIdLeft != SPRITE_NONE)
-  {
-    HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdLeft]);
-    sHeatSelectMenu->spriteIdLeft = SPRITE_NONE;
-  }
-  if (sHeatSelectMenu->spriteIdRight != SPRITE_NONE)
-  {
-    HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdRight]);
-    sHeatSelectMenu->spriteIdRight = SPRITE_NONE;
-  }
-  if (sHeatSelectMenu->spriteIdSelect != SPRITE_NONE)
-  {
-    HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdSelect]);
-    sHeatSelectMenu->spriteIdSelect = SPRITE_NONE;
-  }
-  if (sHeatSelectMenu->spriteIdStart != SPRITE_NONE)
-  {
-    HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdStart]);
-    sHeatSelectMenu->spriteIdStart = SPRITE_NONE;
-  }
+    HSelM_RemoveItemIcon();
+    if (sHeatSelectMenu->spriteIdLeft != SPRITE_NONE)
+    {
+        HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdLeft]);
+        sHeatSelectMenu->spriteIdLeft = SPRITE_NONE;
+    }
+    if (sHeatSelectMenu->spriteIdRight != SPRITE_NONE)
+    {
+        HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdRight]);
+        sHeatSelectMenu->spriteIdRight = SPRITE_NONE;
+    }
+    if (sHeatSelectMenu->spriteIdSelect != SPRITE_NONE)
+    {
+        HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdSelect]);
+        sHeatSelectMenu->spriteIdSelect = SPRITE_NONE;
+    }
+    HSelM_RemoveStartIcon();
 }
 
 static void HSelM_CleanupSprite(struct Sprite *sprite)
 {
-  FreeSpriteOamMatrix(sprite);
-  DestroySprite(sprite);
+    FreeSpriteOamMatrix(sprite);
+    DestroySprite(sprite);
+}
+
+static void HSelM_RemoveItemIcon(void)
+{
+    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdRegisteredKeyItem);
+
+    if (*spriteIdLoc != SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_ITEM_ICON);
+        FreeSpritePaletteByTag(TAG_ITEM_ICON);
+        DestroySprite(&(gSprites[*spriteIdLoc]));
+        *spriteIdLoc = SPRITE_NONE;
+    }
+}
+static void HSelM_RemoveStartIcon(void)
+{
+    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdStart);
+
+    if (*spriteIdLoc != SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_START_ICON);
+        FreeSpritePaletteByTag(TAG_START_ICON);
+        DestroySprite(&(gSprites[*spriteIdLoc]));
+        *spriteIdLoc = SPRITE_NONE;
+    }
+}
+static void HSelM_RemoveSelectIcon(void)
+{
+    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdSelect);
+
+    if (*spriteIdLoc != SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_SELECT_ICON);
+        FreeSpritePaletteByTag(TAG_SELECT_ICON);
+        DestroySprite(&(gSprites[*spriteIdLoc]));
+        *spriteIdLoc = SPRITE_NONE;
+    }
+}
+
+static void HSelM_RemoveLeftIcon(void)
+{
+    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdLeft);
+
+    if (*spriteIdLoc != SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_L_ICON);
+        FreeSpritePaletteByTag(TAG_L_ICON);
+        DestroySprite(&(gSprites[*spriteIdLoc]));
+        *spriteIdLoc = SPRITE_NONE;
+    }
 }
