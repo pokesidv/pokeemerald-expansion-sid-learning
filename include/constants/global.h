@@ -91,6 +91,9 @@
 #define PYRAMID_BAG_ITEMS_COUNT 10
 #define ROAMER_COUNT 1 // Number of maximum concurrent active roamers
 
+// multiple_registered_items
+#define REGISTERED_ITEMS_MAX 10
+
 // Bag constants
 #define BAG_ITEMS_COUNT 40
 #define BAG_KEYITEMS_COUNT 30

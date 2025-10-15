@@ -104,7 +104,16 @@ void UpdatePocketListPosition(u8 pocketId);
 void CB2_ReturnToBagMenuPocket(void);
 void CB2_BagMenuFromStartMenu(void);
 u8 GetItemListPosition(u8 pocketId);
-bool8 UseRegisteredKeyItemOnField(void);
+
+// multiple_registered_items
+bool8 UseRegisteredKeyItemOnField(u8 index);
+bool8 TxRegItemsMenu_CheckRegisteredHasItem(u16 itemId);
+u8 TxRegItemsMenu_GetRegisteredItemIndex(u16 itemId);
+void TxRegItemsMenu_RemoveRegisteredItem(u16 itemId);
+void TxRegItemsMenu_CompactRegisteredItems(void);
+u8 TxRegItemsMenu_CountUsedRegisteredItemSlots(void);
+bool8 TxRegItemsMenu_AddRegisteredItem(u16 itemId);
+
 void CB2_GoToSellMenu(void);
 void GoToBagMenu(u8 location, u8 pocket, void ( *exitCallback)());
 void DoWallyTutorialBagMenu(void);

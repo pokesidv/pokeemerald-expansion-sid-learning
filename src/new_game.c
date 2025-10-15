@@ -187,7 +187,14 @@ void NewGameInitData(void)
     ZeroPlayerPartyMons();
     ResetPokemonStorageSystem();
     DeactivateAllRoamers();
-    gSaveBlock1Ptr->registeredItem = ITEM_NONE;
+    gSaveBlock1Ptr->registeredItemSelect = ITEM_NONE;
+    u8 i;
+    for (i = 0 ; i < REGISTERED_ITEMS_MAX; i++)
+    {
+        gSaveBlock1Ptr->registeredItems[i].itemId = ITEM_NONE;
+    }
+    gSaveBlock1Ptr->registeredItemLastSelected = 0;
+    gSaveBlock1Ptr->registeredItemListCount = 0;
     ClearBag();
     NewGameInitPCItems();
     ClearPokeblocks();
