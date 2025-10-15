@@ -74,8 +74,8 @@ static bool8 HSelM_StartSectionState(void);
 // NAVIGATION AND INPUT HANDLING
 static void Task_HSelM_HandleMainInput(u8 taskId);
 static void HSelM_Handle_ABUTTON(void);
-static void HSelM_Handle_DPADDOWN(void);
-static void HSelM_Handle_DPADUP(void);
+static void HSelM_Handle_DPADRIGHT(void);
+static void HSelM_Handle_DPADLEFT(void);
 static void HSelM_Handle_LBUTTON(void);
 static void HSelM_Handle_RBUTTON(void);
 static void HSelM_Handle_SELECTBUTTON(void);
@@ -95,7 +95,7 @@ static void HSelM_UpdateSpritePalettes(void); // called in handle input as well 
 // TEXT WINDOWS
 static void HSelM_CreateTextWindows(void);
 static const struct WindowTemplate *HSelM_GetTopWindowTemplate(void); // a different window is created depending on whether there are registered items or not or if we are in time picker mode
-static void HSelM_UpdateTextWindows(void);
+static void HSelM_RefreshTextWindows(void);
 static void HSelM_UpdateTopTextWindow(void);
 static void HSelM_UpdateLTextWindow(void);
 static void HSelM_UpdateRTextWindow(void);
@@ -190,17 +190,24 @@ void HeatSelectMenu_Init(void)
     HSelM_CreateSprites();
     HSelM_LoadBackground();
     HSelM_CreateTextWindows();
-    HSelM_UpdateTextWindows();
+    
     CreateTask(Task_HSelM_HandleMainInput, 0);
 }
 
 bool8 HSelM_AreThereRegisteredItems(void)
 {
-    return FALSE;
+    // we assume that registeredItems is a compacted list, so if the first slot is empty, there are no registered items at all
+    return gSaveBlock1Ptr->registeredItems[0].itemId != ITEM_NONE;
 }
 u32 HSelM_HowManyRegisteredItems(void)
 {
-    return 0;
+    s8 i;
+    for (i = 0; i < REGISTERED_ITEMS_MAX; i++)
+    {
+        if (gSaveBlock1Ptr->registeredItems[i].itemId == ITEM_NONE)
+            return i;
+    }
+    return REGISTERED_ITEMS_MAX;
 }
 bool8 HSelM_TopHasSprite(void){
     return sHeatSelectMenu->mode == HSELM_MODE_MAIN && HSelM_AreThereRegisteredItems();
@@ -278,13 +285,13 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     {
         HSelM_Handle_ABUTTON();
     }
-    else if (JOY_NEW(DPAD_DOWN))
+    else if (JOY_NEW(DPAD_RIGHT))
     {
-        HSelM_Handle_DPADDOWN();
+        HSelM_Handle_DPADRIGHT();
     }
-    else if (JOY_NEW(DPAD_UP))
+    else if (JOY_NEW(DPAD_LEFT))
     {
-        HSelM_Handle_DPADUP();
+        HSelM_Handle_DPADLEFT();
     }
     else if (JOY_NEW(L_BUTTON))
     {
@@ -307,8 +314,7 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
         if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
         {
             sHeatSelectMenu->mode = HSELM_MODE_MAIN;
-            HSelM_RefreshTilemap();
-            HSelM_UpdateTextWindows();
+            HSelM_RefreshTextWindows();
             return;
         }
         PlaySE(SE_SELECT);
@@ -317,7 +323,7 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     }
 }
 
-static void HSelM_Handle_DPADDOWN(void)
+static void HSelM_Handle_DPADRIGHT(void)
 {
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
@@ -325,7 +331,7 @@ static void HSelM_Handle_DPADDOWN(void)
         return;
     }
     u32 n = HSelM_HowManyRegisteredItems();
-    if (n == 0)
+    if (n <= 1)
     {
         sHeatSelectMenu->registeredItemIndex = 0;
         return;
@@ -336,10 +342,10 @@ static void HSelM_Handle_DPADDOWN(void)
     {
         sHeatSelectMenu->registeredItemIndex = 0;
     }
-
-    HSelM_UpdateTextWindows();
+    // the tilemap doesn't change, and the size of the text window doesn't change, but the text in the top box does
+    HSelM_UpdateTopTextWindow();
 }
-static void HSelM_Handle_DPADUP(void)
+static void HSelM_Handle_DPADLEFT(void)
 {
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
@@ -347,17 +353,22 @@ static void HSelM_Handle_DPADUP(void)
         return;
     }
     u32 n = HSelM_HowManyRegisteredItems();
-    if (n == 0)
+    if (n <= 1)
     {
         sHeatSelectMenu->registeredItemIndex = 0;
         return;
     }
     PlaySE(SE_SELECT);
-    sHeatSelectMenu->registeredItemIndex--;
     if (sHeatSelectMenu->registeredItemIndex <= 0)
     {
-        sHeatSelectMenu->registeredItemIndex = n-1;
+        sHeatSelectMenu->registeredItemIndex = n - 1;
     }
+    else
+    {
+        sHeatSelectMenu->registeredItemIndex--;
+    }
+    // the tilemap doesn't change, and the size of the text window doesn't change, but the text in the top box does
+    HSelM_UpdateTopTextWindow();
 }
 static void HSelM_Handle_ABUTTON(void)
 {
@@ -372,8 +383,17 @@ static void HSelM_Handle_ABUTTON(void)
         sHeatSelectMenu->registeredItemIndex = 0;
         return;
     }
+    u8 index = sHeatSelectMenu->registeredItemIndex;
     PlaySE(SE_SELECT);
-    // TODO (vi): implement using the registered item
+    HSelM_ExitAndCleanup();
+    DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+    UseRegisteredKeyItemOnField(index);
+    // if(HSelM_AreThereRegisteredItems()){
+    //     u16 registeredItem = gSaveBlock1Ptr->registeredItems[sHeatSelectMenu->registeredItemIndex].itemId;
+    //     StringExpandPlaceholders(gStringVar4, GetItemName(registeredItem));
+    // } else {
+    //     StringExpandPlaceholders(gStringVar4, gText_NoRegisteredItem);
+    // }
 }
 static void HSelM_Handle_LBUTTON(void){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
@@ -404,8 +424,7 @@ static void HSelM_Handle_RBUTTON(void){
     } else {
         PlaySE(SE_SELECT);
         sHeatSelectMenu->mode = HSELM_MODE_TIME_PICKER; 
-        HSelM_RefreshTilemap();
-        HSelM_UpdateTextWindows();
+        HSelM_RefreshTextWindows();
     }
 }
 static void HSelM_Handle_SELECTBUTTON(void){
@@ -420,8 +439,7 @@ static void HSelM_Handle_SELECTBUTTON(void){
     } else {
         PlaySE(SE_SELECT);
         FlagToggle(FLAG_SID_REPEL);
-        HSelM_RefreshTilemap();
-        HSelM_UpdateTextWindows();
+        HSelM_RefreshTextWindows();
     }
 }
 static void HSelM_Handle_STARTBUTTON(void){
@@ -436,8 +454,7 @@ static void HSelM_Handle_STARTBUTTON(void){
     } else {
         PlaySE(SE_SELECT);
         FlagToggle(FLAG_I_EXP_SHARE);
-        HSelM_RefreshTilemap();
-        HSelM_UpdateTextWindows();
+        HSelM_RefreshTextWindows();
     }
 }
 
@@ -630,11 +647,24 @@ static void HSelM_CreateTextWindows(void)
     sHeatSelectMenu->sRTextWindowId = AddWindow(&sWindowTemplate_R);
     sHeatSelectMenu->sSelectTextWindowId = AddWindow(&sWindowTemplate_Select);
     sHeatSelectMenu->sStartTextWindowId = AddWindow(&sWindowTemplate_Start);
+
+    HSelM_UpdateTopTextWindow();
+    HSelM_UpdateLTextWindow();
+    HSelM_UpdateRTextWindow();
+    HSelM_UpdateSelectTextWindow();
+    HSelM_UpdateStartTextWindow();
 }
 
-static void HSelM_UpdateTextWindows(void)
+static void HSelM_RefreshTextWindows(void)
 {
+    // top gets destroyed and recreated because it can change size depending on whether there are registered items or not or if we are in time picker mode
+    HSelM_CleanupTextWindow(sHeatSelectMenu->sTopTextWindowId);
+
+    HSelM_RefreshTilemap();
+
+    sHeatSelectMenu->sTopTextWindowId = AddWindow(HSelM_GetTopWindowTemplate());
     HSelM_UpdateTopTextWindow();
+
     HSelM_UpdateLTextWindow();
     HSelM_UpdateRTextWindow();
     HSelM_UpdateSelectTextWindow();
@@ -708,8 +738,8 @@ static void HSelM_UpdateTopTextWindow(void)
     else
     {
         if(HSelM_AreThereRegisteredItems()){
-            // TODO (vi): replace with the name of the registered item at index sHeatSelectMenu->registeredItemIndex
-            StringExpandPlaceholders(gStringVar4, gText_Friday);
+            u16 registeredItem = gSaveBlock1Ptr->registeredItems[sHeatSelectMenu->registeredItemIndex].itemId;
+            StringExpandPlaceholders(gStringVar4, GetItemName(registeredItem));
         } else {
             StringExpandPlaceholders(gStringVar4, gText_NoRegisteredItem);
         }
