@@ -95,8 +95,8 @@ static void HSelM_PrintItemIcon(u16 itemId);
 static void HSelM_PrintStartIcon(void);
 static void HSelM_PrintSelectIcon(void);
 static void HSelM_PrintLeftIcon(void);
+static void HSelM_PrintRightIcon(void);
 static void HSelM_CreateSprites(void);
-static void HSelM_UpdateSpritePalettes(void); // called in handle input as well for when we return from other screens and the sprite palettes could be blended with the OW?
 
 // TEXT WINDOWS
 static void HSelM_CreateTextWindows(void);
@@ -118,6 +118,7 @@ static void HSelM_RemoveItemIcon(void);
 static void HSelM_RemoveStartIcon(void);
 static void HSelM_RemoveSelectIcon(void);
 static void HSelM_RemoveLeftIcon(void);
+static void HSelM_RemoveRightIcon(void);
 
 // the menu has a top section that shows the registered items if there is any, and below it there are L, R, Select, and Start buttons
 // in time picker mode, the top section shows a prompt to pick a time of day, and the L, R, Select, and Start buttons set the time to morning, day, evening, and night respectively
@@ -277,12 +278,6 @@ bool8 HSelM_StartSectionState(void){
 
 static void Task_HSelM_HandleMainInput(u8 taskId)
 {
-    // if (!gPaletteFade.active)
-    // {
-    //     HSelM_UpdateSpritePalettes();
-    // }
-    // no need to update text windows here to refresh every tick. only update texts when we perform actions that make them change
-
     // Handle input delay to prevent immediate processing of the button that opened the menu
     if (sHeatSelectMenu->inputDelay > 0)
     {
@@ -596,12 +591,142 @@ static void HSelM_RefreshTilemap(void)
 ///// ============== SPRITES ==============================================================================================================
 ///// =====================================================================================================================================
 
-// #define HSELM_TAG_ICON_GFX 1234
-// #define HSELM_TAG_ICON_PAL 0x4654
-
-// TODO (vi): every sprite will have its own function to source the right sprite (some are item sprites, some we have to provide our own version of, etc.)
+static const u32 sTimeIconsGfx[] = INCBIN_U32("graphics/heat_select_menu/time_of_day_icons.4bpp.lz");
+static const u16 sTimeIconsPal[] = INCBIN_U16("graphics/heat_select_menu/time_of_day_icons.gbapal");
 
 #define TAG_ITEM_ICON       5110
+#define TAG_START_ICON       5111
+#define TAG_SELECT_ICON       5112
+#define TAG_LEFT_ICON       5113
+#define TAG_RIGHT_ICON       5114
+
+static const struct OamData gOamIcon = {
+    .y = 0,
+    .affineMode = ST_OAM_AFFINE_DOUBLE,
+    .objMode = 0,
+    .bpp = ST_OAM_4BPP,
+    .shape = SPRITE_SHAPE(32x32),
+    .x = 0,
+    .matrixNum = 0,
+    .size = SPRITE_SIZE(32x32),
+    .tileNum = 0,
+    .priority = 0,
+    .paletteNum = 0,
+};
+
+static const union AnimCmd gAnimCmdNight[] = {
+    ANIMCMD_FRAME(0, 0),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const gIconNightAnim[] = {
+    gAnimCmdNight,
+};
+
+
+static const union AnimCmd gAnimCmdMorning[] = {
+    ANIMCMD_FRAME(16, 0),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const gIconMorningAnim[] = {
+    gAnimCmdMorning,
+};
+
+
+static const union AnimCmd gAnimCmdDay[] = {
+    ANIMCMD_FRAME(32, 0),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const gIconDayAnim[] = {
+    gAnimCmdDay,
+};
+
+
+static const union AnimCmd gAnimCmdEvening[] = {
+    ANIMCMD_FRAME(48, 0),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const gIconEveningAnim[] = {
+    gAnimCmdEvening,
+};
+
+
+static const union AnimCmd gAnimCmdClock[] = {
+    ANIMCMD_FRAME(64, 0),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd *const gIconClockAnim[] = {
+    gAnimCmdClock,
+};
+
+static const struct SpriteTemplate gSpriteIconNight = {
+    .tileTag = TAG_START_ICON,
+    .paletteTag = TAG_START_ICON,
+    .oam = &gOamIcon,
+    .anims = gIconNightAnim,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+static const struct SpriteTemplate gSpriteIconMorning = {
+    .tileTag = TAG_LEFT_ICON,
+    .paletteTag = TAG_LEFT_ICON,
+    .oam = &gOamIcon,
+    .anims = gIconMorningAnim,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+static const struct SpriteTemplate gSpriteIconDay = {
+    .tileTag = TAG_RIGHT_ICON,
+    .paletteTag = TAG_RIGHT_ICON,
+    .oam = &gOamIcon,
+    .anims = gIconDayAnim,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+static const struct SpriteTemplate gSpriteIconEvening = {
+    .tileTag = TAG_SELECT_ICON,
+    .paletteTag = TAG_SELECT_ICON,
+    .oam = &gOamIcon,
+    .anims = gIconEveningAnim,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+static const struct SpriteTemplate gSpriteIconClock = {
+    .tileTag = TAG_RIGHT_ICON,
+    .paletteTag = TAG_RIGHT_ICON,
+    .oam = &gOamIcon,
+    .anims = gIconClockAnim,
+    .images = NULL,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCallbackDummy,
+};
+
+static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplate)
+{
+
+    const struct CompressedSpriteSheet spriteSheet[] = {
+        {sTimeIconsGfx, 32 * 160 / 2, tag},
+        {NULL, 0, 0}
+    };
+    
+    LoadCompressedSpriteSheet(spriteSheet);
+
+    struct SpritePalette spritePalette;
+    spritePalette.data = sTimeIconsPal;
+    spritePalette.tag = tag;
+    LoadSpritePalette(&spritePalette);
+
+    return CreateSprite(spriteTemplate, 0, 0, 0);
+}
+
 static void HSelM_PrintItemIcon(u16 itemId)
 {
     u8 spriteId = MAX_SPRITES;
@@ -623,8 +748,6 @@ static void HSelM_PrintItemIcon(u16 itemId)
     }
 }
 
-
-#define TAG_START_ICON       5111
 static void HSelM_PrintStartIcon(void)
 {
     u8 spriteId = MAX_SPRITES;
@@ -634,18 +757,31 @@ static void HSelM_PrintStartIcon(void)
     {
         FreeSpriteTilesByTag(TAG_START_ICON);
         FreeSpritePaletteByTag(TAG_START_ICON);
-        spriteId = AddItemIconSprite(TAG_START_ICON, TAG_START_ICON, ITEM_EXP_ALL);
-
-        if (spriteId != MAX_SPRITES)
+        if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
         {
-            *spriteIdLoc = spriteId;
-            gSprites[spriteId].oam.priority = 0;
-            gSprites[spriteId].x2 = 19*8+4;
-            gSprites[spriteId].y2 = 15*8+4;
+            spriteId = HSelM_AddTimeIcon(TAG_START_ICON, &gSpriteIconNight);
+            if (spriteId != MAX_SPRITES)
+            {
+                *spriteIdLoc = spriteId;
+                gSprites[spriteId].oam.priority = 0;
+                gSprites[spriteId].x2 = 19 * 8;
+                gSprites[spriteId].y2 = 15 * 8;
+            }
+        }
+        else
+        {
+            spriteId = AddItemIconSprite(TAG_START_ICON, TAG_START_ICON, ITEM_EXP_ALL);
+            if (spriteId != MAX_SPRITES)
+            {
+                *spriteIdLoc = spriteId;
+                gSprites[spriteId].oam.priority = 0;
+                gSprites[spriteId].x2 = 19 * 8 + 4;
+                gSprites[spriteId].y2 = 15 * 8 + 4;
+            }
         }
     }
 }
-#define TAG_SELECT_ICON       5112
+
 static void HSelM_PrintSelectIcon(void)
 {
     u8 spriteId = MAX_SPRITES;
@@ -655,18 +791,30 @@ static void HSelM_PrintSelectIcon(void)
     {
         FreeSpriteTilesByTag(TAG_SELECT_ICON);
         FreeSpritePaletteByTag(TAG_SELECT_ICON);
-        spriteId = AddItemIconSprite(TAG_SELECT_ICON, TAG_SELECT_ICON, ITEM_REPEL);
-
-        if (spriteId != MAX_SPRITES)
+        if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
         {
-            *spriteIdLoc = spriteId;
-            gSprites[spriteId].oam.priority = 0;
-            gSprites[spriteId].x2 = 4*8+4;
-            gSprites[spriteId].y2 = 15*8+4;
+            spriteId = HSelM_AddTimeIcon(TAG_SELECT_ICON, &gSpriteIconEvening);
+            if (spriteId != MAX_SPRITES)
+            {
+                *spriteIdLoc = spriteId;
+                gSprites[spriteId].oam.priority = 0;
+                gSprites[spriteId].x2 = 4 * 8;
+                gSprites[spriteId].y2 = 15 * 8;
+            }
+        }
+        else
+        {
+            spriteId = AddItemIconSprite(TAG_SELECT_ICON, TAG_SELECT_ICON, ITEM_REPEL);
+            if (spriteId != MAX_SPRITES)
+            {
+                *spriteIdLoc = spriteId;
+                gSprites[spriteId].oam.priority = 0;
+                gSprites[spriteId].x2 = 4 * 8 + 4;
+                gSprites[spriteId].y2 = 15 * 8 + 4;
+            }
         }
     }
 }
-#define TAG_L_ICON       5113
 static void HSelM_PrintLeftIcon(void)
 {
     u8 spriteId = MAX_SPRITES;
@@ -674,16 +822,55 @@ static void HSelM_PrintLeftIcon(void)
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
-        FreeSpriteTilesByTag(TAG_L_ICON);
-        FreeSpritePaletteByTag(TAG_L_ICON);
-        spriteId = AddItemIconSprite(TAG_L_ICON, TAG_L_ICON, ITEM_POKEVIAL);
+        FreeSpriteTilesByTag(TAG_LEFT_ICON);
+        FreeSpritePaletteByTag(TAG_LEFT_ICON);
+        if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+        {
+            spriteId = HSelM_AddTimeIcon(TAG_LEFT_ICON, &gSpriteIconMorning);
+            if (spriteId != MAX_SPRITES)
+            {
+                *spriteIdLoc = spriteId;
+                gSprites[spriteId].oam.priority = 0;
+                gSprites[spriteId].x2 = 2 * 8;
+                gSprites[spriteId].y2 = 8 * 8;
+            }
+        }
+        else
+        {
+            spriteId = AddItemIconSprite(TAG_LEFT_ICON, TAG_LEFT_ICON, ITEM_POKEVIAL);
+            if (spriteId != MAX_SPRITES)
+            {
+                *spriteIdLoc = spriteId;
+                gSprites[spriteId].oam.priority = 0;
+                gSprites[spriteId].x2 = 2 * 8 + 4;
+                gSprites[spriteId].y2 = 8 * 8 + 4;
+            }
+        }
+    }
+}
+static void HSelM_PrintRightIcon(void)
+{
+    u8 spriteId = MAX_SPRITES;
+    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdRight;
 
+    if (*spriteIdLoc == SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_RIGHT_ICON);
+        FreeSpritePaletteByTag(TAG_RIGHT_ICON);
+        if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+        {
+            spriteId = HSelM_AddTimeIcon(TAG_RIGHT_ICON, &gSpriteIconDay);
+        }
+        else
+        {
+            spriteId = HSelM_AddTimeIcon(TAG_RIGHT_ICON, &gSpriteIconClock);
+        }
         if (spriteId != MAX_SPRITES)
         {
             *spriteIdLoc = spriteId;
             gSprites[spriteId].oam.priority = 0;
-            gSprites[spriteId].x2 = 2*8+4;
-            gSprites[spriteId].y2 = 8*8+4;
+            gSprites[spriteId].x2 = 21 * 8;
+            gSprites[spriteId].y2 = 8 * 8;
         }
     }
 }
@@ -697,37 +884,13 @@ static void HSelM_CreateSprites(void)
         HSelM_PrintItemIcon(registeredItem);
     }
     HSelM_RemoveStartIcon();
-    if(sHeatSelectMenu->mode == HSELM_MODE_MAIN){
-        HSelM_PrintStartIcon();
-    } else {
-        // in time picker mode, the start icon is a moon
-        // TODO (vi): create and print the moon sprite here
-    }
+    HSelM_PrintStartIcon();
     HSelM_RemoveSelectIcon();
-    if(sHeatSelectMenu->mode == HSELM_MODE_MAIN){
-        HSelM_PrintSelectIcon();
-    } else {
-        // in time picker mode, the select icon is a sun
-        // TODO (vi): create and print the sun sprite here
-    }
+    HSelM_PrintSelectIcon();
     HSelM_RemoveLeftIcon();
-    if(sHeatSelectMenu->mode == HSELM_MODE_MAIN){
-        HSelM_PrintLeftIcon();
-    } else {
-        // in time picker mode, the L icon is a sun
-        // TODO (vi): create and print the sun sprite here
-    }
-
-    // TODO (vi): do whatever to create the sprites of the top slot, left, right, select, start slots and the same for the time picking mode
-    //     sHeatStartMenu->spriteIdPokedex = CreateSprite(&gSpriteIconPokedex, x, y, 0);
-}
-
-static void HSelM_UpdateSpritePalettes(void)
-{
-    // u32 index;
-    // //   LoadSpritePalette(sSpritePal_Icon);
-    // index = IndexOfSpritePaletteTag(TAG_ICON_PAL);
-    // LoadPalette(sIconPal, OBJ_PLTT_ID(index), PLTT_SIZE_4BPP);
+    HSelM_PrintLeftIcon();
+    HSelM_RemoveRightIcon();
+    HSelM_PrintRightIcon();
 }
 
 ////// =====================================================================================================================================
@@ -880,7 +1043,6 @@ static void HSelM_UpdateTopTextWindow(void)
     HSelM_PrintCenteredStringVar4(sHeatSelectMenu->sTopTextWindowId, FONT_SMALL, HSelM_GetTopWindowTemplate()->width);
 }
 
-// TODO (vi): real L text
 static const u8 gText_On[]    = _("On");
 static const u8 gText_Off[]    = _("Off");
 static const u8 gText_Pokevial_Dose_Count[] = _("{STR_VAR_1}/{STR_VAR_2}");
@@ -1081,8 +1243,21 @@ static void HSelM_RemoveLeftIcon(void)
 
     if (*spriteIdLoc != SPRITE_NONE)
     {
-        FreeSpriteTilesByTag(TAG_L_ICON);
-        FreeSpritePaletteByTag(TAG_L_ICON);
+        FreeSpriteTilesByTag(TAG_LEFT_ICON);
+        FreeSpritePaletteByTag(TAG_LEFT_ICON);
+        DestroySprite(&(gSprites[*spriteIdLoc]));
+        *spriteIdLoc = SPRITE_NONE;
+    }
+}
+
+static void HSelM_RemoveRightIcon(void)
+{
+    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdRight);
+
+    if (*spriteIdLoc != SPRITE_NONE)
+    {
+        FreeSpriteTilesByTag(TAG_RIGHT_ICON);
+        FreeSpritePaletteByTag(TAG_RIGHT_ICON);
         DestroySprite(&(gSprites[*spriteIdLoc]));
         *spriteIdLoc = SPRITE_NONE;
     }
