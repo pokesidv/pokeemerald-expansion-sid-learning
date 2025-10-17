@@ -284,8 +284,8 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
 ///// ============== Sprite data ==========================================================
 ///// =====================================================================================
 
-#define TAG_ICON_GFX 1234
-#define TAG_ICON_PAL 0x4654
+#define TAG_ICON_GFX 0x8009
+#define TAG_ICON_PAL 0x8009
 
 static const u32 sIconGfx[] = INCBIN_U32("graphics/heat_start_menu/icons.4bpp.lz");
 static const u16 sIconPal[] = INCBIN_U16("graphics/heat_start_menu/icons.gbapal");
@@ -1437,12 +1437,6 @@ static void HeatStartMenu_HandleInput_DPADUP(void)
 
 static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
 {
-  u32 index;
-  if (sHeatStartMenu->loadState == 0 && !gPaletteFade.active)
-  {
-    index = IndexOfSpritePaletteTag(TAG_ICON_PAL);
-    LoadPalette(sIconPal, OBJ_PLTT_ID(index), PLTT_SIZE_4BPP);
-  }
 
   if(GetSafariZoneFlag() == FALSE){
     HeatStartMenu_UpdateClockDisplay();
