@@ -1069,7 +1069,7 @@ static void HSelM_UpdateLTextWindow(void)
     else
     {
         u32 dose = PokevialGetDose();
-        ConvertIntToDecimalStringN(gStringVar1, dose, STR_CONV_MODE_LEADING_ZEROS, CountDigits(dose));
+        ConvertIntToDecimalStringN(gStringVar1, dose, STR_CONV_MODE_LEADING_ZEROS, dose == 0 ? 1 : CountDigits(dose));
         u32 size = PokevialGetSize();
         ConvertIntToDecimalStringN(gStringVar2, size, STR_CONV_MODE_LEADING_ZEROS, CountDigits(size));
         StringExpandPlaceholders(gStringVar4, gText_Pokevial_Dose_Count);

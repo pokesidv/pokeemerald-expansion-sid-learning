@@ -20,7 +20,7 @@ script EventScript_QolMenu {
     
     lock
 
-    dynmultipush("Wait until...", QOL_MENU_OPTION_WAIT)
+    // dynmultipush("Wait until...", QOL_MENU_OPTION_WAIT)
     
     if(checkitem(ITEM_POKEVIAL)){
         pokevialgetsize()
@@ -38,26 +38,26 @@ script EventScript_QolMenu {
             }
         }
         
-        // dynmultipush("Size up", QOL_MENU_OPTION_SIZE_UP)
-        // dynmultipush("Size down", QOL_MENU_OPTION_SIZE_DOWN)
-        // dynmultipush("Dose up", QOL_MENU_OPTION_DOSE_UP)
-        // dynmultipush("Dose down", QOL_MENU_OPTION_DOSE_DOWN)
-        // dynmultipush("Refill", QOL_MENU_OPTION_REFILL)
+        dynmultipush("Size up", QOL_MENU_OPTION_SIZE_UP)
+        dynmultipush("Size down", QOL_MENU_OPTION_SIZE_DOWN)
+        dynmultipush("Dose up", QOL_MENU_OPTION_DOSE_UP)
+        dynmultipush("Dose down", QOL_MENU_OPTION_DOSE_DOWN)
+        dynmultipush("Refill", QOL_MENU_OPTION_REFILL)
     }
 
-    if(flag(FLAG_SID_REPEL)){
-        dynmultipush("Repel: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_REPEL)
-    } else {
-        dynmultipush("Repel: {CLEAR_TO 60}off", QOL_MENU_OPTION_REPEL)
-    }
+    // if(flag(FLAG_SID_REPEL)){
+    //     dynmultipush("Repel: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_REPEL)
+    // } else {
+    //     dynmultipush("Repel: {CLEAR_TO 60}off", QOL_MENU_OPTION_REPEL)
+    // }
 
-    if(checkitem(ITEM_EXP_ALL)){
-        if(flag(FLAG_I_EXP_SHARE)){
-            dynmultipush("Exp-All: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_EXP_ALL)
-        } else {
-            dynmultipush("Exp-All: {CLEAR_TO 60}off", QOL_MENU_OPTION_EXP_ALL)
-        }
-    }
+    // if(checkitem(ITEM_EXP_ALL)){
+    //     if(flag(FLAG_I_EXP_SHARE)){
+    //         dynmultipush("Exp-All: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_EXP_ALL)
+    //     } else {
+    //         dynmultipush("Exp-All: {CLEAR_TO 60}off", QOL_MENU_OPTION_EXP_ALL)
+    //     }
+    // }
 
     dynmultipush("Change ability", QOL_MENU_OPTION_ABILICHANGE)
     dynmultipush("Change nature", QOL_MENU_OPTION_NATURE_CHANGE)

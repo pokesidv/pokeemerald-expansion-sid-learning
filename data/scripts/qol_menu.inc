@@ -1,23 +1,11 @@
 EventScript_QolMenu::
 # 21 "data/scripts/qol_menu.pory"
 	lock
-# 23 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_0, 9
 	checkitem ITEM_POKEVIAL
 # 0 "data/scripts/qol_menu.pory"
 	compare VAR_RESULT, 0
 	goto_if_ne EventScript_QolMenu_2
 EventScript_QolMenu_1:
-# 48 "data/scripts/qol_menu.pory"
-	goto_if_set FLAG_SID_REPEL, EventScript_QolMenu_5
-# 51 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_5, 1
-EventScript_QolMenu_4:
-	checkitem ITEM_EXP_ALL
-# 0 "data/scripts/qol_menu.pory"
-	compare VAR_RESULT, 0
-	goto_if_ne EventScript_QolMenu_12
-EventScript_QolMenu_11:
 # 62 "data/scripts/qol_menu.pory"
 	dynmultipush EventScript_QolMenu_Text_8, 10
 # 63 "data/scripts/qol_menu.pory"
@@ -29,30 +17,30 @@ EventScript_QolMenu_11:
 # 69 "data/scripts/qol_menu.pory"
 	switch VAR_RESULT
 # 70 "data/scripts/qol_menu.pory"
-	case 1, EventScript_QolMenu_19
+	case 1, EventScript_QolMenu_6
 # 78 "data/scripts/qol_menu.pory"
-	case 2, EventScript_QolMenu_20
+	case 2, EventScript_QolMenu_7
 # 80 "data/scripts/qol_menu.pory"
-	case 3, EventScript_QolMenu_21
+	case 3, EventScript_QolMenu_8
 # 83 "data/scripts/qol_menu.pory"
-	case 4, EventScript_QolMenu_22
+	case 4, EventScript_QolMenu_9
 # 85 "data/scripts/qol_menu.pory"
-	case 5, EventScript_QolMenu_23
+	case 5, EventScript_QolMenu_10
 # 87 "data/scripts/qol_menu.pory"
-	case 6, EventScript_QolMenu_24
+	case 6, EventScript_QolMenu_11
 # 89 "data/scripts/qol_menu.pory"
-	case 7, EventScript_QolMenu_25
+	case 7, EventScript_QolMenu_12
 # 91 "data/scripts/qol_menu.pory"
-	case 8, EventScript_QolMenu_26
+	case 8, EventScript_QolMenu_13
 # 99 "data/scripts/qol_menu.pory"
-	case 9, EventScript_QolMenu_27
+	case 9, EventScript_QolMenu_14
 # 101 "data/scripts/qol_menu.pory"
-	case 10, EventScript_QolMenu_28
+	case 10, EventScript_QolMenu_15
 # 103 "data/scripts/qol_menu.pory"
-	case 11, EventScript_QolMenu_29
+	case 11, EventScript_QolMenu_16
 # 105 "data/scripts/qol_menu.pory"
-	case 12, EventScript_QolMenu_30
-EventScript_QolMenu_17:
+	case 12, EventScript_QolMenu_17
+EventScript_QolMenu_4:
 # 109 "data/scripts/qol_menu.pory"
 	waitmessage
 # 110 "data/scripts/qol_menu.pory"
@@ -70,126 +58,120 @@ EventScript_QolMenu_2:
 	buffernumberstring STR_VAR_1, VAR_0x8006
 # 30 "data/scripts/qol_menu.pory"
 	compare VAR_0x8006, 0
-	goto_if_eq EventScript_QolMenu_8
+	goto_if_eq EventScript_QolMenu_19
 # 33 "data/scripts/qol_menu.pory"
 	pokevialisfull
 # 34 "data/scripts/qol_menu.pory"
 	compare VAR_RESULT, 1
-	goto_if_eq EventScript_QolMenu_14
+	goto_if_eq EventScript_QolMenu_28
 # 37 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_3, 2
-	goto EventScript_QolMenu_1
-
-EventScript_QolMenu_5:
-# 49 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_4, 1
-	goto EventScript_QolMenu_4
-
-EventScript_QolMenu_8:
-# 31 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_1, 2
-	goto EventScript_QolMenu_1
-
-EventScript_QolMenu_12:
-# 55 "data/scripts/qol_menu.pory"
-	goto_if_set FLAG_I_EXP_SHARE, EventScript_QolMenu_31
-# 58 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_7, 8
-	goto EventScript_QolMenu_11
-
-EventScript_QolMenu_14:
-# 35 "data/scripts/qol_menu.pory"
 	dynmultipush EventScript_QolMenu_Text_2, 2
+EventScript_QolMenu_18:
+# 41 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_3, 3
+# 42 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_4, 4
+# 43 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_5, 5
+# 44 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_6, 6
+# 45 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_7, 7
 	goto EventScript_QolMenu_1
 
-EventScript_QolMenu_19:
+EventScript_QolMenu_6:
 # 71 "data/scripts/qol_menu.pory"
-	goto_if_set FLAG_SID_REPEL, EventScript_QolMenu_34
+	goto_if_set FLAG_SID_REPEL, EventScript_QolMenu_22
 # 75 "data/scripts/qol_menu.pory"
 	setflag FLAG_SID_REPEL
 # 76 "data/scripts/qol_menu.pory"
 	msgbox EventScript_QolMenu_Text_12
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_20:
+EventScript_QolMenu_7:
 # 79 "data/scripts/qol_menu.pory"
 	pokevialtryuse
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_21:
+EventScript_QolMenu_8:
 # 81 "data/scripts/qol_menu.pory"
 	pokevialincreasesize
 # 82 "data/scripts/qol_menu.pory"
 	pokevialrefill
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_22:
+EventScript_QolMenu_9:
 # 84 "data/scripts/qol_menu.pory"
 	pokevialdecreasesize
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_23:
+EventScript_QolMenu_10:
 # 86 "data/scripts/qol_menu.pory"
 	pokevialadddose
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_24:
+EventScript_QolMenu_11:
 # 88 "data/scripts/qol_menu.pory"
 	pokevialremovedose
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_25:
+EventScript_QolMenu_12:
 # 90 "data/scripts/qol_menu.pory"
 	pokevialrefill
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_26:
+EventScript_QolMenu_13:
 # 92 "data/scripts/qol_menu.pory"
-	goto_if_set FLAG_I_EXP_SHARE, EventScript_QolMenu_37
+	goto_if_set FLAG_I_EXP_SHARE, EventScript_QolMenu_25
 # 96 "data/scripts/qol_menu.pory"
 	setflag FLAG_I_EXP_SHARE
 # 97 "data/scripts/qol_menu.pory"
 	msgbox EventScript_QolMenu_Text_14
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_27:
+EventScript_QolMenu_14:
 # 100 "data/scripts/qol_menu.pory"
 	call EventScript_QolMenu_Wait
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_28:
+EventScript_QolMenu_15:
 # 102 "data/scripts/qol_menu.pory"
 	call EventScript_QolMenu_PickAbiliChangeMon
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_29:
+EventScript_QolMenu_16:
 # 104 "data/scripts/qol_menu.pory"
 	call EventScript_QolMenu_PickNatureChangeMon
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_30:
+EventScript_QolMenu_17:
 # 106 "data/scripts/qol_menu.pory"
 	call EventScript_QolMenu_GiveRockClimbMon
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_31:
-# 56 "data/scripts/qol_menu.pory"
-	dynmultipush EventScript_QolMenu_Text_6, 8
-	goto EventScript_QolMenu_11
+EventScript_QolMenu_19:
+# 31 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_0, 2
+	goto EventScript_QolMenu_18
 
-EventScript_QolMenu_34:
+EventScript_QolMenu_22:
 # 72 "data/scripts/qol_menu.pory"
 	clearflag FLAG_SID_REPEL
 # 73 "data/scripts/qol_menu.pory"
 	msgbox EventScript_QolMenu_Text_11
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
 
-EventScript_QolMenu_37:
+EventScript_QolMenu_25:
 # 93 "data/scripts/qol_menu.pory"
 	clearflag FLAG_I_EXP_SHARE
 # 94 "data/scripts/qol_menu.pory"
 	msgbox EventScript_QolMenu_Text_13
-	goto EventScript_QolMenu_17
+	goto EventScript_QolMenu_4
+
+EventScript_QolMenu_28:
+# 35 "data/scripts/qol_menu.pory"
+	dynmultipush EventScript_QolMenu_Text_1, 2
+	goto EventScript_QolMenu_18
 
 
 EventScript_QolMenu_Wait::
@@ -614,36 +596,36 @@ EventScript_QolMenu_GiveRockClimbMon::
 
 
 EventScript_QolMenu_Text_0:
-# 23 "data/scripts/qol_menu.pory"
-	.string "Wait until...$"
-
-EventScript_QolMenu_Text_1:
 # 31 "data/scripts/qol_menu.pory"
 	.string "Pokévial: {CLEAR_TO 60}0/{STR_VAR_2}$"
 
-EventScript_QolMenu_Text_2:
+EventScript_QolMenu_Text_1:
 # 35 "data/scripts/qol_menu.pory"
 	.string "Pokévial: {CLEAR_TO 60}{COLOR BLUE}{SHADOW LIGHT_BLUE}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}$"
 
-EventScript_QolMenu_Text_3:
+EventScript_QolMenu_Text_2:
 # 37 "data/scripts/qol_menu.pory"
 	.string "Pokévial: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}{STR_VAR_1}/{STR_VAR_2}{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}$"
 
+EventScript_QolMenu_Text_3:
+# 41 "data/scripts/qol_menu.pory"
+	.string "Size up$"
+
 EventScript_QolMenu_Text_4:
-# 49 "data/scripts/qol_menu.pory"
-	.string "Repel: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON$"
+# 42 "data/scripts/qol_menu.pory"
+	.string "Size down$"
 
 EventScript_QolMenu_Text_5:
-# 51 "data/scripts/qol_menu.pory"
-	.string "Repel: {CLEAR_TO 60}off$"
+# 43 "data/scripts/qol_menu.pory"
+	.string "Dose up$"
 
 EventScript_QolMenu_Text_6:
-# 56 "data/scripts/qol_menu.pory"
-	.string "Exp-All: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON$"
+# 44 "data/scripts/qol_menu.pory"
+	.string "Dose down$"
 
 EventScript_QolMenu_Text_7:
-# 58 "data/scripts/qol_menu.pory"
-	.string "Exp-All: {CLEAR_TO 60}off$"
+# 45 "data/scripts/qol_menu.pory"
+	.string "Refill$"
 
 EventScript_QolMenu_Text_8:
 # 62 "data/scripts/qol_menu.pory"
