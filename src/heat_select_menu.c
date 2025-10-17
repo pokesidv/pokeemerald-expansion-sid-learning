@@ -91,6 +91,8 @@ static void HSelM_LoadBackground(void);
 static void HSelM_RefreshTilemap(void);
 
 // SPRITES
+static void HSelM_LoadTimeIconPalette(u16 tag);
+static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplate);
 static void HSelM_PrintItemIcon(u16 itemId);
 static void HSelM_PrintStartIcon(void);
 static void HSelM_PrintSelectIcon(void);
@@ -113,7 +115,6 @@ static void HSelM_PrintCenteredStringVar4Background(u8, u32, u16, bool8);
 static void HSelM_ExitAndCleanup(void);
 static void HSelM_CleanupTextWindow(u32 windowId);
 static void HSelM_CleanupSprites(void);
-static void HSelM_CleanupSprite(struct Sprite *sprite);
 static void HSelM_RemoveItemIcon(void);
 static void HSelM_RemoveStartIcon(void);
 static void HSelM_RemoveSelectIcon(void);
@@ -594,16 +595,19 @@ static void HSelM_RefreshTilemap(void)
 static const u32 sTimeIconsGfx[] = INCBIN_U32("graphics/heat_select_menu/time_of_day_icons.4bpp.lz");
 static const u16 sTimeIconsPal[] = INCBIN_U16("graphics/heat_select_menu/time_of_day_icons.gbapal");
 
-#define TAG_ITEM_ICON       5110
-#define TAG_START_ICON       5111
-#define TAG_SELECT_ICON       5112
-#define TAG_LEFT_ICON       5113
-#define TAG_RIGHT_ICON       5114
+// from 0x8000 onwards, sprite palette tags are ignored by the overworld day / night blend system, so we use those for our icons to avoid palette conflicts
+// from 0x8001 to 0x8004 are already used by OBJ_EVENT_PAL_TAG_LIGHT and similar overworld sprites, so we avoid those as well
+#define TAG_ITEM_ICON       0x8010
+#define TAG_START_ICON      0x8011
+#define TAG_SELECT_ICON     0x8012
+#define TAG_LEFT_ICON       0x8013
+#define TAG_RIGHT_ICON      0x8014
 
 static const struct OamData gOamIcon = {
     .y = 0,
-    .affineMode = ST_OAM_AFFINE_DOUBLE,
-    .objMode = 0,
+    .affineMode = ST_OAM_AFFINE_OFF,
+    .objMode = ST_OAM_OBJ_NORMAL,
+    .mosaic = FALSE,
     .bpp = ST_OAM_4BPP,
     .shape = SPRITE_SHAPE(32x32),
     .x = 0,
@@ -709,6 +713,14 @@ static const struct SpriteTemplate gSpriteIconClock = {
     .callback = SpriteCallbackDummy,
 };
 
+static void HSelM_LoadTimeIconPalette(u16 tag)
+{
+    struct SpritePalette spritePalette;
+    spritePalette.data = sTimeIconsPal;
+    spritePalette.tag = tag;
+    LoadSpritePalette(&spritePalette);
+}
+
 static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplate)
 {
 
@@ -719,10 +731,7 @@ static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplat
     
     LoadCompressedSpriteSheet(spriteSheet);
 
-    struct SpritePalette spritePalette;
-    spritePalette.data = sTimeIconsPal;
-    spritePalette.tag = tag;
-    LoadSpritePalette(&spritePalette);
+    HSelM_LoadTimeIconPalette(tag);
 
     return CreateSprite(spriteTemplate, 0, 0, 0);
 }
@@ -1176,28 +1185,10 @@ static void HSelM_CleanupTextWindow(u32 windowId)
 static void HSelM_CleanupSprites(void)
 {
     HSelM_RemoveItemIcon();
-    if (sHeatSelectMenu->spriteIdLeft != SPRITE_NONE)
-    {
-        HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdLeft]);
-        sHeatSelectMenu->spriteIdLeft = SPRITE_NONE;
-    }
-    if (sHeatSelectMenu->spriteIdRight != SPRITE_NONE)
-    {
-        HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdRight]);
-        sHeatSelectMenu->spriteIdRight = SPRITE_NONE;
-    }
-    if (sHeatSelectMenu->spriteIdSelect != SPRITE_NONE)
-    {
-        HSelM_CleanupSprite(&gSprites[sHeatSelectMenu->spriteIdSelect]);
-        sHeatSelectMenu->spriteIdSelect = SPRITE_NONE;
-    }
+    HSelM_RemoveLeftIcon();
+    HSelM_RemoveRightIcon();
+    HSelM_RemoveSelectIcon();
     HSelM_RemoveStartIcon();
-}
-
-static void HSelM_CleanupSprite(struct Sprite *sprite)
-{
-    FreeSpriteOamMatrix(sprite);
-    DestroySprite(sprite);
 }
 
 static void HSelM_RemoveItemIcon(void)
