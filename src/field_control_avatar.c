@@ -157,6 +157,9 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
     }
 }
 
+#include "heat_start_menu.h"
+#include "map_name_popup.h"
+#include "config/heat_menus.h"
 int ProcessPlayerFieldInput(struct FieldInput *input)
 {
     struct MapPosition position;
@@ -224,7 +227,12 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->pressedStartButton)
     {
         PlaySE(SE_WIN_OPEN);
+        #if ENABLE_HEAT_START_MENU
+        HideMapNamePopUpWindow();
+        HeatStartMenu_Init();
+        #else 
         ShowStartMenu();
+        #endif
         return TRUE;
     }
 

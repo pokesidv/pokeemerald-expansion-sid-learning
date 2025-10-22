@@ -1,3 +1,4 @@
+#include "config/heat_menus.h"
 #ifndef GUARD_STRINGS_H
 #define GUARD_STRINGS_H
 
@@ -270,6 +271,15 @@ extern const u8 gText_Sound[];
 extern const u8 gText_Frame[];
 extern const u8 gText_OptionMenuCancel[];
 extern const u8 gText_ButtonMode[];
+
+#if HEAT_MENUS_SAVEBLOCK_PALETTES
+extern const u8 gText_MenuPal[];
+extern const u8 gText_MenuPalColor[];
+extern const u8 gText_MenuPalNumber[];
+extern const u8 gText_SmallDot[];
+extern const u8 gText_LargeDot[];
+extern const u8 gText_PageNav[];
+#endif
 
 extern const u8 gText_MaleSymbol[];
 extern const u8 gText_FemaleSymbol[];

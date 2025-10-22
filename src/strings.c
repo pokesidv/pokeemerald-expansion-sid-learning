@@ -2,6 +2,7 @@
 #include "strings.h"
 #include "battle_pyramid_bag.h"
 #include "item_menu.h"
+#include "config/heat_menus.h"
 
 ALIGNED(4)
 const u8 gText_ExpandedPlaceholder_Empty[] = _("");
@@ -985,6 +986,14 @@ const u8 gText_MoveCloserToLinkPartner[] = _("Move closer to your link partner(s
 const u8 gText_ABtnRegistrationCounter[] = _("A Button: Registration Counter");
 const u8 gText_ABtnTitleScreen[] = _("A Button: Title Screen");
 const u8 gText_Option[] = _("OPTION");
+#if HEAT_MENUS_SAVEBLOCK_PALETTES
+const u8 gText_SmallDot[] = _("·");
+const u8 gText_LargeDot[] = _("{EMOJI_CIRCLE}");
+const u8 gText_PageNav[] = _("{L_BUTTON}{R_BUTTON} PAGE");
+const u8 gText_MenuPal[] = _("MENU COLOR");
+const u8 gText_MenuPalColor[] = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}COLOR");
+const u8 gText_MenuPalNumber[] = _("{COLOR GREEN}{SHADOW LIGHT_GREEN}");
+#endif
 const u8 gText_TextSpeed[] = _("TEXT SPEED");
 const u8 gText_BattleScene[] = _("BATTLE SCENE");
 const u8 gText_BattleStyle[] = _("BATTLE STYLE");
