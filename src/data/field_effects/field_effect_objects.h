@@ -1437,14 +1437,20 @@ static const struct SpriteFrameImage sPicTable_RockClimbDust[] = {
     overworld_frame(gFieldEffectObjectPic_RockClimbDust, 4, 4, 1),
     overworld_frame(gFieldEffectObjectPic_RockClimbDust, 4, 4, 2),
 };
+
+static const struct SpriteFrameImage sPicTable_LavaClimbSpray[] = {
+    overworld_frame(gFieldEffectObjectPic_LavaClimbSpray, 4, 4, 0),
+    overworld_frame(gFieldEffectObjectPic_LavaClimbSpray, 4, 4, 1),
+    overworld_frame(gFieldEffectObjectPic_LavaClimbSpray, 4, 4, 2),
+};
 const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbDust = {
     .tileTag = 0xFFFF,
-    .paletteTag = FLDEFF_PAL_TAG_DUST_CLOUD,
+    .paletteTag = FLDEFF_PAL_TAG_DUST_LAVA,
     .oam = &gObjectEventBaseOam_32x32,
     .anims = sAnimTable_RockClimbDust,
-    .images = sPicTable_RockClimbDust,
+    .images = sPicTable_LavaClimbSpray,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = UpdateJumpImpactEffect,
 };
 
-const struct SpritePalette gSpritePalette_BigDust = {gFieldEffectPal_DustCloud, FLDEFF_PAL_TAG_DUST_CLOUD};
+const struct SpritePalette gSpritePalette_BigDust = {gFieldEffectPal_Lava, FLDEFF_PAL_TAG_DUST_LAVA};

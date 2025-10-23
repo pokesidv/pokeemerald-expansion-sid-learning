@@ -416,12 +416,6 @@ static void HSelM_Handle_ABUTTON(void)
     HSelM_ExitAndCleanup();
     DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
     UseRegisteredKeyItemOnField(index);
-    // if(HSelM_AreThereRegisteredItems()){
-    //     u16 registeredItem = gSaveBlock1Ptr->registeredItems[sHeatSelectMenu->registeredItemIndex].itemId;
-    //     StringExpandPlaceholders(gStringVar4, GetItemName(registeredItem));
-    // } else {
-    //     StringExpandPlaceholders(gStringVar4, gText_NoRegisteredItem);
-    // }
 }
 static void HSelM_Handle_LBUTTON(void){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)

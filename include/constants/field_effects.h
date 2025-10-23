@@ -142,6 +142,10 @@
 #define FLDEFF_PAL_TAG_CAVE_DUST          0x1012
 #define FLDEFF_PAL_TAG_ORAS_DOWSE         0x1013
 #define FLDEFF_PAL_TAG_DUST_CLOUD         0x1014
+// from 0x8000 onwards, sprite palette tags are ignored by the overworld day / night blend system, so we use those for our icons to avoid palette conflicts
+// from 0x8001 to 0x8004 are already used by OBJ_EVENT_PAL_TAG_LIGHT and similar overworld sprites, so we avoid those as well
+// and from 0x8010 to 0x8014 are used in heat select menu.c for various icons, so we avoid those too
+#define FLDEFF_PAL_TAG_DUST_LAVA          0x8020
 #define FLDEFF_PAL_TAG_FIELD_MOVE_MON     0x8400
 
 // tile tags, for field effects that may have many copies on screen at once

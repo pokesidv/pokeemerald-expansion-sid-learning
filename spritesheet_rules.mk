@@ -665,6 +665,8 @@ $(FLDEFFGFXDIR)/ground_impact_dust.4bpp: %.4bpp: %.png
 
 $(FLDEFFGFXDIR)/rock_climb_dust.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -mwidth 4 -mheight 4
+$(FLDEFFGFXDIR)/lava_climb_spray.4bpp: %.4bpp: %.png
+	$(GFX) $< $@ -mwidth 4 -mheight 4
 
 $(FLDEFFGFXDIR)/ash_puff.4bpp: %.4bpp: %.png
 	$(GFX) $< $@ -mwidth 2 -mheight 2
