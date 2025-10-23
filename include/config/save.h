@@ -11,6 +11,10 @@
 #define FREE_LINK_BATTLE_RECORDS            FALSE   // Frees up link battle record data (88 bytes).
 #define FREE_MYSTERY_GIFT                   FALSE   // Frees up Mystery Gift data (876 bytes).
                                             // SaveBlock1 total: 2516 bytes
+// multiple_registered_items
+#define ENABLE_MULTIPLE_REGISTERED_ITEMS    FALSE // Enable multiple registered items feature. always enable ENABLE_HEAT_SELECT_MENU as well from config/heat_menus.h if you set this to TRUE
+#define REGISTERED_ITEMS_MAX                10   // Maximum number of registered items if multiple registered items feature is enabled. (cannot go over 16 due to the saveblock structure)
+                                            
 // SaveBlock2 configs
 #define FREE_BATTLE_TOWER_E_READER          FALSE   // Frees up Battle Tower E-Reader data (188 bytes).
 #define FREE_POKEMON_JUMP                   FALSE   // Frees up Pokémon Jump data (16 bytes).

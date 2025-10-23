@@ -48,6 +48,7 @@
 #include "constants/items.h"
 #include "difficulty.h"
 #include "follower_npc.h"
+#include "config/save.h"
 
 extern const u8 EventScript_ResetAllMapFlags[];
 
@@ -188,6 +189,15 @@ void NewGameInitData(void)
     ResetPokemonStorageSystem();
     DeactivateAllRoamers();
     gSaveBlock1Ptr->registeredItem = ITEM_NONE;
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
+    u8 i;
+    for (i = 0 ; i < REGISTERED_ITEMS_MAX; i++)
+    {
+        gSaveBlock1Ptr->registeredItems[i].itemId = ITEM_NONE;
+    }
+    gSaveBlock1Ptr->registeredItemLastSelected = 0;
+    gSaveBlock1Ptr->registeredItemListCount = 0;
+    #endif
     ClearBag();
     NewGameInitPCItems();
     ClearPokeblocks();

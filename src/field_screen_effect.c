@@ -471,9 +471,21 @@ void ReturnToFieldOpenStartMenu(void)
     LockPlayerFieldControls();
 }
 
+void ReturnToFieldOpenSelectMenu(void)
+{
+    FadeInFromBlack();
+    LockPlayerFieldControls();
+}
+
 bool8 FieldCB_ReturnToFieldOpenStartMenu(void)
 {
     ShowReturnToFieldStartMenu();
+    return FALSE;
+}
+
+bool8 FieldCB_ReturnToFieldOpenSelectMenu(void)
+{
+    ShowReturnToFieldOpenSelectMenu();
     return FALSE;
 }
 
