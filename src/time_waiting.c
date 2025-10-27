@@ -8,31 +8,39 @@
 
 void WaitTillMorning()
 {
+    #if OW_USE_FAKE_RTC
     if(AccurateTimeOfDay() == TIME_MORNING)
         return; // Already morning, no need to wait
     FakeRtc_ForwardTimeTo(MORNING_HOUR_MID, 0, 0);
     SetMainCallback2(CB2_LoadMap);
+    #endif
 }
 void WaitTillDay()
 {
+    #if OW_USE_FAKE_RTC
     if(AccurateTimeOfDay() == TIME_DAY)
         return; // Already day, no need to wait
     FakeRtc_ForwardTimeTo(DAY_HOUR_MID, 0, 0);
     SetMainCallback2(CB2_LoadMap);
+    #endif
 }
 void WaitTillEvening()
 {
+    #if OW_USE_FAKE_RTC
     if(AccurateTimeOfDay() == TIME_EVENING)
         return; // Already evening, no need to wait
     FakeRtc_ForwardTimeTo(EVENING_HOUR_MID, 0, 0);
     SetMainCallback2(CB2_LoadMap);
+    #endif
 }
 void WaitTillNight()
 {
+    #if OW_USE_FAKE_RTC
     if(AccurateTimeOfDay() == TIME_NIGHT)
         return; // Already night, no need to wait
     FakeRtc_ForwardTimeTo(NIGHT_HOUR_MID, 0, 0);
     SetMainCallback2(CB2_LoadMap);
+    #endif
 }
 
 static const u8 *const gTimeOfDayStringsTable[TIMES_OF_DAY_COUNT] = {

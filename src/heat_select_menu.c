@@ -10,6 +10,7 @@
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "event_object_lock.h"
+#include "io_reg.h"
 #include "event_scripts.h"
 #include "tv.h"
 #include "fieldmap.h"
@@ -93,8 +94,14 @@ static void HSelM_LoadBackground(void);
 static void HSelM_RefreshTilemap(void);
 
 // SPRITES
+static bool32 HSelM_ShouldHandleFlash(void);
 static void HSelM_LoadTimeIconPalette(u16 tag);
 static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplate);
+static void HSelM_PrintItemIconParametrized(u16 itemId, bool32 flash);
+static void HSelM_PrintStartIconParametrized(bool32 flash);
+static void HSelM_PrintSelectIconParametrized(bool32 flash);
+static void HSelM_PrintLeftIconParametrized(bool32 flash);
+static void HSelM_PrintRightIconParametrized(bool32 flash);
 static void HSelM_PrintItemIcon(u16 itemId);
 static void HSelM_PrintStartIcon(void);
 static void HSelM_PrintSelectIcon(void);
@@ -155,6 +162,12 @@ struct HeatSelectMenu
     u32 spriteIdRight;
     u32 spriteIdSelect;
     u32 spriteIdStart;
+    // duplicate sprites to handle when we are in a dark cave and need to show them with a specific property enabled to make them visible
+    u32 spriteIdRegisteredKeyItemFlash;
+    u32 spriteIdLeftFlash;
+    u32 spriteIdRightFlash;
+    u32 spriteIdSelectFlash;
+    u32 spriteIdStartFlash;
 };
 
 static EWRAM_DATA struct HeatSelectMenu *sHeatSelectMenu = NULL;
@@ -199,6 +212,11 @@ void HeatSelectMenu_Init(void)
     sHeatSelectMenu->spriteIdRight = SPRITE_NONE;
     sHeatSelectMenu->spriteIdSelect = SPRITE_NONE;
     sHeatSelectMenu->spriteIdStart = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdRegisteredKeyItemFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdLeftFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdRightFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdSelectFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdStartFlash = SPRITE_NONE;
     sHeatSelectMenu->sTopTextWindowId = 0;
     sHeatSelectMenu->sLTextWindowId = 0;
     sHeatSelectMenu->sRTextWindowId = 0;
@@ -448,12 +466,16 @@ static void HSelM_Handle_ABUTTON(void)
 static void HSelM_Handle_LBUTTON(void){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
+        #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_MORNING) return; // already morning, do nothing
         PlaySE(SE_SELECT);
         HSelM_ExitAndCleanup();
         DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
         WaitTillMorning();
         return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
     } else {
         PlaySE(SE_SELECT);
         HSelM_ExitAndCleanup();
@@ -484,12 +506,16 @@ static void HSelM_Handle_RBUTTON(void){
 static void HSelM_Handle_SELECTBUTTON(void){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
+        #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_EVENING) return; // already evening, do nothing
         PlaySE(SE_SELECT);
         HSelM_ExitAndCleanup();
         DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
         WaitTillEvening();
         return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
     } else {
         PlaySE(SE_SELECT);
         HSelM_ExitAndCleanup();
@@ -501,12 +527,16 @@ static void HSelM_Handle_SELECTBUTTON(void){
 static void HSelM_Handle_STARTBUTTON(void){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
+        #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_NIGHT) return; // already night, do nothing
         PlaySE(SE_SELECT);
         HSelM_ExitAndCleanup();
         DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
         WaitTillNight();
         return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
     } else {
         PlaySE(SE_SELECT);
         // TODO: customize functionality for START button in main mode if you don't want it to toggle Exp. Share
@@ -745,6 +775,10 @@ static const struct SpriteTemplate gSpriteIconClock = {
     .callback = SpriteCallbackDummy,
 };
 
+static bool32 HSelM_ShouldHandleFlash(){
+    return GetFlashLevel() > 0 || InBattlePyramid_();
+}
+
 static void HSelM_LoadTimeIconPalette(u16 tag)
 {
     struct SpritePalette spritePalette;
@@ -768,10 +802,10 @@ static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplat
     return CreateSprite(spriteTemplate, 0, 0, 0);
 }
 
-static void HSelM_PrintItemIcon(u16 itemId)
+static void HSelM_PrintItemIconParametrized(u16 itemId, bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdRegisteredKeyItem;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdRegisteredKeyItemFlash : &sHeatSelectMenu->spriteIdRegisteredKeyItem;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -785,14 +819,18 @@ static void HSelM_PrintItemIcon(u16 itemId)
             gSprites[spriteId].oam.priority = 0;
             gSprites[spriteId].x2 = 2*8+4;
             gSprites[spriteId].y2 = 2*8+4;
+            if(flash)
+            {
+                gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+            }
         }
     }
 }
 
-static void HSelM_PrintStartIcon(void)
+static void HSelM_PrintStartIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdStart;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdStartFlash : &sHeatSelectMenu->spriteIdStart;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -807,6 +845,10 @@ static void HSelM_PrintStartIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 19 * 8;
                 gSprites[spriteId].y2 = 15 * 8;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
         else
@@ -819,15 +861,19 @@ static void HSelM_PrintStartIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 19 * 8 + 4;
                 gSprites[spriteId].y2 = 15 * 8 + 4;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
     }
 }
 
-static void HSelM_PrintSelectIcon(void)
+static void HSelM_PrintSelectIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdSelect;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdSelectFlash : &sHeatSelectMenu->spriteIdSelect;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -842,6 +888,10 @@ static void HSelM_PrintSelectIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 4 * 8;
                 gSprites[spriteId].y2 = 15 * 8;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
         else
@@ -854,14 +904,18 @@ static void HSelM_PrintSelectIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 4 * 8 + 4;
                 gSprites[spriteId].y2 = 15 * 8 + 4;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
     }
 }
-static void HSelM_PrintLeftIcon(void)
+static void HSelM_PrintLeftIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdLeft;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdLeftFlash : &sHeatSelectMenu->spriteIdLeft;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -876,6 +930,10 @@ static void HSelM_PrintLeftIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 2 * 8;
                 gSprites[spriteId].y2 = 8 * 8;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
         else
@@ -888,14 +946,18 @@ static void HSelM_PrintLeftIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 2 * 8 + 4;
                 gSprites[spriteId].y2 = 8 * 8 + 4;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
     }
 }
-static void HSelM_PrintRightIcon(void)
+static void HSelM_PrintRightIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdRight;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdRightFlash : &sHeatSelectMenu->spriteIdRight;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -915,12 +977,66 @@ static void HSelM_PrintRightIcon(void)
             gSprites[spriteId].oam.priority = 0;
             gSprites[spriteId].x2 = 21 * 8;
             gSprites[spriteId].y2 = 8 * 8;
+            if(flash)
+            {
+                gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+            }
         }
+    }
+}
+
+static void HSelM_PrintItemIcon(u16 itemId)
+{
+    HSelM_PrintItemIconParametrized(itemId, FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintItemIconParametrized(itemId, TRUE);
+    }
+}
+
+static void HSelM_PrintStartIcon()
+{
+    HSelM_PrintStartIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintStartIconParametrized(TRUE);
+    }
+}
+
+static void HSelM_PrintSelectIcon()
+{
+    HSelM_PrintSelectIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintSelectIconParametrized(TRUE);
+    }
+}
+
+static void HSelM_PrintLeftIcon()
+{
+    HSelM_PrintLeftIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintLeftIconParametrized(TRUE);
+    }
+}
+
+static void HSelM_PrintRightIcon()
+{
+    HSelM_PrintRightIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintRightIconParametrized(TRUE);
     }
 }
 
 static void HSelM_CreateSprites(void)
 {
+    if(HSelM_ShouldHandleFlash())
+    {
+        SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+        SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+    }
     HSelM_RemoveItemIcon();
     if (HSelM_AreThereRegisteredItems() && sHeatSelectMenu->mode == HSELM_MODE_MAIN)
     {
@@ -1232,65 +1348,42 @@ static void HSelM_CleanupSprites(void)
     HSelM_RemoveStartIcon();
 }
 
-static void HSelM_RemoveItemIcon(void)
+// Helper function to remove any icon sprite
+static void HSelM_RemoveIconGeneric(u32 *spriteIdLoc, u32 *spriteIdLocFlash, u16 tag)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdRegisteredKeyItem);
-
     if (*spriteIdLoc != SPRITE_NONE)
     {
-        FreeSpriteTilesByTag(TAG_ITEM_ICON);
-        FreeSpritePaletteByTag(TAG_ITEM_ICON);
+        FreeSpriteTilesByTag(tag);
+        FreeSpritePaletteByTag(tag);
         DestroySprite(&(gSprites[*spriteIdLoc]));
         *spriteIdLoc = SPRITE_NONE;
+        if(*spriteIdLocFlash != SPRITE_NONE && HSelM_ShouldHandleFlash())
+        {
+            DestroySprite(&(gSprites[*spriteIdLocFlash]));
+            *spriteIdLocFlash = SPRITE_NONE;
+        }
     }
+}
+
+static void HSelM_RemoveItemIcon(void)
+{
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdRegisteredKeyItem, &sHeatSelectMenu->spriteIdRegisteredKeyItemFlash, TAG_ITEM_ICON);
 }
 static void HSelM_RemoveStartIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdStart);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_START_ICON);
-        FreeSpritePaletteByTag(TAG_START_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdStart, &sHeatSelectMenu->spriteIdStartFlash, TAG_START_ICON);
 }
 static void HSelM_RemoveSelectIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdSelect);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_SELECT_ICON);
-        FreeSpritePaletteByTag(TAG_SELECT_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdSelect, &sHeatSelectMenu->spriteIdSelectFlash, TAG_SELECT_ICON);
 }
 
 static void HSelM_RemoveLeftIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdLeft);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_LEFT_ICON);
-        FreeSpritePaletteByTag(TAG_LEFT_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdLeft, &sHeatSelectMenu->spriteIdLeftFlash, TAG_LEFT_ICON);
 }
 
 static void HSelM_RemoveRightIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdRight);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_RIGHT_ICON);
-        FreeSpritePaletteByTag(TAG_RIGHT_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdRight, &sHeatSelectMenu->spriteIdRightFlash, TAG_RIGHT_ICON);
 }
