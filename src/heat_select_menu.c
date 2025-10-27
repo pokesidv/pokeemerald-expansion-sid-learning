@@ -78,15 +78,13 @@ static bool8 HSelM_StartSectionState(void);
 // NAVIGATION AND INPUT HANDLING
 static void Task_HSelM_HandleMainInput(u8 taskId);
 static void HSelM_RefreshUI(void);
-static void HSelM_Handle_ABUTTON(void);
-static void HSelM_Handle_DPADDOWN(void);
-static void HSelM_Handle_DPADUP(void);
-static void HSelM_Handle_LBUTTON(void);
-static void HSelM_Handle_RBUTTON(void);
-static void HSelM_Handle_SELECTBUTTON(void);
-static void HSelM_Handle_STARTBUTTON(void);
-
-static void HSelM_DoCleanUpAndChangeCallback(MainCallback callback);
+static void HSelM_Handle_ABUTTON(u8 taskId);
+static void HSelM_Handle_DPADDOWN(u8 taskId);
+static void HSelM_Handle_DPADUP(u8 taskId);
+static void HSelM_Handle_LBUTTON(u8 taskId);
+static void HSelM_Handle_RBUTTON(u8 taskId);
+static void HSelM_Handle_SELECTBUTTON(u8 taskId);
+static void HSelM_Handle_STARTBUTTON(u8 taskId);
 
 // BACKGROUND
 static const u32 *HSelM_GetCurrentTilemap(void);
@@ -121,7 +119,7 @@ static void HSelM_PrintCenteredStringVar4(u8, u32, u16);
 static void HSelM_PrintCenteredStringVar4Background(u8, u32, u16, bool8);
 
 // EXIT AND CLEANUP
-static void HSelM_ExitAndCleanup(void);
+static void HSelM_ExitAndCleanup(bool32 unfreeze);
 static void HSelM_CleanupTextWindow(u32 windowId);
 static void HSelM_CleanupSprites(void);
 static void HSelM_RemoveItemIcon(void);
@@ -289,7 +287,10 @@ bool8 HSelM_SelectSectionState(void){
     }
     else
     {
-        return TRUE; // TODO: read SELECT button state
+        if(INFINITE_REPEL_FLAG > TEMP_FLAGS_END){
+            return FlagGet(INFINITE_REPEL_FLAG);
+        }
+        return TRUE; // TODO: read SELECT button state if you don't use it for infinite repel toggling
     }
 }
 bool8 HSelM_StartSectionState(void){
@@ -324,31 +325,31 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     
     if (JOY_NEW(A_BUTTON))
     {
-        HSelM_Handle_ABUTTON();
+        HSelM_Handle_ABUTTON(taskId);
     }
     else if (JOY_NEW(DPAD_DOWN))
     {
-        HSelM_Handle_DPADDOWN();
+        HSelM_Handle_DPADDOWN(taskId);
     }
     else if (JOY_NEW(DPAD_UP))
     {
-        HSelM_Handle_DPADUP();
+        HSelM_Handle_DPADUP(taskId);
     }
     else if (JOY_NEW(L_BUTTON))
     {
-        HSelM_Handle_LBUTTON();
+        HSelM_Handle_LBUTTON(taskId);
     }
     else if (JOY_NEW(R_BUTTON))
     {
-        HSelM_Handle_RBUTTON();
+        HSelM_Handle_RBUTTON(taskId);
     }
     else if (JOY_NEW(SELECT_BUTTON))
     {
-        HSelM_Handle_SELECTBUTTON();
+        HSelM_Handle_SELECTBUTTON(taskId);
     }
     else if (JOY_NEW(START_BUTTON))
     {
-        HSelM_Handle_STARTBUTTON();
+        HSelM_Handle_STARTBUTTON(taskId);
     }
     else if (JOY_NEW(B_BUTTON))
     {
@@ -359,7 +360,7 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
             return;
         }
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
+        HSelM_ExitAndCleanup(TRUE);
         DestroyTask(taskId);
     }
 }
@@ -383,7 +384,18 @@ static void HSelM_RefreshUI(void)
     HSelM_CreateSprites();
 }
 
-static void HSelM_Handle_DPADDOWN(void)
+static void Task_CloseAfterMessage(u8 taskId)
+{
+    if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
+    {
+        ClearDialogWindowAndFrame(0, TRUE);
+        DestroyTask(taskId);
+        ScriptUnfreezeObjectEvents();
+        UnlockPlayerFieldControls();
+    }
+}
+
+static void HSelM_Handle_DPADDOWN(u8 taskId)
 {
     #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
@@ -409,7 +421,7 @@ static void HSelM_Handle_DPADDOWN(void)
     HSelM_UpdateTopTextWindow();
     #endif
 }
-static void HSelM_Handle_DPADUP(void)
+static void HSelM_Handle_DPADUP(u8 taskId)
 {
     #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
@@ -438,7 +450,7 @@ static void HSelM_Handle_DPADUP(void)
     HSelM_UpdateTopTextWindow();
     #endif
 }
-static void HSelM_Handle_ABUTTON(void)
+static void HSelM_Handle_ABUTTON(u8 taskId)
 {
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
@@ -455,22 +467,22 @@ static void HSelM_Handle_ABUTTON(void)
     u8 index = sHeatSelectMenu->registeredItemIndex;
     #endif
     PlaySE(SE_SELECT);
-    HSelM_ExitAndCleanup();
-    DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+    HSelM_ExitAndCleanup(TRUE);
+    DestroyTask(taskId);
     #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     UseRegisteredKeyItemOnField(index);
     #else
     UseRegisteredKeyItemOnField();
     #endif
 }
-static void HSelM_Handle_LBUTTON(void){
+static void HSelM_Handle_LBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_MORNING) return; // already morning, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillMorning();
         return;
         #else
@@ -478,20 +490,20 @@ static void HSelM_Handle_LBUTTON(void){
         #endif
     } else {
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         // TODO: add functionality for L button in main mode
         return;
     }
 }
-static void HSelM_Handle_RBUTTON(void){
+static void HSelM_Handle_RBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_DAY) return; // already day, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillDay();
         return;
         #else
@@ -503,64 +515,92 @@ static void HSelM_Handle_RBUTTON(void){
         HSelM_RefreshUI();
     }
 }
-static void HSelM_Handle_SELECTBUTTON(void){
+
+const u8 gText_RepelTurnedOn[] = _("Infinite Repel turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}.\nYou're scaring wild Pokémon away!");
+const u8 gText_RepelTurnedOff[] = _("Infinite Repel turned off.\nCatch 'em all!");
+#define TOGGLE_INFINITE_REPEL_WITHOUT_EXITING FALSE
+static void HSelM_Handle_SELECTBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_EVENING) return; // already evening, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillEvening();
         return;
         #else
         return; // RTC not enabled, can't wait until a time of day
         #endif
     } else {
-        PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
-        // TODO: add functionality for L button in main mode
+        if (INFINITE_REPEL_FLAG > TEMP_FLAGS_END)
+        {
+            PlaySE(SE_SELECT);
+            bool32 isTurningOn = !FlagGet(INFINITE_REPEL_FLAG);
+            FlagToggle(INFINITE_REPEL_FLAG);
+            #if TOGGLE_INFINITE_REPEL_WITHOUT_EXITING
+            HSelM_RefreshUI();
+            #else
+            StringExpandPlaceholders(gStringVar4, isTurningOn ? gText_RepelTurnedOn : gText_RepelTurnedOff);
+            HSelM_ExitAndCleanup(FALSE);
+            DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseAfterMessage);
+            #endif
+        }
+        else
+        {
+            PlaySE(SE_SELECT);
+            // TODO: customize functionality for select button in main mode if you're not using infinite repel toggle
+            HSelM_ExitAndCleanup(TRUE);
+            DestroyTask(taskId);
+        }
         return;
     }
 }
-static void HSelM_Handle_STARTBUTTON(void){
+
+
+const u8 gText_ExpAllTurnedOn[] = _("Experience Share turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}.\nLevel up your whole team!");
+const u8 gText_ExpAllTurnedOff[] = _("Experience Share turned off.\nTrain your favorite Pokémon!");
+#define TOGGLE_EXP_ALL_WITHOUT_EXITING FALSE
+static void HSelM_Handle_STARTBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_NIGHT) return; // already night, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillNight();
         return;
         #else
         return; // RTC not enabled, can't wait until a time of day
         #endif
-    } else {
-        PlaySE(SE_SELECT);
-        // TODO: customize functionality for START button in main mode if you don't want it to toggle Exp. Share
-        if(I_EXP_SHARE_FLAG > TEMP_FLAGS_END){
+    }
+    else
+    {
+        if (I_EXP_SHARE_FLAG > TEMP_FLAGS_END)
+        {
+            PlaySE(SE_SELECT);
+            bool32 isTurningOn = !FlagGet(I_EXP_SHARE_FLAG);
             FlagToggle(I_EXP_SHARE_FLAG);
+            #if TOGGLE_EXP_ALL_WITHOUT_EXITING
+            HSelM_RefreshUI();
+            #else
+            StringExpandPlaceholders(gStringVar4, isTurningOn ? gText_ExpAllTurnedOn : gText_ExpAllTurnedOff);
+            HSelM_ExitAndCleanup(FALSE);
+            DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseAfterMessage);
+            #endif
         }
-        HSelM_RefreshUI();
+        else
+        {
+            PlaySE(SE_SELECT);
+            // TODO: customize functionality for START button in main mode if you don't want it to toggle Exp. Share
+            HSelM_ExitAndCleanup(TRUE);
+            DestroyTask(taskId);
+        }
         return;
     }
 }
 
-// used by some of the menu options to exit the select menu and either return to field or start that menu option
-static void HSelM_DoCleanUpAndChangeCallback(MainCallback callback)
-{
-  if (!gPaletteFade.active)
-  {
-    DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
-    PlayRainStoppingSoundEffect();
-    HSelM_ExitAndCleanup();
-    CleanupOverworldWindowsAndTilemaps();
-    SetMainCallback2(callback);
-    gMain.savedCallback = CB2_ReturnToFieldWithOpenSelectMenu;
-  }
-}
    
 ///// ======================================================================================================================================
 ///// ============== BACKGROUND ============================================================================================================
@@ -1298,7 +1338,7 @@ static void HSelM_UpdateStartTextWindow(void)
 /////// ============ EXIT AND CLEANUP ===================================================
 /////// =================================================================================
 
-static void HSelM_ExitAndCleanup(void)
+static void HSelM_ExitAndCleanup(bool32 unfreeze)
 {
     u32 i;
     u8 *buf = GetBgTilemapBuffer(0);
@@ -1327,8 +1367,11 @@ static void HSelM_ExitAndCleanup(void)
         sHeatSelectMenu = NULL;
     }
 
-    ScriptUnfreezeObjectEvents();
-    UnlockPlayerFieldControls();
+    if(unfreeze)
+    {
+        ScriptUnfreezeObjectEvents();
+        UnlockPlayerFieldControls();
+    }
 }
 
 static void HSelM_CleanupTextWindow(u32 windowId)
