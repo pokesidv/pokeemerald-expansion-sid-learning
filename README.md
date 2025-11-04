@@ -64,7 +64,7 @@ In the future I'll try to make another branch with these menus and also all the 
 If you use **`pokeemerald-expansion`**, please credit **RHH (Rom Hacking Hideout)**. Optionally, include the version number for clarity.
 
 ```
-Based off RHH's pokeemerald-expansion 1.13.2 https://github.com/rh-hideout/pokeemerald-expansion/
+Based off RHH's pokeemerald-expansion 1.13.3 https://github.com/rh-hideout/pokeemerald-expansion/
 ```
 
 Please consider [crediting all contributors](CREDITS.md) involved in the project!
