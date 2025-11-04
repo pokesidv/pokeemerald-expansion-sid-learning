@@ -269,7 +269,7 @@ bool8 HSelM_StartSectionState(void){
     }
     else
     {
-        return FlagGet(FLAG_I_EXP_SHARE);
+        return FlagGet(I_EXP_SHARE_FLAG);
     }
 }
 
@@ -475,7 +475,7 @@ static void HSelM_Handle_STARTBUTTON(void){
         return;
     } else {
         PlaySE(SE_SELECT);
-        FlagToggle(FLAG_I_EXP_SHARE);
+        FlagToggle(I_EXP_SHARE_FLAG);
         HSelM_RefreshUI();
     }
 }

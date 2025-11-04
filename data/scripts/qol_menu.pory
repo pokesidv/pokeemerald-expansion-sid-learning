@@ -52,7 +52,7 @@ script EventScript_QolMenu {
     // }
 
     // if(checkitem(ITEM_EXP_ALL)){
-    //     if(flag(FLAG_I_EXP_SHARE)){
+    //     if(flag(I_EXP_SHARE_FLAG)){
     //         dynmultipush("Exp-All: {CLEAR_TO 60}{COLOR GREEN}{SHADOW LIGHT_GREEN}ON", QOL_MENU_OPTION_EXP_ALL)
     //     } else {
     //         dynmultipush("Exp-All: {CLEAR_TO 60}off", QOL_MENU_OPTION_EXP_ALL)
@@ -89,11 +89,11 @@ script EventScript_QolMenu {
         case QOL_MENU_OPTION_REFILL:
             pokevialrefill()
         case QOL_MENU_OPTION_EXP_ALL:
-            if(flag(FLAG_I_EXP_SHARE)){
-                clearflag(FLAG_I_EXP_SHARE)
+            if(flag(I_EXP_SHARE_FLAG)){
+                clearflag(I_EXP_SHARE_FLAG)
                 msgbox(format("Exp-all turned off. That's the sigma grindset way."))
             } else {
-                setflag(FLAG_I_EXP_SHARE)
+                setflag(I_EXP_SHARE_FLAG)
                 msgbox(format("Exp-all turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}. Easy level farming for your whole party!"))
             }
         case QOL_MENU_OPTION_WAIT:

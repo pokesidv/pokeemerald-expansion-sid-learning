@@ -122,9 +122,9 @@ EventScript_QolMenu_12:
 
 EventScript_QolMenu_13:
 # 92 "data/scripts/qol_menu.pory"
-	goto_if_set FLAG_I_EXP_SHARE, EventScript_QolMenu_25
+	goto_if_set I_EXP_SHARE_FLAG, EventScript_QolMenu_25
 # 96 "data/scripts/qol_menu.pory"
-	setflag FLAG_I_EXP_SHARE
+	setflag I_EXP_SHARE_FLAG
 # 97 "data/scripts/qol_menu.pory"
 	msgbox EventScript_QolMenu_Text_14
 	goto EventScript_QolMenu_4
@@ -163,7 +163,7 @@ EventScript_QolMenu_22:
 
 EventScript_QolMenu_25:
 # 93 "data/scripts/qol_menu.pory"
-	clearflag FLAG_I_EXP_SHARE
+	clearflag I_EXP_SHARE_FLAG
 # 94 "data/scripts/qol_menu.pory"
 	msgbox EventScript_QolMenu_Text_13
 	goto EventScript_QolMenu_4
