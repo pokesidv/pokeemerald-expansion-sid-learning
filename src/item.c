@@ -20,6 +20,7 @@
 #include "constants/moves.h"
 #include "constants/item_effects.h"
 #include "constants/hold_effects.h"
+#include "config/save.h"
 
 #define DUMMY_PC_BAG_POCKET                 \
 {                                           \
@@ -522,16 +523,17 @@ void CompactPCItems(void)
 
 void SwapRegisteredBike(void)
 {
-    switch (gSaveBlock1Ptr->registeredItemSelect)
+    switch (gSaveBlock1Ptr->registeredItem)
     {
     case ITEM_MACH_BIKE:
-        gSaveBlock1Ptr->registeredItemSelect = ITEM_ACRO_BIKE;
+        gSaveBlock1Ptr->registeredItem = ITEM_ACRO_BIKE;
         break;
     case ITEM_ACRO_BIKE:
-        gSaveBlock1Ptr->registeredItemSelect = ITEM_MACH_BIKE;
+        gSaveBlock1Ptr->registeredItem = ITEM_MACH_BIKE;
         break;
     }
 
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     // Also swap in registered items list if either bike is present
     u8 pos_ACRO = TxRegItemsMenu_GetRegisteredItemIndex(ITEM_ACRO_BIKE);
     u8 pos_MACH = TxRegItemsMenu_GetRegisteredItemIndex(ITEM_MACH_BIKE);
@@ -543,6 +545,7 @@ void SwapRegisteredBike(void)
     {
         gSaveBlock1Ptr->registeredItems[pos_MACH].itemId = ITEM_ACRO_BIKE;
     }
+    #endif
 }
 
 void CompactItemsInBagPocket(enum Pocket pocketId)

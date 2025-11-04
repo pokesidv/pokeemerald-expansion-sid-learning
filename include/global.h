@@ -21,6 +21,7 @@
 #include "constants/trainer_hill.h"
 #include "constants/items.h"
 #include "config/save.h"
+#include "config/heat_menus.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
@@ -583,7 +584,9 @@ struct SaveBlock2
              u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
              u16 optionsBattleSceneOff:1; // whether battle animations are disabled
              u16 regionMapZoom:1; // whether the map is zoomed in
+             #if HEAT_MENUS_SAVEBLOCK_PALETTES
              u16 optionsStartMenuPalette:2; // whether the start menu is in the default palette
+             #endif
              //u16 padding1:4;
              //u16 padding2;
     /*0x18*/ struct Pokedex pokedex;
@@ -661,11 +664,13 @@ struct ItemSlot
     u16 quantity;
 };
 
+#if ENABLE_MULTIPLE_REGISTERED_ITEMS
 // multiple_registered_items
 struct RegisteredItemSlot
 {
     u16 itemId;
 };
+#endif
 
 struct Pokeblock
 {
@@ -1097,7 +1102,7 @@ struct SaveBlock1
     /*0x238*/ struct Pokemon playerParty[PARTY_SIZE];
     /*0x490*/ u32 money;
     /*0x494*/ u16 coins;
-    /*0x496*/ u16 registeredItemSelect; // registered for use with SELECT button (ignored with the edits on registering multiple items, kept for stability)
+    /*0x496*/ u16 registeredItem; // registered for use with SELECT button (ignored when ENABLE_MULTIPLE_REGISTERED_ITEMS is TRUE)
     /*0x498*/ struct ItemSlot pcItems[PC_ITEMS_COUNT];
     /*0x560 -> 0x848 is bag storage*/
     /*0x560*/ struct Bag bag;
@@ -1186,10 +1191,12 @@ struct SaveBlock1
 #endif //FREE_TRAINER_HILL
     /*0x3???*/ struct WaldaPhrase waldaPhrase;
     /*      */ struct Pokevial pokevial; //Pokevial Branch
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     // multiple_registered_items
     /*      */ u8 registeredItemLastSelected:4; //max 16 items
     /*      */ u8 registeredItemListCount:4;
     /*      */ struct RegisteredItemSlot registeredItems[REGISTERED_ITEMS_MAX];
+    #endif
     // sizeof: 0x3???
 };
 

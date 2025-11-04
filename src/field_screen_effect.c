@@ -451,7 +451,7 @@ static void Task_ExitNonDoor(u8 taskId)
         break;
     }
 }
-
+#if ENABLE_HEAT_START_MENU == FALSE
 static void Task_WaitForFadeShowStartMenu(u8 taskId)
 {
     if (WaitForWeatherFadeIn() == TRUE)
@@ -460,18 +460,21 @@ static void Task_WaitForFadeShowStartMenu(u8 taskId)
         CreateTask(Task_ShowStartMenu, 80);
     }
 }
+#endif
 
+#include "config/heat_menus.h"
 void ReturnToFieldOpenStartMenu(void)
 {
     FadeInFromBlack();
-    //CreateTask(Task_WaitForFadeShowStartMenu, 0x50);
+    #if ENABLE_HEAT_START_MENU == FALSE
+    CreateTask(Task_WaitForFadeShowStartMenu, 0x50); 
+    #endif
     LockPlayerFieldControls();
 }
 
 void ReturnToFieldOpenSelectMenu(void)
 {
     FadeInFromBlack();
-    //CreateTask(Task_WaitForFadeShowStartMenu, 0x50);
     LockPlayerFieldControls();
 }
 

@@ -44,6 +44,7 @@
 #include "constants/metatile_behaviors.h"
 #include "constants/songs.h"
 #include "constants/trainer_hill.h"
+#include "config/save.h"
 
 static EWRAM_DATA u8 sWildEncounterImmunitySteps = 0;
 static EWRAM_DATA u16 sPrevMetatileBehavior = 0;
@@ -173,6 +174,8 @@ void FieldGetPlayerInput(struct FieldInput *input, u16 newKeys, u16 heldKeys)
 }
 
 #include "heat_start_menu.h"
+#include "map_name_popup.h"
+#include "config/heat_menus.h"
 #include "heat_select_menu.h"
 int ProcessPlayerFieldInput(struct FieldInput *input)
 {
@@ -241,15 +244,19 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     if (input->pressedStartButton)
     {
         PlaySE(SE_WIN_OPEN);
+        #if ENABLE_HEAT_START_MENU
         HideMapNamePopUpWindow();
         HeatStartMenu_Init();
+        #else 
+        ShowStartMenu();
+        #endif
         return TRUE;
     }
 
     if (input->tookStep && TryFindHiddenPokemon())
         return TRUE;
-
-
+    
+    #if ENABLE_HEAT_SELECT_MENU
     if (input->pressedSelectButton)
     {
         PlaySE(SE_WIN_OPEN);
@@ -257,6 +264,16 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
         HeatSelectMenu_Init();
         return TRUE;
     }
+    #else
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
+    // shouldn't use multiple registered items without enabling heat select menu as we don't have any other window to select which item we want to use
+    if (input->pressedSelectButton && UseRegisteredKeyItemOnField(0) == TRUE)
+        return TRUE;
+    #else
+    if (input->pressedSelectButton && UseRegisteredKeyItemOnField() == TRUE)
+        return TRUE;
+    #endif
+    #endif
 
     if (input->pressedLButton && FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
     {

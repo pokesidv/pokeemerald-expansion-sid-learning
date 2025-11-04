@@ -50,6 +50,7 @@
 #include "constants/items.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
+#include "config/save.h"
 
 #define TAG_POCKET_SCROLL_ARROW 110
 #define TAG_BAG_SCROLL_ARROW    111
@@ -200,6 +201,13 @@ static void BagMenu_MoveCursorCallback(s32, bool8, struct ListMenu *);
 static void BagMenu_ItemPrintCallback(u8, u32, u8);
 static void ItemMenu_UseOutOfBattle(u8);
 static void ItemMenu_Toss(u8);
+#if ENABLE_MULTIPLE_REGISTERED_ITEMS
+static void ItemMenu_RegisterList(u8 taskId);
+static void ItemMenu_Deselect(u8 taskId);
+extern const u8 EventScript_SelectWithoutRegisteredItem[];
+#else
+static void ItemMenu_Register(u8);
+#endif
 static void ItemMenu_Give(u8);
 static void ItemMenu_UseInBattle(u8);
 static void ItemMenu_CheckTag(u8);
@@ -297,13 +305,21 @@ static const u8 sText_NothingToSort[] = _("There's nothing to sort!");
 static const struct MenuAction sItemMenuActions[] = {
     [ACTION_USE]               = {gMenuText_Use,                {ItemMenu_UseOutOfBattle}},
     [ACTION_TOSS]              = {gMenuText_Toss,               {ItemMenu_Toss}},
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     [ACTION_REGISTER]          = {gMenuText_Register,           {ItemMenu_RegisterList}},
+    #else
+    [ACTION_REGISTER]          = {gMenuText_Register,           {ItemMenu_Register}},
+    #endif
     [ACTION_GIVE]              = {gMenuText_Give,               {ItemMenu_Give}},
     [ACTION_CANCEL]            = {gText_Cancel2,                {ItemMenu_Cancel}},
     [ACTION_BATTLE_USE]        = {gMenuText_Use,                {ItemMenu_UseInBattle}},
     [ACTION_CHECK]             = {COMPOUND_STRING("CHECK"),     {ItemMenu_UseOutOfBattle}},
     [ACTION_WALK]              = {COMPOUND_STRING("WALK"),      {ItemMenu_UseOutOfBattle}},
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     [ACTION_DESELECT]          = {COMPOUND_STRING("DESELECT"),  {ItemMenu_Deselect}},
+    #else
+    [ACTION_DESELECT]          = {COMPOUND_STRING("DESELECT"),  {ItemMenu_Register}},
+    #endif
     [ACTION_CHECK_TAG]         = {COMPOUND_STRING("CHECK TAG"), {ItemMenu_CheckTag}},
     [ACTION_CONFIRM]           = {gMenuText_Confirm,            {Task_FadeAndCloseBagMenu}},
     [ACTION_SHOW]              = {COMPOUND_STRING("SHOW"),      {ItemMenu_Show}},
@@ -1029,9 +1045,13 @@ static void BagMenu_ItemPrintCallback(u8 windowId, u32 itemIndex, u8 y)
         }
         else
         {
-            // multiple_registered_items
+            #if ENABLE_MULTIPLE_REGISTERED_ITEMS
             // Print registered icon if item is one of the registered list
             if (TxRegItemsMenu_CheckRegisteredHasItem(itemSlot.itemId))
+            #else
+            // Print registered icon
+            if (gSaveBlock1Ptr->registeredItem != ITEM_NONE && gSaveBlock1Ptr->registeredItem == itemSlot.itemId)
+            #endif
                 BlitBitmapToWindow(windowId, sRegisteredSelect_Gfx, 96, y - 1, 24, 16);
         }
     }
@@ -1709,7 +1729,7 @@ static void OpenContextMenu(u8 taskId)
                 break;
             case POCKET_KEY_ITEMS:
                 gBagMenu->contextMenuItemsPtr = gBagMenu->contextMenuItemsBuffer;
-                // multiple_registered_items
+                #if ENABLE_MULTIPLE_REGISTERED_ITEMS
                 // if item cannot be used, only show "Cancel" option
                 if (GetItemFieldFunc(gSpecialVar_ItemId) == ItemUseOutOfBattle_CannotUse){
                     gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_Cancel);
@@ -1724,11 +1744,20 @@ static void OpenContextMenu(u8 taskId)
                     if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
                         gBagMenu->contextMenuItemsBuffer[0] = ACTION_WALK;
                 }
-
                 //if is one of the multi-registered items, change "Register" to "Deselect"
                 if (TxRegItemsMenu_CheckRegisteredHasItem(gSpecialVar_ItemId))
                     gBagMenu->contextMenuItemsBuffer[1] = ACTION_DESELECT;
-
+                #else
+                gBagMenu->contextMenuNumItems = ARRAY_COUNT(sContextMenuItems_KeyItemsPocket);
+                memcpy(&gBagMenu->contextMenuItemsBuffer, &sContextMenuItems_KeyItemsPocket, sizeof(sContextMenuItems_KeyItemsPocket));
+                if (gSaveBlock1Ptr->registeredItem == gSpecialVar_ItemId)
+                    gBagMenu->contextMenuItemsBuffer[1] = ACTION_DESELECT;
+                if (gSpecialVar_ItemId == ITEM_MACH_BIKE || gSpecialVar_ItemId == ITEM_ACRO_BIKE)
+                {
+                    if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_MACH_BIKE | PLAYER_AVATAR_FLAG_ACRO_BIKE))
+                        gBagMenu->contextMenuItemsBuffer[0] = ACTION_WALK;
+                }
+                #endif
                 break;
             case POCKET_POKE_BALLS:
                 gBagMenu->contextMenuItemsPtr = sContextMenuItems_BallsPocket;
@@ -2091,7 +2120,7 @@ static void ItemMenu_Cancel(u8 taskId)
     ReturnToItemList(taskId);
 }
 
-// multiple_registered_items
+#if ENABLE_MULTIPLE_REGISTERED_ITEMS
 static const u8 gText_TooManyRegistered[] = _("You already have too\nmany items registered!");
 
 static void ItemMenu_Cancel2(u8 taskId)
@@ -2107,6 +2136,24 @@ static void ItemMenu_Cancel2(u8 taskId)
 
     DisplayItemMessage(taskId, 1, gText_TooManyRegistered, HandleErrorMessage);
 }
+#else
+static void ItemMenu_Register(u8 taskId)
+{
+    s16 *data = gTasks[taskId].data;
+    u16 *scrollPos = &gBagPosition.scrollPosition[gBagPosition.pocket];
+    u16 *cursorPos = &gBagPosition.cursorPosition[gBagPosition.pocket];
+
+    if (gSaveBlock1Ptr->registeredItem == gSpecialVar_ItemId)
+        gSaveBlock1Ptr->registeredItem = ITEM_NONE;
+    else
+        gSaveBlock1Ptr->registeredItem = gSpecialVar_ItemId;
+    DestroyListMenuTask(tListTaskId, scrollPos, cursorPos);
+    LoadBagItemListBuffers(gBagPosition.pocket);
+    tListTaskId = ListMenuInit(&gMultiuseListMenuTemplate, *scrollPos, *cursorPos);
+    ScheduleBgCopyTilemapToVram(0);
+    ItemMenu_Cancel(taskId);
+}
+#endif
 
 static void ItemMenu_UseInBattle(u8 taskId)
 {
@@ -2164,6 +2211,7 @@ static void Task_ItemContext_GiveToPC(u8 taskId)
 
 #define tUsingRegisteredKeyItem data[3] // See usage in item_use.c
 
+#if ENABLE_MULTIPLE_REGISTERED_ITEMS
 // multiple_registered_items
 static void TxRegItemsMenu_ChangeLastSelectedItemIndex(u8 index)
 {
@@ -2289,6 +2337,51 @@ bool8 UseRegisteredKeyItemOnField(u8 index)
     ScriptContext_SetupScript(EventScript_SelectWithoutRegisteredItem);
     return TRUE;
 }
+#else
+// in case of single registered item
+bool8 UseRegisteredKeyItemOnField(void)
+{
+    u8 taskId;
+    u16 registeredItem;
+
+    if (InUnionRoom() == TRUE || CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE || InBattlePike() || InMultiPartnerRoom() == TRUE)
+        return FALSE;
+    HideMapNamePopUpWindow();
+    ChangeBgY_ScreenOff(0, 0, BG_COORD_SET);
+
+    if (index >= 0 && index < REGISTERED_ITEMS_MAX)
+    {
+        registeredItem = gSaveBlock1Ptr->registeredItems[index].itemId;
+    }
+    else
+    {
+        // index out of bounds
+        return FALSE;
+    }
+
+    if (registeredItem != ITEM_NONE)
+    {
+        if (CheckBagHasItem(registeredItem, 1) == TRUE)
+        {
+            LockPlayerFieldControls();
+            FreezeObjectEvents();
+            PlayerFreeze();
+            StopPlayerAvatar();
+            gSpecialVar_ItemId = registeredItem;
+            taskId = CreateTask(GetItemFieldFunc(registeredItem), 8);
+            gTasks[taskId].tUsingRegisteredKeyItem = TRUE;
+            return TRUE;
+        }
+        else if(index >= 0 && index < REGISTERED_ITEMS_MAX)
+        {
+            // if item not in bag, unregister it
+            gSaveBlock1Ptr->registeredItems[index].itemId = ITEM_NONE;
+        }
+    }
+    ScriptContext_SetupScript(EventScript_SelectWithoutRegisteredItem);
+    return TRUE;
+}
+#endif
 
 #undef tUsingRegisteredKeyItem
 
@@ -2833,6 +2926,7 @@ static void PrintTMHMMoveData(u16 itemId)
     }
 }
 
+#if ENABLE_MULTIPLE_REGISTERED_ITEMS
 // multiple_registered_items
 static s32 TxRegItemsMenu_FindFreeRegisteredItemSlot(void)
 {
@@ -2923,6 +3017,7 @@ static void UNUSED ItemMenu_Deselect(u8 taskId)
 
     gTasks[taskId].func = ItemMenu_FinishRegister;
 }
+#endif
 
 static const u8 sText_SortItemsHow[] = _("Sort items how?");
 static const u8 sText_ItemsSorted[] = _("Items sorted by {STR_VAR_1}!");

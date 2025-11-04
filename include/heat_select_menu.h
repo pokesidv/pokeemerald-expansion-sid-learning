@@ -1,6 +1,3 @@
-// void HeatSelectMenu_Init(void);
-
-
 #define HSM_TOP_SPRITE_Y 8
 #define HSM_TOP_SPRITE_X 15
 #define HSM_L_SPRITE_X 0

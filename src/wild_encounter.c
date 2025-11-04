@@ -12,6 +12,7 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "pokeblock.h"
+#include "config/heat_menus.h"
 #include "pokemon.h"
 #include "random.h"
 #include "roamer.h"
@@ -1093,9 +1094,18 @@ static bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
 {
     
     u8 i;
-    // this is so that the flag makes the repel check happen even if you're not using a repel item
-    if (!REPEL_STEP_COUNT && FlagGet(FLAG_SID_REPEL) == FALSE)
-        return TRUE;
+
+    if (INFINITE_REPEL_FLAG > TEMP_FLAGS_END)
+    {
+        // this is so that the flag makes the repel check happen even if you're not using a repel item
+        if (!REPEL_STEP_COUNT && FlagGet(INFINITE_REPEL_FLAG) == FALSE)
+            return TRUE;
+    }
+    else
+    {
+        if (!REPEL_STEP_COUNT)
+            return TRUE;
+    }
 
     for (i = 0; i < PARTY_SIZE; i++)
     {

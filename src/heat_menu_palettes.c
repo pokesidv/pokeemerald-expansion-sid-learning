@@ -4,6 +4,8 @@
 #include "heat_menu_palettes.h"
 #include "palette.h"
 #include "menu.h"
+#include "config/heat_menus.h"
+
 
 static const u16 sStartMenuPalette[] = INCBIN_U16("graphics/heat_start_menu/bg.gbapal");
 
@@ -29,7 +31,12 @@ void HeatMenus_LoadPalettes(void)
     // Load the standard menu palette for text windows
     LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
 
-    // Load the start menu palette based on the persistent setting
+    // Load the start menu palette based on the persistent setting or just the default if such use of saveblock 2 is not enabled.
+    #if HEAT_MENUS_SAVEBLOCK_PALETTES
     const u16 *selectedPalette = GetStartMenuPalette(gSaveBlock2Ptr->optionsStartMenuPalette);
+    # else
+    const u16 *selectedPalette = GetStartMenuPalette(0);
+    # endif
+    
     LoadPalette(selectedPalette, BG_PLTT_ID(14), PLTT_SIZE_4BPP);
 }

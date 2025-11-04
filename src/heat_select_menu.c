@@ -10,6 +10,7 @@
 #include "event_data.h"
 #include "event_object_movement.h"
 #include "event_object_lock.h"
+#include "io_reg.h"
 #include "event_scripts.h"
 #include "tv.h"
 #include "fieldmap.h"
@@ -62,6 +63,9 @@
 #include "event_object_movement.h"
 #include "constants/layouts.h"
 #include "gba/isagbprint.h"
+#include "config/heat_menus.h"
+#include "config/save.h"
+
 
 // LOGIC AND STATE
 static bool8 HSelM_AreThereRegisteredItems(void);
@@ -75,15 +79,13 @@ static bool8 HSelM_StartSectionState(void);
 // NAVIGATION AND INPUT HANDLING
 static void Task_HSelM_HandleMainInput(u8 taskId);
 static void HSelM_RefreshUI(void);
-static void HSelM_Handle_ABUTTON(void);
-static void HSelM_Handle_DPADDOWN(void);
-static void HSelM_Handle_DPADUP(void);
-static void HSelM_Handle_LBUTTON(void);
-static void HSelM_Handle_RBUTTON(void);
-static void HSelM_Handle_SELECTBUTTON(void);
-static void HSelM_Handle_STARTBUTTON(void);
-
-static void HSelM_DoCleanUpAndChangeCallback(MainCallback callback);
+static void HSelM_Handle_ABUTTON(u8 taskId);
+static void HSelM_Handle_DPADDOWN(u8 taskId);
+static void HSelM_Handle_DPADUP(u8 taskId);
+static void HSelM_Handle_LBUTTON(u8 taskId);
+static void HSelM_Handle_RBUTTON(u8 taskId);
+static void HSelM_Handle_SELECTBUTTON(u8 taskId);
+static void HSelM_Handle_STARTBUTTON(u8 taskId);
 
 // BACKGROUND
 static const u32 *HSelM_GetCurrentTilemap(void);
@@ -91,8 +93,14 @@ static void HSelM_LoadBackground(void);
 static void HSelM_RefreshTilemap(void);
 
 // SPRITES
+static bool32 HSelM_ShouldHandleFlash(void);
 static void HSelM_LoadTimeIconPalette(u16 tag);
 static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplate);
+static void HSelM_PrintItemIconParametrized(u16 itemId, bool32 flash);
+static void HSelM_PrintStartIconParametrized(bool32 flash);
+static void HSelM_PrintSelectIconParametrized(bool32 flash);
+static void HSelM_PrintLeftIconParametrized(bool32 flash);
+static void HSelM_PrintRightIconParametrized(bool32 flash);
 static void HSelM_PrintItemIcon(u16 itemId);
 static void HSelM_PrintStartIcon(void);
 static void HSelM_PrintSelectIcon(void);
@@ -112,7 +120,7 @@ static void HSelM_PrintCenteredStringVar4(u8, u32, u16);
 static void HSelM_PrintCenteredStringVar4Background(u8, u32, u16, bool8);
 
 // EXIT AND CLEANUP
-static void HSelM_ExitAndCleanup(void);
+static void HSelM_ExitAndCleanup(bool32 unfreeze);
 static void HSelM_CleanupTextWindow(u32 windowId);
 static void HSelM_CleanupSprites(void);
 static void HSelM_RemoveItemIcon(void);
@@ -153,6 +161,12 @@ struct HeatSelectMenu
     u32 spriteIdRight;
     u32 spriteIdSelect;
     u32 spriteIdStart;
+    // duplicate sprites to handle when we are in a dark cave and need to show them with a specific property enabled to make them visible
+    u32 spriteIdRegisteredKeyItemFlash;
+    u32 spriteIdLeftFlash;
+    u32 spriteIdRightFlash;
+    u32 spriteIdSelectFlash;
+    u32 spriteIdStartFlash;
 };
 
 static EWRAM_DATA struct HeatSelectMenu *sHeatSelectMenu = NULL;
@@ -187,12 +201,21 @@ void HeatSelectMenu_Init(void)
     sHeatSelectMenu->savedCallback = CB2_ReturnToFieldWithOpenSelectMenu;
     sHeatSelectMenu->inputDelay = 1;
     sHeatSelectMenu->mode = HSELM_MODE_MAIN;
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     sHeatSelectMenu->registeredItemIndex = gSaveBlock1Ptr->registeredItemLastSelected;
+    #else 
+    sHeatSelectMenu->registeredItemIndex = 0;
+    #endif
     sHeatSelectMenu->spriteIdRegisteredKeyItem = SPRITE_NONE;
     sHeatSelectMenu->spriteIdLeft = SPRITE_NONE;
     sHeatSelectMenu->spriteIdRight = SPRITE_NONE;
     sHeatSelectMenu->spriteIdSelect = SPRITE_NONE;
     sHeatSelectMenu->spriteIdStart = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdRegisteredKeyItemFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdLeftFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdRightFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdSelectFlash = SPRITE_NONE;
+    sHeatSelectMenu->spriteIdStartFlash = SPRITE_NONE;
     sHeatSelectMenu->sTopTextWindowId = 0;
     sHeatSelectMenu->sLTextWindowId = 0;
     sHeatSelectMenu->sRTextWindowId = 0;
@@ -207,11 +230,16 @@ void HeatSelectMenu_Init(void)
 
 bool8 HSelM_AreThereRegisteredItems(void)
 {
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     // we assume that registeredItems is a compacted list, so if the first slot is empty, there are no registered items at all
     return gSaveBlock1Ptr->registeredItems[0].itemId != ITEM_NONE;
+    #else
+    return gSaveBlock1Ptr->registeredItem != ITEM_NONE;
+    #endif
 }
 u32 HSelM_HowManyRegisteredItems(void)
 {
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     s8 i;
     for (i = 0; i < REGISTERED_ITEMS_MAX; i++)
     {
@@ -219,6 +247,9 @@ u32 HSelM_HowManyRegisteredItems(void)
             return i;
     }
     return REGISTERED_ITEMS_MAX;
+    #else 
+    return gSaveBlock1Ptr->registeredItem == ITEM_NONE ? 0 : 1;
+    #endif
 }
 bool8 HSelM_TopHasSprite(void){
     return sHeatSelectMenu->mode == HSELM_MODE_MAIN && HSelM_AreThereRegisteredItems();
@@ -257,7 +288,10 @@ bool8 HSelM_SelectSectionState(void){
     }
     else
     {
-        return FlagGet(FLAG_SID_REPEL);
+        if(INFINITE_REPEL_FLAG > TEMP_FLAGS_END){
+            return FlagGet(INFINITE_REPEL_FLAG);
+        }
+        return TRUE;
     }
 }
 bool8 HSelM_StartSectionState(void){
@@ -268,8 +302,12 @@ bool8 HSelM_StartSectionState(void){
         return timeOfDay != TIME_NIGHT; // if it's already night, don't highlight the button
     }
     else
-    {
-        return FlagGet(I_EXP_SHARE_FLAG);
+    {   
+        // only used if I_EXP_SHARE_FLAG is defined in config/item.h
+        if(I_EXP_SHARE_FLAG > TEMP_FLAGS_END){
+            return FlagGet(I_EXP_SHARE_FLAG);
+        }
+        return TRUE; 
     }
 }
 
@@ -288,31 +326,31 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
     
     if (JOY_NEW(A_BUTTON))
     {
-        HSelM_Handle_ABUTTON();
+        HSelM_Handle_ABUTTON(taskId);
     }
     else if (JOY_NEW(DPAD_DOWN))
     {
-        HSelM_Handle_DPADDOWN();
+        HSelM_Handle_DPADDOWN(taskId);
     }
     else if (JOY_NEW(DPAD_UP))
     {
-        HSelM_Handle_DPADUP();
+        HSelM_Handle_DPADUP(taskId);
     }
     else if (JOY_NEW(L_BUTTON))
     {
-        HSelM_Handle_LBUTTON();
+        HSelM_Handle_LBUTTON(taskId);
     }
     else if (JOY_NEW(R_BUTTON))
     {
-        HSelM_Handle_RBUTTON();
+        HSelM_Handle_RBUTTON(taskId);
     }
     else if (JOY_NEW(SELECT_BUTTON))
     {
-        HSelM_Handle_SELECTBUTTON();
+        HSelM_Handle_SELECTBUTTON(taskId);
     }
     else if (JOY_NEW(START_BUTTON))
     {
-        HSelM_Handle_STARTBUTTON();
+        HSelM_Handle_STARTBUTTON(taskId);
     }
     else if (JOY_NEW(B_BUTTON))
     {
@@ -323,7 +361,7 @@ static void Task_HSelM_HandleMainInput(u8 taskId)
             return;
         }
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
+        HSelM_ExitAndCleanup(TRUE);
         DestroyTask(taskId);
     }
 }
@@ -347,8 +385,20 @@ static void HSelM_RefreshUI(void)
     HSelM_CreateSprites();
 }
 
-static void HSelM_Handle_DPADDOWN(void)
+static void Task_CloseAfterMessage(u8 taskId)
 {
+    if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
+    {
+        ClearDialogWindowAndFrame(0, TRUE);
+        DestroyTask(taskId);
+        ScriptUnfreezeObjectEvents();
+        UnlockPlayerFieldControls();
+    }
+}
+
+static void HSelM_Handle_DPADDOWN(u8 taskId)
+{
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         // in time picker mode, DPAD does nothing
@@ -370,9 +420,11 @@ static void HSelM_Handle_DPADDOWN(void)
     // but the text in the top box does and the sprite in the top box does
     HSelM_CreateSprites();
     HSelM_UpdateTopTextWindow();
+    #endif
 }
-static void HSelM_Handle_DPADUP(void)
+static void HSelM_Handle_DPADUP(u8 taskId)
 {
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     if (sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
         // in time picker mode, DPAD does nothing
@@ -397,8 +449,9 @@ static void HSelM_Handle_DPADUP(void)
     // but the text in the top box does and the sprite in the top box does
     HSelM_CreateSprites();
     HSelM_UpdateTopTextWindow();
+    #endif
 }
-static void HSelM_Handle_ABUTTON(void)
+static void HSelM_Handle_ABUTTON(u8 taskId)
 {
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
@@ -411,88 +464,145 @@ static void HSelM_Handle_ABUTTON(void)
         sHeatSelectMenu->registeredItemIndex = 0;
         return;
     }
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     u8 index = sHeatSelectMenu->registeredItemIndex;
+    #endif
     PlaySE(SE_SELECT);
-    HSelM_ExitAndCleanup();
-    DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+    HSelM_ExitAndCleanup(TRUE);
+    DestroyTask(taskId);
+    #if ENABLE_MULTIPLE_REGISTERED_ITEMS
     UseRegisteredKeyItemOnField(index);
+    #else
+    UseRegisteredKeyItemOnField();
+    #endif
 }
-static void HSelM_Handle_LBUTTON(void){
+static void HSelM_Handle_LBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
+        #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_MORNING) return; // already morning, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillMorning();
         return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
     } else {
         if(PokevialGetDose() <= 0) return; // vial is empty, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         PokeVialTryUse();
+        return;
     }
 }
-static void HSelM_Handle_RBUTTON(void){
+static void HSelM_Handle_RBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
+        #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_DAY) return; // already day, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillDay();
         return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
     } else {
         PlaySE(SE_SELECT);
         sHeatSelectMenu->mode = HSELM_MODE_TIME_PICKER; 
         HSelM_RefreshUI();
     }
 }
-static void HSelM_Handle_SELECTBUTTON(void){
+
+const u8 gText_RepelTurnedOn[] = _("Infinite Repel turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}.\nYou're scaring wild Pokémon away!");
+const u8 gText_RepelTurnedOff[] = _("Infinite Repel turned off.\nCatch 'em all!");
+#define TOGGLE_INFINITE_REPEL_WITHOUT_EXITING FALSE
+static void HSelM_Handle_SELECTBUTTON(u8 taskId){
     if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
     {
+        #if OW_USE_FAKE_RTC
         if(AccurateTimeOfDay() == TIME_EVENING) return; // already evening, do nothing
         PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
         WaitTillEvening();
         return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
     } else {
-        PlaySE(SE_SELECT);
-        FlagToggle(FLAG_SID_REPEL);
-        HSelM_RefreshUI();
-    }
-}
-static void HSelM_Handle_STARTBUTTON(void){
-    if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
-    {
-        if(AccurateTimeOfDay() == TIME_NIGHT) return; // already night, do nothing
-        PlaySE(SE_SELECT);
-        HSelM_ExitAndCleanup();
-        DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
-        WaitTillNight();
+        if (INFINITE_REPEL_FLAG > TEMP_FLAGS_END)
+        {
+            PlaySE(SE_SELECT);
+            bool32 isTurningOn = !FlagGet(INFINITE_REPEL_FLAG);
+            FlagToggle(INFINITE_REPEL_FLAG);
+            #if TOGGLE_INFINITE_REPEL_WITHOUT_EXITING
+            HSelM_RefreshUI();
+            #else
+            StringExpandPlaceholders(gStringVar4, isTurningOn ? gText_RepelTurnedOn : gText_RepelTurnedOff);
+            HSelM_ExitAndCleanup(FALSE);
+            DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseAfterMessage);
+            #endif
+        }
+        else
+        {
+            PlaySE(SE_SELECT);
+            // customize functionality for select button in main mode if you're not using infinite repel toggle
+            HSelM_ExitAndCleanup(TRUE);
+            DestroyTask(taskId);
+        }
         return;
-    } else {
-        PlaySE(SE_SELECT);
-        FlagToggle(I_EXP_SHARE_FLAG);
-        HSelM_RefreshUI();
     }
 }
 
-// used by some of the menu options to exit the select menu and either return to field or start that menu option
-static void HSelM_DoCleanUpAndChangeCallback(MainCallback callback)
-{
-  if (!gPaletteFade.active)
-  {
-    DestroyTask(FindTaskIdByFunc(Task_HSelM_HandleMainInput));
-    PlayRainStoppingSoundEffect();
-    HSelM_ExitAndCleanup();
-    CleanupOverworldWindowsAndTilemaps();
-    SetMainCallback2(callback);
-    gMain.savedCallback = CB2_ReturnToFieldWithOpenSelectMenu;
-  }
+
+const u8 gText_ExpAllTurnedOn[] = _("Experience Share turned {COLOR GREEN}{SHADOW LIGHT_GREEN}ON{COLOR DARK_GRAY}{SHADOW LIGHT_GRAY}.\nLevel up your whole team!");
+const u8 gText_ExpAllTurnedOff[] = _("Experience Share turned off.\nTrain your favorite Pokémon!");
+#define TOGGLE_EXP_ALL_WITHOUT_EXITING FALSE
+static void HSelM_Handle_STARTBUTTON(u8 taskId){
+    if(sHeatSelectMenu->mode == HSELM_MODE_TIME_PICKER)
+    {
+        #if OW_USE_FAKE_RTC
+        if(AccurateTimeOfDay() == TIME_NIGHT) return; // already night, do nothing
+        PlaySE(SE_SELECT);
+        HSelM_ExitAndCleanup(TRUE);
+        DestroyTask(taskId);
+        WaitTillNight();
+        return;
+        #else
+        return; // RTC not enabled, can't wait until a time of day
+        #endif
+    }
+    else
+    {
+        if (I_EXP_SHARE_FLAG > TEMP_FLAGS_END)
+        {
+            PlaySE(SE_SELECT);
+            bool32 isTurningOn = !FlagGet(I_EXP_SHARE_FLAG);
+            FlagToggle(I_EXP_SHARE_FLAG);
+            #if TOGGLE_EXP_ALL_WITHOUT_EXITING
+            HSelM_RefreshUI();
+            #else
+            StringExpandPlaceholders(gStringVar4, isTurningOn ? gText_ExpAllTurnedOn : gText_ExpAllTurnedOff);
+            HSelM_ExitAndCleanup(FALSE);
+            DisplayItemMessageOnField(taskId, gStringVar4, Task_CloseAfterMessage);
+            #endif
+        }
+        else
+        {
+            PlaySE(SE_SELECT);
+            // customize functionality for START button in main mode if you don't want it to toggle Exp. Share
+            HSelM_ExitAndCleanup(TRUE);
+            DestroyTask(taskId);
+        }
+        return;
+    }
 }
+
    
 ///// ======================================================================================================================================
 ///// ============== BACKGROUND ============================================================================================================
@@ -707,6 +817,10 @@ static const struct SpriteTemplate gSpriteIconClock = {
     .callback = SpriteCallbackDummy,
 };
 
+static bool32 HSelM_ShouldHandleFlash(){
+    return GetFlashLevel() > 0 || InBattlePyramid_();
+}
+
 static void HSelM_LoadTimeIconPalette(u16 tag)
 {
     struct SpritePalette spritePalette;
@@ -730,10 +844,10 @@ static u32 HSelM_AddTimeIcon(u16 tag, const struct SpriteTemplate *spriteTemplat
     return CreateSprite(spriteTemplate, 0, 0, 0);
 }
 
-static void HSelM_PrintItemIcon(u16 itemId)
+static void HSelM_PrintItemIconParametrized(u16 itemId, bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdRegisteredKeyItem;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdRegisteredKeyItemFlash : &sHeatSelectMenu->spriteIdRegisteredKeyItem;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -747,14 +861,18 @@ static void HSelM_PrintItemIcon(u16 itemId)
             gSprites[spriteId].oam.priority = 0;
             gSprites[spriteId].x2 = 2*8+4;
             gSprites[spriteId].y2 = 2*8+4;
+            if(flash)
+            {
+                gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+            }
         }
     }
 }
 
-static void HSelM_PrintStartIcon(void)
+static void HSelM_PrintStartIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdStart;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdStartFlash : &sHeatSelectMenu->spriteIdStart;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -769,6 +887,10 @@ static void HSelM_PrintStartIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 19 * 8;
                 gSprites[spriteId].y2 = 15 * 8;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
         else
@@ -780,15 +902,19 @@ static void HSelM_PrintStartIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 19 * 8 + 4;
                 gSprites[spriteId].y2 = 15 * 8 + 4;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
     }
 }
 
-static void HSelM_PrintSelectIcon(void)
+static void HSelM_PrintSelectIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdSelect;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdSelectFlash : &sHeatSelectMenu->spriteIdSelect;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -803,6 +929,10 @@ static void HSelM_PrintSelectIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 4 * 8;
                 gSprites[spriteId].y2 = 15 * 8;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
         else
@@ -814,14 +944,18 @@ static void HSelM_PrintSelectIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 4 * 8 + 4;
                 gSprites[spriteId].y2 = 15 * 8 + 4;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
     }
 }
-static void HSelM_PrintLeftIcon(void)
+static void HSelM_PrintLeftIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdLeft;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdLeftFlash : &sHeatSelectMenu->spriteIdLeft;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -836,6 +970,10 @@ static void HSelM_PrintLeftIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 2 * 8;
                 gSprites[spriteId].y2 = 8 * 8;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
         else
@@ -847,14 +985,18 @@ static void HSelM_PrintLeftIcon(void)
                 gSprites[spriteId].oam.priority = 0;
                 gSprites[spriteId].x2 = 2 * 8 + 4;
                 gSprites[spriteId].y2 = 8 * 8 + 4;
+                if(flash)
+                {
+                    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+                }
             }
         }
     }
 }
-static void HSelM_PrintRightIcon(void)
+static void HSelM_PrintRightIconParametrized(bool32 flash)
 {
     u8 spriteId = MAX_SPRITES;
-    u32* spriteIdLoc = &sHeatSelectMenu->spriteIdRight;
+    u32* spriteIdLoc = flash ? &sHeatSelectMenu->spriteIdRightFlash : &sHeatSelectMenu->spriteIdRight;
 
     if (*spriteIdLoc == SPRITE_NONE)
     {
@@ -874,16 +1016,74 @@ static void HSelM_PrintRightIcon(void)
             gSprites[spriteId].oam.priority = 0;
             gSprites[spriteId].x2 = 21 * 8;
             gSprites[spriteId].y2 = 8 * 8;
+            if(flash)
+            {
+                gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+            }
         }
+    }
+}
+
+static void HSelM_PrintItemIcon(u16 itemId)
+{
+    HSelM_PrintItemIconParametrized(itemId, FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintItemIconParametrized(itemId, TRUE);
+    }
+}
+
+static void HSelM_PrintStartIcon()
+{
+    HSelM_PrintStartIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintStartIconParametrized(TRUE);
+    }
+}
+
+static void HSelM_PrintSelectIcon()
+{
+    HSelM_PrintSelectIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintSelectIconParametrized(TRUE);
+    }
+}
+
+static void HSelM_PrintLeftIcon()
+{
+    HSelM_PrintLeftIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintLeftIconParametrized(TRUE);
+    }
+}
+
+static void HSelM_PrintRightIcon()
+{
+    HSelM_PrintRightIconParametrized(FALSE);
+    if(HSelM_ShouldHandleFlash())
+    {
+        HSelM_PrintRightIconParametrized(TRUE);
     }
 }
 
 static void HSelM_CreateSprites(void)
 {
+    if(HSelM_ShouldHandleFlash())
+    {
+        SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+        SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+    }
     HSelM_RemoveItemIcon();
     if (HSelM_AreThereRegisteredItems() && sHeatSelectMenu->mode == HSELM_MODE_MAIN)
     {
+        #if ENABLE_MULTIPLE_REGISTERED_ITEMS
         u16 registeredItem = gSaveBlock1Ptr->registeredItems[sHeatSelectMenu->registeredItemIndex].itemId;
+        #else
+        u16 registeredItem = gSaveBlock1Ptr->registeredItem;
+        #endif
         HSelM_PrintItemIcon(registeredItem);
     }
     HSelM_RemoveStartIcon();
@@ -1036,7 +1236,11 @@ static void HSelM_UpdateTopTextWindow(void)
     else
     {
         if(HSelM_AreThereRegisteredItems()){
+            #if ENABLE_MULTIPLE_REGISTERED_ITEMS
             u16 registeredItem = gSaveBlock1Ptr->registeredItems[sHeatSelectMenu->registeredItemIndex].itemId;
+            #else
+            u16 registeredItem = gSaveBlock1Ptr->registeredItem;
+            #endif
             StringExpandPlaceholders(gStringVar4, GetItemName(registeredItem));
         } else {
             StringExpandPlaceholders(gStringVar4, gText_NoRegisteredItem);
@@ -1135,7 +1339,7 @@ static void HSelM_UpdateStartTextWindow(void)
 /////// ============ EXIT AND CLEANUP ===================================================
 /////// =================================================================================
 
-static void HSelM_ExitAndCleanup(void)
+static void HSelM_ExitAndCleanup(bool32 unfreeze)
 {
     u32 i;
     u8 *buf = GetBgTilemapBuffer(0);
@@ -1164,8 +1368,11 @@ static void HSelM_ExitAndCleanup(void)
         sHeatSelectMenu = NULL;
     }
 
-    ScriptUnfreezeObjectEvents();
-    UnlockPlayerFieldControls();
+    if(unfreeze)
+    {
+        ScriptUnfreezeObjectEvents();
+        UnlockPlayerFieldControls();
+    }
 }
 
 static void HSelM_CleanupTextWindow(u32 windowId)
@@ -1185,65 +1392,42 @@ static void HSelM_CleanupSprites(void)
     HSelM_RemoveStartIcon();
 }
 
-static void HSelM_RemoveItemIcon(void)
+// Helper function to remove any icon sprite
+static void HSelM_RemoveIconGeneric(u32 *spriteIdLoc, u32 *spriteIdLocFlash, u16 tag)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdRegisteredKeyItem);
-
     if (*spriteIdLoc != SPRITE_NONE)
     {
-        FreeSpriteTilesByTag(TAG_ITEM_ICON);
-        FreeSpritePaletteByTag(TAG_ITEM_ICON);
+        FreeSpriteTilesByTag(tag);
+        FreeSpritePaletteByTag(tag);
         DestroySprite(&(gSprites[*spriteIdLoc]));
         *spriteIdLoc = SPRITE_NONE;
+        if(*spriteIdLocFlash != SPRITE_NONE && HSelM_ShouldHandleFlash())
+        {
+            DestroySprite(&(gSprites[*spriteIdLocFlash]));
+            *spriteIdLocFlash = SPRITE_NONE;
+        }
     }
+}
+
+static void HSelM_RemoveItemIcon(void)
+{
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdRegisteredKeyItem, &sHeatSelectMenu->spriteIdRegisteredKeyItemFlash, TAG_ITEM_ICON);
 }
 static void HSelM_RemoveStartIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdStart);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_START_ICON);
-        FreeSpritePaletteByTag(TAG_START_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdStart, &sHeatSelectMenu->spriteIdStartFlash, TAG_START_ICON);
 }
 static void HSelM_RemoveSelectIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdSelect);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_SELECT_ICON);
-        FreeSpritePaletteByTag(TAG_SELECT_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdSelect, &sHeatSelectMenu->spriteIdSelectFlash, TAG_SELECT_ICON);
 }
 
 static void HSelM_RemoveLeftIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdLeft);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_LEFT_ICON);
-        FreeSpritePaletteByTag(TAG_LEFT_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdLeft, &sHeatSelectMenu->spriteIdLeftFlash, TAG_LEFT_ICON);
 }
 
 static void HSelM_RemoveRightIcon(void)
 {
-    u32 *spriteIdLoc = &(sHeatSelectMenu->spriteIdRight);
-
-    if (*spriteIdLoc != SPRITE_NONE)
-    {
-        FreeSpriteTilesByTag(TAG_RIGHT_ICON);
-        FreeSpritePaletteByTag(TAG_RIGHT_ICON);
-        DestroySprite(&(gSprites[*spriteIdLoc]));
-        *spriteIdLoc = SPRITE_NONE;
-    }
+    HSelM_RemoveIconGeneric(&sHeatSelectMenu->spriteIdRight, &sHeatSelectMenu->spriteIdRightFlash, TAG_RIGHT_ICON);
 }

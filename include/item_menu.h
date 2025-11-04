@@ -4,6 +4,7 @@
 #include "item.h"
 #include "main.h"
 #include "menu_helpers.h"
+#include "config/save.h"
 
 enum {
     ITEMMENULOCATION_FIELD,
@@ -106,14 +107,18 @@ void CB2_ReturnToBagMenuPocket(void);
 void CB2_BagMenuFromStartMenu(void);
 u8 GetItemListPosition(u8 pocketId);
 
+#if ENABLE_MULTIPLE_REGISTERED_ITEMS
 // multiple_registered_items
-bool8 UseRegisteredKeyItemOnField(u8 index);
+bool8 UseRegisteredKeyItemOnField(u8 index); // multiple registered items
 bool8 TxRegItemsMenu_CheckRegisteredHasItem(u16 itemId);
 u8 TxRegItemsMenu_GetRegisteredItemIndex(u16 itemId);
 void TxRegItemsMenu_RemoveRegisteredItem(u16 itemId);
 void TxRegItemsMenu_CompactRegisteredItems(void);
 u8 TxRegItemsMenu_CountUsedRegisteredItemSlots(void);
 bool8 TxRegItemsMenu_AddRegisteredItem(u16 itemId);
+#else
+bool8 UseRegisteredKeyItemOnField(void); // single registered item
+#endif
 
 void CB2_GoToSellMenu(void);
 void GoToBagMenu(u8 location, u8 pocket, MainCallback exitCallback);

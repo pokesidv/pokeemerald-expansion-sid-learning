@@ -687,24 +687,26 @@ static void CreateStartMenuTask(TaskFunc followupFunc)
 }
 
 #include "heat_start_menu.h"
+#include "config/heat_menus.h"
 #include "heat_select_menu.h"
 static bool8 FieldCB_ReturnToFieldStartMenu(void)
 {
-    //if (InitStartMenuStep() == FALSE)
-    //{
-    //    return FALSE;
-    //}
+    #if ENABLE_HEAT_START_MENU
     HeatStartMenu_Init();
-
+    #else
+    if (InitStartMenuStep() == FALSE)
+    {
+        return FALSE;
+    }
+    #endif
     ReturnToFieldOpenStartMenu();
     return TRUE;
 }
 
 static bool8 FieldCB_ReturnToFieldSelectMenu(void)
 {
-
+    // no need to check ENABLE_HEAT_SELECT_MENU here since this method would only be called if the feature is enabled at all
     HeatSelectMenu_Init();
-
     ReturnToFieldOpenSelectMenu();
     return TRUE;
 }
