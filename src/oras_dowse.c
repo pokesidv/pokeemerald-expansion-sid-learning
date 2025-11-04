@@ -354,9 +354,7 @@ static void UpdateORASDowsingFieldEffect(struct Sprite *sprite)
         sprite->y2++;
 
     if (playerObj->previousMovementDirection != playerObj->movementDirection)
-    {
         UpdateDowsingAnimDirection(sprite, playerObj);
-    }
 
     if (playerObj->movementActionId != MOVEMENT_ACTION_NONE)
     {
@@ -375,11 +373,10 @@ static void UpdateORASDowsingFieldEffect(struct Sprite *sprite)
             UpdateDowseState(sprite);
         }
     }
+
     if (I_ORAS_DOWSING_SOUNDS && sprite->sDowseState == ORASD_WIGGLE_FASTER && playerObj->heldMovementFinished != FALSE)
     {
-        sprite->sSoundTimer++;
-
-        if (sprite->sSoundTimer == 70)
+        if (++sprite->sSoundTimer == 70)
         {
             PlaySE(SE_ITEMFINDER);
             sprite->sSoundTimer = 0;
@@ -404,9 +401,7 @@ void UpdateDowseState(struct Sprite *sprite)
         u8 directionToItem = CARDINAL_DIRECTION_COUNT;
         u8 playerDirToItem = GetDirectionToHiddenItem(distX, distY);
         if (playerDirToItem != DIR_NONE)
-        {
-            directionToItem = (sClockwiseDirections[GetDirectionToHiddenItem(distX, distY) - 1]);
-        }
+            directionToItem = sClockwiseDirections[GetDirectionToHiddenItem(distX, distY) - 1];
 
         if (distX < 0)
             distX *= -1;
@@ -423,17 +418,11 @@ void UpdateDowseState(struct Sprite *sprite)
         else if (distX == distY && distX != 0)
         {
             if ((directionToItem == DIR_NORTH || directionToItem == DIR_SOUTH) && sprite->tItemDistanceX > 0 && playerObj->movementDirection == DIR_EAST)
-            {
                 ChangeDowsingColor(DIR_EAST, sprite);
-            }
             else if ((directionToItem == DIR_NORTH || directionToItem == DIR_SOUTH) && sprite->tItemDistanceX < 0 && playerObj->movementDirection == DIR_WEST)
-            {
                 ChangeDowsingColor(DIR_WEST, sprite);
-            }
             else
-            {
                 ClearDowsingColor(sprite);
-            }
         }
         else
         {
