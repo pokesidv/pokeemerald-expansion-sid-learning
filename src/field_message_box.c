@@ -128,7 +128,6 @@ bool8 ShowFieldMessageFromBuffer(void)
     return TRUE;
 }
 
-extern void FillDialogFramePlate();
 extern int GetDialogFramePlateWidth();
 static void ExpandStringAndStartDrawFieldMessage(const u8 *str, bool32 allowSkippingDelayWithButtonPress)
 {

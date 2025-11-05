@@ -62,7 +62,7 @@ void TrySpawnNamebox(u32 tileNum)
     struct WindowTemplate template =
     {
         .bg = 0,
-        .tilemapLeft = 2,
+        .tilemapLeft = 1,
         .tilemapTop = 13,
         .width = winWidth,
         .height = OW_NAME_BOX_DEFAULT_HEIGHT,
@@ -133,8 +133,13 @@ void FillNamebox(void)
     for (u32 i = 0; i < winSize; i++)
     {
         #define TILE(x) (8 * x)
-        CopyToWindowPixelBuffer(sNameboxWindowId, &gfx[TILE(1)], TILE_SIZE_4BPP, i);
-        CopyToWindowPixelBuffer(sNameboxWindowId, &gfx[TILE(4)], TILE_SIZE_4BPP, i + winSize);
+        if(i==0){ // the first two fill tiles are different than the rest
+            CopyToWindowPixelBuffer(sNameboxWindowId, &gfx[TILE(1)], TILE_SIZE_4BPP, i);
+            CopyToWindowPixelBuffer(sNameboxWindowId, &gfx[TILE(6)], TILE_SIZE_4BPP, i + winSize);
+        } else { // (kinda, actually 2 and 1 are the same but the tileset looks nicer how it is right now)
+            CopyToWindowPixelBuffer(sNameboxWindowId, &gfx[TILE(2)], TILE_SIZE_4BPP, i);
+            CopyToWindowPixelBuffer(sNameboxWindowId, &gfx[TILE(7)], TILE_SIZE_4BPP, i + winSize);
+        }
         #undef TILE
     }
 }
@@ -164,11 +169,13 @@ static void WindowFunc_DrawNamebox(u32 bg, u32 L, u32 T, u32 w, u32 h, u32 p, u3
 {
     // left-most
     FillBgTilemapBufferRect(bg, tileNum,     L - 1, T,     1, 1, p);
-    FillBgTilemapBufferRect(bg, tileNum + 3, L - 1, T + 1, 1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum + 5, L - 1, T + 1, 1, 1, p);
 
     // right-most
-    FillBgTilemapBufferRect(bg, tileNum + 2, L + w, T,     1, 1, p);
-    FillBgTilemapBufferRect(bg, tileNum + 5, L + w, T + 1, 1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum + 3, L + w,     T,     1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum + 8, L + w,     T + 1, 1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum + 4, L + w + 1, T,     1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum + 9, L + w + 1, T + 1, 1, 1, p);
 }
 
 static void WindowFunc_ClearNamebox(u8 bg, u8 L, u8 T, u8 w, u8 h, u8 p)

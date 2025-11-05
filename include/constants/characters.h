@@ -251,6 +251,8 @@
 #define TEXT_DYNAMIC_COLOR_5    0xE // Usually blue-green
 #define TEXT_DYNAMIC_COLOR_6    0xF // Usually cerulean
 
+#define SID_CUSTOM_MESSAGEBOX_BACKGROUND    0xB // same as TEXT_DYNAMIC_COLOR_2
+
 #define PLACEHOLDER_ID_UNKNOWN       0x0
 #define PLACEHOLDER_ID_PLAYER        0x1
 #define PLACEHOLDER_ID_STRING_VAR_1  0x2
