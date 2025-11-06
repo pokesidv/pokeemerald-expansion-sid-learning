@@ -1077,12 +1077,12 @@ void DrawBattleEntryBackground(void)
             enum TrainerClassID trainerClass = GetTrainerClassFromId(TRAINER_BATTLE_PARAM.opponentA);
             if (trainerClass == TRAINER_CLASS_LEADER)
             {
-                LoadBattleEnvironmentEntryGfx(BATTLE_ENVIRONMENT_BUILDING);
+                LoadBattleEnvironmentEntryGfx(BATTLE_ENVIRONMENT_LEADER);
                 return;
             }
             else if (trainerClass == TRAINER_CLASS_CHAMPION)
             {
-                LoadBattleEnvironmentEntryGfx(BATTLE_ENVIRONMENT_BUILDING);
+                LoadBattleEnvironmentEntryGfx(BATTLE_ENVIRONMENT_CHAMPION);
                 return;
             }
         }
