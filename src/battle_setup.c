@@ -662,7 +662,7 @@ enum BattleEnvironments BattleSetup_GetEnvironmentId(void)
     case MAP_TYPE_OCEAN_ROUTE:
         if (MetatileBehavior_IsSurfableWaterOrUnderwater(tileBehavior))
             return BATTLE_ENVIRONMENT_WATER;
-        return BATTLE_ENVIRONMENT_PLAIN;
+        return BATTLE_ENVIRONMENT_PLAINS;
     }
     if (MetatileBehavior_IsDeepOrOceanWater(tileBehavior))
         return BATTLE_ENVIRONMENT_WATER;
@@ -684,7 +684,7 @@ enum BattleEnvironments BattleSetup_GetEnvironmentId(void)
     if (GetSavedWeather() == WEATHER_SANDSTORM)
         return BATTLE_ENVIRONMENT_SAND;
 
-    return BATTLE_ENVIRONMENT_PLAIN;
+    return BATTLE_ENVIRONMENT_PLAINS;
 }
 
 static enum TransitionType GetBattleTransitionTypeByMap(void)

@@ -26,6 +26,14 @@ const u32 gBattleEnvironmentTiles_Rock[] = INCBIN_U32("graphics/battle_environme
 const u16 gBattleEnvironmentPalette_Rock[] = INCBIN_U16("graphics/battle_environment/rock/palette.gbapal");
 const u32 gBattleEnvironmentTilemap_Rock[] = INCBIN_U32("graphics/battle_environment/rock/map.bin.smolTM");
 
+const u32 gBattleEnvironmentTiles_Plains[] = INCBIN_U32("graphics/battle_environment/plains/tiles.4bpp.smol");
+const u16 gBattleEnvironmentPalette_Plains[] = INCBIN_U16("graphics/battle_environment/plains/palette.gbapal");
+const u32 gBattleEnvironmentTilemap_Plains[] = INCBIN_U32("graphics/battle_environment/plains/map.bin.smolTM");
+
+const u32 gBattleEnvironmentTiles_Snow[] = INCBIN_U32("graphics/battle_environment/snow/tiles.4bpp.smol");
+const u16 gBattleEnvironmentPalette_Snow[] = INCBIN_U16("graphics/battle_environment/snow/palette.gbapal");
+const u32 gBattleEnvironmentTilemap_Snow[] = INCBIN_U32("graphics/battle_environment/snow/map.bin.smolTM");
+
 const u32 gBattleEnvironmentTiles_Cave[] = INCBIN_U32("graphics/battle_environment/cave/tiles.4bpp.smol");
 const u16 gBattleEnvironmentPalette_Cave[] = INCBIN_U16("graphics/battle_environment/cave/palette.gbapal");
 const u32 gBattleEnvironmentTilemap_Cave[] = INCBIN_U32("graphics/battle_environment/cave/map.bin.smolTM");
@@ -172,6 +180,37 @@ const struct BattleEnvironment gBattleEnvironmentInfo[BATTLE_ENVIRONMENT_COUNT] 
             .entryTilemap = gBattleEnvironmentAnimTilemap_Building,
             .palette = gBattleEnvironmentPalette_Plain,
         },
+    },
+
+    // CUSTOM
+    
+    [BATTLE_ENVIRONMENT_ROCK] =
+    {
+        .secretPowerEffect = MOVE_EFFECT_SPD_MINUS_1,
+        .camouflageType = TYPE_ROCK,
+        .background = ENVIRONMENT_BACKGROUND(Rock),
+    },
+    
+    [BATTLE_ENVIRONMENT_PLAINS] =
+    {
+        .naturePower = MOVE_SWIFT,
+        .secretPowerEffect = MOVE_EFFECT_PARALYSIS,
+        .camouflageType = TYPE_NORMAL,
+        .background = ENVIRONMENT_BACKGROUND(Plains),
+    },
+
+    [BATTLE_ENVIRONMENT_SNOW] = // MOVED UP
+    {
+    #if B_NATURE_POWER_MOVES >= GEN_7
+        .naturePower = MOVE_ICE_BEAM,
+    #elif B_NATURE_POWER_MOVES >= GEN_6
+        .naturePower = MOVE_FROST_BREATH,
+    #else
+        .naturePower = MOVE_BLIZZARD,
+    #endif
+        .secretPowerEffect = MOVE_EFFECT_FREEZE_OR_FROSTBITE,
+        .camouflageType = TYPE_ICE,
+        .background = ENVIRONMENT_BACKGROUND(Snow), // given background data
     },
 
     [BATTLE_ENVIRONMENT_FRONTIER] =
@@ -372,18 +411,6 @@ const struct BattleEnvironment gBattleEnvironmentInfo[BATTLE_ENVIRONMENT_COUNT] 
         .camouflageType = TYPE_GROUND,
     },
 
-    [BATTLE_ENVIRONMENT_SNOW] =
-    {
-    #if B_NATURE_POWER_MOVES >= GEN_7
-        .naturePower = MOVE_ICE_BEAM,
-    #elif B_NATURE_POWER_MOVES >= GEN_6
-        .naturePower = MOVE_FROST_BREATH,
-    #else
-        .naturePower = MOVE_BLIZZARD,
-    #endif
-        .secretPowerEffect = MOVE_EFFECT_FREEZE_OR_FROSTBITE,
-        .camouflageType = TYPE_ICE,
-    },
 
     [BATTLE_ENVIRONMENT_ICE] =
     {
@@ -425,6 +452,7 @@ static const struct {
     u8 mapScene;
     u8 battleEnvironment;
 } sMapBattleSceneMapping[] = {
+    {MAP_BATTLE_SCENE_PLAINS,   BATTLE_ENVIRONMENT_PLAINS},
     {MAP_BATTLE_SCENE_GYM,      BATTLE_ENVIRONMENT_GYM},
     {MAP_BATTLE_SCENE_MAGMA,    BATTLE_ENVIRONMENT_MAGMA},
     {MAP_BATTLE_SCENE_AQUA,     BATTLE_ENVIRONMENT_AQUA},
