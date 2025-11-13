@@ -1533,7 +1533,7 @@ static const struct BattleWindowText sTextOnWindowsInfo_Normal[] =
         .speed = 1,
         .fgColor = 1,
         .bgColor = 15,
-        .shadowColor = 6,
+        .shadowColor = 11,
     },
     [B_WIN_ACTION_PROMPT] = {
         .fillValue = PIXEL_FILL(0xF),
@@ -1543,7 +1543,7 @@ static const struct BattleWindowText sTextOnWindowsInfo_Normal[] =
         .speed = 0,
         .fgColor = 1,
         .bgColor = 15,
-        .shadowColor = 6,
+        .shadowColor = 11,
     },
     [B_WIN_ACTION_MENU] = {
         .fillValue = PIXEL_FILL(0xE),

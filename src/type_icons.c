@@ -195,22 +195,22 @@ const struct OamData sOamData_TypeIcons =
 {
     .affineMode = ST_OAM_AFFINE_OFF,
     .objMode = ST_OAM_OBJ_NORMAL,
-    .shape = SPRITE_SHAPE(8x16),
-    .size = SPRITE_SIZE(8x16),
+    .shape = SPRITE_SHAPE(16x16),
+    .size = SPRITE_SIZE(16x16),
     .priority = 1,
 };
 
 const struct CompressedSpriteSheet sSpriteSheet_TypeIcons2 =
 {
     .data = gBattleIcons_Gfx2,
-    .size = (8*16) * 9,
+    .size = (16*16) * 9,
     .tag = TYPE_ICON_TAG_2,
 };
 
 const struct CompressedSpriteSheet sSpriteSheet_TypeIcons1 =
 {
     .data = gBattleIcons_Gfx1,
-    .size = (8*16) * 10,
+    .size = (16*16) * 10,
     .tag = TYPE_ICON_TAG,
 };
 

@@ -2345,6 +2345,7 @@ u8 GetHPBarLevel(s16 hp, s16 maxhp)
     return result;
 }
 
+#define USE_SHADOW_ON_HEALTHBOX TRUE
 static u8 *AddTextPrinterAndCreateWindowOnHealthboxWithFont(const u8 *str, u32 x, u32 y, u32 bgColor, u32 *windowId, u32 fontId)
 {
     u16 winId;
@@ -2356,13 +2357,18 @@ static u8 *AddTextPrinterAndCreateWindowOnHealthboxWithFont(const u8 *str, u32 x
 
     color[0] = bgColor;
     color[1] = 1;
+    #if USE_SHADOW_ON_HEALTHBOX
     color[2] = 3;
+    #else
+    color[2] = 0;
+    #endif
 
     AddTextPrinterParameterized4(winId, fontId, x, y, 0, 0, color, TEXT_SKIP_DRAW, str);
 
     *windowId = winId;
     return (u8 *)(GetWindowAttribute(winId, WINDOW_TILE_DATA));
 }
+#undef USE_SHADOW_ON_HEALTHBOX
 
 static u8 *AddTextPrinterAndCreateWindowOnHealthbox(const u8 *str, u32 x, u32 y, u32 bgColor, u32 *windowId)
 {
