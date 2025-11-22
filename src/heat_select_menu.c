@@ -609,7 +609,7 @@ static void HSelM_Handle_STARTBUTTON(u8 taskId){
 ///// ======================================================================================================================================
 
 // tiles 
-static const u32 sHSelMTiles[] = INCBIN_U32("graphics/heat_select_menu/qol_menu_tiles_2.4bpp.lz"); 
+static const u32 sHSelMTiles[] = INCBIN_U32("graphics/heat_select_menu/new_tiles.4bpp.lz"); 
 
 // tilemaps for every possible state of top, L, R, Select, and Start boxes (on/off for each of them so 32 total, encoded as 5 bits)
 // we will swap the tilemap based on which boxes are toggled on or off 
