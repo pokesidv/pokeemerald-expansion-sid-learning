@@ -358,7 +358,7 @@ void PlayerStep(u8 direction, u16 newKeys, u16 heldKeys)
             DoPlayerAvatarTransition();
             if (TryDoMetatileBehaviorForcedMovementWithHeldKeys(heldKeys) == 0)
             {
-                if (GetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT) != FALSE)
+                if (GetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT) != FNPC_FORCED_NONE)
                 {
                     gPlayerAvatar.preventStep = TRUE;
                     CreateTask(Task_MoveNPCFollowerAfterForcedMovement, 1);
@@ -547,7 +547,7 @@ static bool8 DoForcedMovement(u8 direction, void (*moveFunc)(u8))
         {
             if (collision == COLLISION_LEDGE_JUMP)
             {
-                SetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT, FALSE);
+                SetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT, FNPC_FORCED_NONE);
                 PlayerJumpLedge(direction);
             }
 
@@ -558,8 +558,8 @@ static bool8 DoForcedMovement(u8 direction, void (*moveFunc)(u8))
     }
     else
     {
-        if (PlayerHasFollowerNPC())
-            SetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT, TRUE);
+        if (PlayerHasFollowerNPC() && GetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT) != FNPC_FORCED_STAY)
+            SetFollowerNPCData(FNPC_DATA_FORCED_MOVEMENT, FNPC_FORCED_FOLLOW);
 
         playerAvatar->runningState = MOVING;
         moveFunc(direction);
@@ -2233,7 +2233,6 @@ bool8 ObjectMovingOnRockStairs(struct ObjectEvent *objectEvent, u8 direction)
         s16 x = objectEvent->currentCoords.x;
         s16 y = objectEvent->currentCoords.y;
 
-        // TODO followers on sideways stairs
         if (IsFollowerVisible() && GetFollowerObject() != NULL && (objectEvent->isPlayer || objectEvent->localId == OBJ_EVENT_ID_FOLLOWER))
             return FALSE;
 

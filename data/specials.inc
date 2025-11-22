@@ -565,6 +565,8 @@ gSpecials::
 	def_special GetCodeFeedback
 	def_special SetHiddenNature
 	def_special SetAbility
+	def_special ObjectEventInteractionGetApricornTreeData
+	def_special ObjectEventInteractionPickApricornTree
     //Start Pokevial Branch
     def_special PokevialGetDose
     def_special PokevialGetSize
