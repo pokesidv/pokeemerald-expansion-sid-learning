@@ -35,7 +35,9 @@
     "gMapGroup_IndoorRoute119",
     "gMapGroup_IndoorRoute124",
     "gMapGroup_ArdorProvince",
-    "gMapGroup_Indoor_Ardor_ChitinCragDale"
+    "gMapGroup_Indoor_Ardor_ChitinCragDale",
+    "gMapGroup_GuileProvince",
+    "gMapGroup_VigorProvince"
   ],
   "gMapGroup_TownsAndRoutes": [
     "PetalburgCity",
@@ -630,9 +632,39 @@
     "ArdorProvince_Route0",
     "ArdorProvince_Route2B",
     "ArdorProvince_Route2A",
-    "Ironwill_Monastery"
+    "Ironwill_Monastery",
+    "CinderPeakBastion",
+    "ArdorProvince_Route3A",
+    "ArdorProvince_Route3B",
+    "ArdorProvince_Route4"
   ],
   "gMapGroup_Indoor_Ardor_ChitinCragDale": [
     "ChitinCragDale_Lab"
+  ],
+  "gMapGroup_GuileProvince": [
+    "GuileProvince_Route0",
+    "Driftbrook_Haven",
+    "Frostveil_Burrrow",
+    "Stillmist_Cove",
+    "Loretide_Shell",
+    "GuileProvince_Route1",
+    "GuileProvince_Route2A",
+    "GuileProvince_Route2B",
+    "GuileProvince_Route3A",
+    "GuileProvince_Route3B",
+    "GuileProvince_Route4"
+  ],
+  "gMapGroup_VigorProvince": [
+    "VigorProvince_Route0",
+    "VigorProvince_Route1",
+    "VigorProvince_Route2A",
+    "VigorProvince_Route2B",
+    "VigorProvince_Route3A",
+    "VigorProvince_Route3B",
+    "VigorProvince_Route4",
+    "Thornwood_Cross",
+    "Voltloft_Canopy",
+    "Grimfen_Thicket",
+    "Gladeward_Cradle"
   ]
 }

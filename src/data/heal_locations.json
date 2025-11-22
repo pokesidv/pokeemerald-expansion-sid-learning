@@ -228,6 +228,60 @@
       "map": "MAP_KINDLEHEARTH_FORGE",
       "x": 10,
       "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_CINDER_PEAK_BASTION",
+      "map": "MAP_CINDER_PEAK_BASTION",
+      "x": 5,
+      "y": 15
+    },
+    {
+      "id": "HEAL_LOCATION_DRIFTBROOK_HAVEN",
+      "map": "MAP_DRIFTBROOK_HAVEN",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_FROSTVEIL_BURRROW",
+      "map": "MAP_FROSTVEIL_BURRROW",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_GLADEWARD_CRADLE",
+      "map": "MAP_GLADEWARD_CRADLE",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_GRIMFEN_THICKET",
+      "map": "MAP_GRIMFEN_THICKET",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_LORETIDE_SHELL",
+      "map": "MAP_LORETIDE_SHELL",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_STILLMIST_COVE",
+      "map": "MAP_STILLMIST_COVE",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_THORNWOOD_CROSS",
+      "map": "MAP_THORNWOOD_CROSS",
+      "x": 10,
+      "y": 10
+    },
+    {
+      "id": "HEAL_LOCATION_VOLTLOFT_CANOPY",
+      "map": "MAP_VOLTLOFT_CANOPY",
+      "x": 10,
+      "y": 10
     }
   ]
 }

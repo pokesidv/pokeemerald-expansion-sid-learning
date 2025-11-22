@@ -1,0 +1,31 @@
+{
+  "id": "MAP_GUILE_PROVINCE_ROUTE0",
+  "name": "GuileProvince_Route0",
+  "layout": "LAYOUT_GUILE_PROVINCE_ROUTE0",
+  "music": "MUS_ROULETTE",
+  "region_map_section": "MAPSEC_GUILE_0",
+  "requires_flash": false,
+  "weather": "WEATHER_NONE",
+  "map_type": "MAP_TYPE_ROUTE",
+  "allow_cycling": true,
+  "allow_escaping": false,
+  "allow_running": true,
+  "show_map_name": true,
+  "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
+  "connections": [
+    {
+      "map": "MAP_ARDOR_PROVINCE_ROUTE4",
+      "offset": 18,
+      "direction": "up"
+    },
+    {
+      "map": "MAP_DRIFTBROOK_HAVEN",
+      "offset": 0,
+      "direction": "left"
+    }
+  ],
+  "object_events": [],
+  "warp_events": [],
+  "coord_events": [],
+  "bg_events": []
+}

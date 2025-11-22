@@ -17,6 +17,11 @@
       "map": "MAP_KINDLEHEARTH_FORGE",
       "offset": 0,
       "direction": "up"
+    },
+    {
+      "map": "MAP_VIGOR_PROVINCE_ROUTE4",
+      "offset": 32,
+      "direction": "left"
     }
   ],
   "object_events": [],

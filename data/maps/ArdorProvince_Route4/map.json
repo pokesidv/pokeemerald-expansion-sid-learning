@@ -1,0 +1,31 @@
+{
+  "id": "MAP_ARDOR_PROVINCE_ROUTE4",
+  "name": "ArdorProvince_Route4",
+  "layout": "LAYOUT_ARDOR_PROVINCE_ROUTE4",
+  "music": "MUS_ROULETTE",
+  "region_map_section": "MAPSEC_ARDOR_4",
+  "requires_flash": false,
+  "weather": "WEATHER_NONE",
+  "map_type": "MAP_TYPE_ROUTE",
+  "allow_cycling": true,
+  "allow_escaping": false,
+  "allow_running": true,
+  "show_map_name": true,
+  "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
+  "connections": [
+    {
+      "map": "MAP_CINDER_PEAK_BASTION",
+      "offset": 0,
+      "direction": "right"
+    },
+    {
+      "map": "MAP_GUILE_PROVINCE_ROUTE0",
+      "offset": -18,
+      "direction": "down"
+    }
+  ],
+  "object_events": [],
+  "warp_events": [],
+  "coord_events": [],
+  "bg_events": []
+}

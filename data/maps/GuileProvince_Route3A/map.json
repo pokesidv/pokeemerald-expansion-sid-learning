@@ -1,0 +1,36 @@
+{
+  "id": "MAP_GUILE_PROVINCE_ROUTE3A",
+  "name": "GuileProvince_Route3A",
+  "layout": "LAYOUT_GUILE_PROVINCE_ROUTE3A",
+  "music": "MUS_ROUTE104",
+  "region_map_section": "MAPSEC_GUILE_3A",
+  "requires_flash": false,
+  "weather": "WEATHER_NONE",
+  "map_type": "MAP_TYPE_ROUTE",
+  "allow_cycling": true,
+  "allow_escaping": false,
+  "allow_running": true,
+  "show_map_name": true,
+  "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
+  "connections": [
+    {
+      "map": "MAP_STILLMIST_COVE",
+      "offset": 0,
+      "direction": "up"
+    },
+    {
+      "map": "MAP_LORETIDE_SHELL",
+      "offset": 0,
+      "direction": "down"
+    },
+    {
+      "map": "MAP_GUILE_PROVINCE_ROUTE3B",
+      "offset": 11,
+      "direction": "left"
+    }
+  ],
+  "object_events": [],
+  "warp_events": [],
+  "coord_events": [],
+  "bg_events": []
+}

@@ -1182,3 +1182,55 @@ EventScript_VsSeekerChargingDone::
 	.include "data/maps/ArdorProvince_Route2A/scripts.inc"
 
 	.include "data/maps/Ironwill_Monastery/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route1/scripts.inc"
+
+	.include "data/maps/Driftbrook_Haven/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route4/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route3A/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route2A/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route4/scripts.inc"
+
+	.include "data/maps/Frostveil_Burrrow/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route1/scripts.inc"
+
+	.include "data/maps/ArdorProvince_Route3A/scripts.inc"
+
+	.include "data/maps/Loretide_Shell/scripts.inc"
+
+	.include "data/maps/ArdorProvince_Route4/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route2B/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route3B/scripts.inc"
+
+	.include "data/maps/Grimfen_Thicket/scripts.inc"
+
+	.include "data/maps/Thornwood_Cross/scripts.inc"
+
+	.include "data/maps/CinderPeakBastion/scripts.inc"
+
+	.include "data/maps/Stillmist_Cove/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route2A/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route3A/scripts.inc"
+
+	.include "data/maps/ArdorProvince_Route3B/scripts.inc"
+
+	.include "data/maps/Gladeward_Cradle/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route0/scripts.inc"
+
+	.include "data/maps/VigorProvince_Route3B/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route2B/scripts.inc"
+
+	.include "data/maps/Voltloft_Canopy/scripts.inc"
+
+	.include "data/maps/GuileProvince_Route0/scripts.inc"

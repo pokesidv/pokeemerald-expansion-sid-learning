@@ -4454,7 +4454,7 @@
     {
       "id": "LAYOUT_ARDOR_PROVINCE_ROUTE2A",
       "name": "ArdorProvince_Route2A_Layout",
-      "width": 60,
+      "width": 42,
       "height": 20,
       "primary_tileset": "gTileset_General",
       "secondary_tileset": "gTileset_Petalburg",
@@ -4490,6 +4490,266 @@
       "secondary_tileset": "gTileset_Petalburg",
       "border_filepath": "data/layouts/ArdorProvince_Route2B/border.bin",
       "blockdata_filepath": "data/layouts/ArdorProvince_Route2B/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE2B",
+      "name": "VigorProvince_Route2B_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route2B/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route2B/map.bin"
+    },
+    {
+      "id": "LAYOUT_DRIFTBROOK_HAVEN",
+      "name": "Driftbrook_Haven_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Driftbrook_Haven/border.bin",
+      "blockdata_filepath": "data/layouts/Driftbrook_Haven/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE3B",
+      "name": "GuileProvince_Route3B_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route3B/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route3B/map.bin"
+    },
+    {
+      "id": "LAYOUT_CINDER_PEAK_BASTION",
+      "name": "CinderPeakBastion_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/CinderPeakBastion/border.bin",
+      "blockdata_filepath": "data/layouts/CinderPeakBastion/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE1",
+      "name": "VigorProvince_Route1_Layout",
+      "width": 39,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route1/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route1/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE0",
+      "name": "GuileProvince_Route0_Layout",
+      "width": 30,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route0/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route0/map.bin"
+    },
+    {
+      "id": "LAYOUT_GLADEWARD_CRADLE",
+      "name": "Gladeward_Cradle_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Gladeward_Cradle/border.bin",
+      "blockdata_filepath": "data/layouts/Gladeward_Cradle/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE3B",
+      "name": "ArdorProvince_Route3B_Layout",
+      "width": 20,
+      "height": 40,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ArdorProvince_Route3B/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route3B/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE4",
+      "name": "VigorProvince_Route4_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route4/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route4/map.bin"
+    },
+    {
+      "id": "LAYOUT_FROSTVEIL_BURRROW",
+      "name": "Frostveil_Burrrow_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Frostveil_Burrrow/border.bin",
+      "blockdata_filepath": "data/layouts/Frostveil_Burrrow/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE3A",
+      "name": "VigorProvince_Route3A_Layout",
+      "width": 50,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route3A/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route3A/map.bin"
+    },
+    {
+      "id": "LAYOUT_STILLMIST_COVE",
+      "name": "Stillmist_Cove_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Stillmist_Cove/border.bin",
+      "blockdata_filepath": "data/layouts/Stillmist_Cove/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE2A",
+      "name": "GuileProvince_Route2A_Layout",
+      "width": 20,
+      "height": 36,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route2A/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route2A/map.bin"
+    },
+    {
+      "id": "LAYOUT_LORETIDE_SHELL",
+      "name": "Loretide_Shell_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Loretide_Shell/border.bin",
+      "blockdata_filepath": "data/layouts/Loretide_Shell/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE4",
+      "name": "GuileProvince_Route4_Layout",
+      "width": 39,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route4/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route4/map.bin"
+    },
+    {
+      "id": "LAYOUT_VOLTLOFT_CANOPY",
+      "name": "Voltloft_Canopy_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Voltloft_Canopy/border.bin",
+      "blockdata_filepath": "data/layouts/Voltloft_Canopy/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE2A",
+      "name": "VigorProvince_Route2A_Layout",
+      "width": 43,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route2A/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route2A/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE3A",
+      "name": "GuileProvince_Route3A_Layout",
+      "width": 20,
+      "height": 38,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route3A/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route3A/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE4",
+      "name": "ArdorProvince_Route4_Layout",
+      "width": 40,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ArdorProvince_Route4/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route4/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE1",
+      "name": "GuileProvince_Route1_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route1/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route1/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE3B",
+      "name": "VigorProvince_Route3B_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route3B/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route3B/map.bin"
+    },
+    {
+      "id": "LAYOUT_GRIMFEN_THICKET",
+      "name": "Grimfen_Thicket_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Grimfen_Thicket/border.bin",
+      "blockdata_filepath": "data/layouts/Grimfen_Thicket/map.bin"
+    },
+    {
+      "id": "LAYOUT_GUILE_PROVINCE_ROUTE2B",
+      "name": "GuileProvince_Route2B_Layout",
+      "width": 42,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/GuileProvince_Route2B/border.bin",
+      "blockdata_filepath": "data/layouts/GuileProvince_Route2B/map.bin"
+    },
+    {
+      "id": "LAYOUT_VIGOR_PROVINCE_ROUTE0",
+      "name": "VigorProvince_Route0_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/VigorProvince_Route0/border.bin",
+      "blockdata_filepath": "data/layouts/VigorProvince_Route0/map.bin"
+    },
+    {
+      "id": "LAYOUT_THORNWOOD_CROSS",
+      "name": "Thornwood_Cross_Layout",
+      "width": 20,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/Thornwood_Cross/border.bin",
+      "blockdata_filepath": "data/layouts/Thornwood_Cross/map.bin"
+    },
+    {
+      "id": "LAYOUT_ARDOR_PROVINCE_ROUTE3A",
+      "name": "ArdorProvince_Route3A_Layout",
+      "width": 40,
+      "height": 20,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Petalburg",
+      "border_filepath": "data/layouts/ArdorProvince_Route3A/border.bin",
+      "blockdata_filepath": "data/layouts/ArdorProvince_Route3A/map.bin"
     }
   ]
 }

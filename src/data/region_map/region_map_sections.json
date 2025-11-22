@@ -1234,65 +1234,65 @@
     {
       "id": "MAPSEC_VIGOR_0",
       "name": "Route V0",
-      "x": 0,
-      "y": 0,
+      "x": 9,
+      "y": 10,
       "width": 1,
       "height": 1
     },
     {
       "id": "MAPSEC_THORNWOOD_CROSS",
       "name": "Thornwood Cross",
-      "x": 0,
-      "y": 0,
+      "x": 9,
+      "y": 11,
       "width": 1,
       "height": 1
     },
     {
       "id": "MAPSEC_VIGOR_1",
       "name": "Route V1",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 10,
+      "y": 11,
+      "width": 2,
       "height": 1
     },
     {
       "id": "MAPSEC_GRIMFEN_THICKET",
       "name": "Grimfen Thicket",
-      "x": 0,
-      "y": 0,
+      "x": 15,
+      "y": 11,
       "width": 1,
       "height": 1
     },
     {
       "id": "MAPSEC_VIGOR_2A",
       "name": "Route V2A",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 12,
+      "y": 10,
+      "width": 4,
       "height": 1
     },
     {
       "id": "MAPSEC_VOLTLOFT_CANOPY",
       "name": "Voltloft Canopy",
-      "x": 0,
-      "y": 0,
+      "x": 11,
+      "y": 10,
       "width": 1,
       "height": 1
     },
     {
       "id": "MAPSEC_VIGOR_2B",
       "name": "Route V2B",
-      "x": 0,
-      "y": 0,
+      "x": 13,
+      "y": 11,
       "width": 1,
-      "height": 1
+      "height": 3
     },
     {
       "id": "MAPSEC_VIGOR_3A",
       "name": "Route V3A",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 16,
+      "y": 11,
+      "width": 5,
       "height": 1
     },
     {
@@ -1306,18 +1306,18 @@
     {
       "id": "MAPSEC_VIGOR_3B",
       "name": "Route V3B",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 20,
+      "y": 12,
+      "width": 5,
       "height": 1
     },
     {
       "id": "MAPSEC_VIGOR_4",
       "name": "Route V4",
-      "x": 0,
-      "y": 0,
+      "x": 21,
+      "y": 7,
       "width": 1,
-      "height": 1
+      "height": 2
     },
     {
       "id": "MAPSEC_ARDOR_0",
@@ -1386,9 +1386,9 @@
     {
       "id": "MAPSEC_CINDERPEAK_BASTION",
       "name": "Cinderpeak Bastion",
-      "x": 0,
+      "x": 14,
       "y": 0,
-      "width": 1,
+      "width": 2,
       "height": 1
     },
     {
@@ -1402,9 +1402,9 @@
     {
       "id": "MAPSEC_ARDOR_4",
       "name": "Route A4",
-      "x": 0,
+      "x": 11,
       "y": 0,
-      "width": 1,
+      "width": 3,
       "height": 1
     },
     {
@@ -1418,8 +1418,8 @@
     {
       "id": "MAPSEC_DRIFTBROOK_HAVEN",
       "name": "Driftbrook Haven",
-      "x": 0,
-      "y": 0,
+      "x": 9,
+      "y": 1,
       "width": 1,
       "height": 1
     },
@@ -1450,8 +1450,8 @@
     {
       "id": "MAPSEC_STILLMIST_COVE",
       "name": "Stillmist Cove",
-      "x": 0,
-      "y": 0,
+      "x": 4,
+      "y": 6,
       "width": 1,
       "height": 1
     },
@@ -1474,9 +1474,9 @@
     {
       "id": "MAPSEC_LORETIDE_SHELL",
       "name": "Loretide Shell",
-      "x": 0,
-      "y": 0,
-      "width": 1,
+      "x": 4,
+      "y": 11,
+      "width": 2,
       "height": 1
     },
     {

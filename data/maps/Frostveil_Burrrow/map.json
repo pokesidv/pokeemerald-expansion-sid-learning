@@ -1,0 +1,31 @@
+{
+  "id": "MAP_FROSTVEIL_BURRROW",
+  "name": "Frostveil_Burrrow",
+  "layout": "LAYOUT_FROSTVEIL_BURRROW",
+  "music": "MUS_ROUTE104",
+  "region_map_section": "MAPSEC_FROSTVEIL_BURROW",
+  "requires_flash": false,
+  "weather": "WEATHER_NONE",
+  "map_type": "MAP_TYPE_TOWN",
+  "allow_cycling": true,
+  "allow_escaping": false,
+  "allow_running": true,
+  "show_map_name": true,
+  "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
+  "connections": [
+    {
+      "map": "MAP_GUILE_PROVINCE_ROUTE1",
+      "offset": 0,
+      "direction": "down"
+    },
+    {
+      "map": "MAP_GUILE_PROVINCE_ROUTE2B",
+      "offset": 0,
+      "direction": "left"
+    }
+  ],
+  "object_events": [],
+  "warp_events": [],
+  "coord_events": [],
+  "bg_events": []
+}
