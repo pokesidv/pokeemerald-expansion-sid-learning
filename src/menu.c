@@ -14,6 +14,7 @@
 #include "menu.h"
 #include "menu_helpers.h"
 #include "palette.h"
+#include "vag_ui_palettes.h"
 #include "pokedex.h"
 #include "pokemon_icon.h"
 #include "region_map.h"
@@ -202,13 +203,13 @@ u16 AddTextPrinterParameterized2(u8 windowId, u8 fontId, const u8 *str, u8 speed
 void AddTextPrinterForMessage(bool8 allowSkippingDelayWithButtonPress)
 {
     gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;
-    AddTextPrinterParameterized2(0, FONT_NORMAL, gStringVar4, GetPlayerTextSpeedDelay(), NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+    AddTextPrinterParameterized2(0, FONT_NORMAL, gStringVar4, GetPlayerTextSpeedDelay(), NULL, TEXT_COLOR_DARK_GRAY, SID_CUSTOM_MESSAGEBOX_BACKGROUND, TEXT_COLOR_LIGHT_GRAY);
 }
 
 void AddTextPrinterWithCustomSpeedForMessage(bool8 allowSkippingDelayWithButtonPress, u8 speed)
 {
     gTextFlags.canABSpeedUpPrint = allowSkippingDelayWithButtonPress;
-    AddTextPrinterParameterized2(0, FONT_NORMAL, gStringVar4, speed, NULL, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
+    AddTextPrinterParameterized2(0, FONT_NORMAL, gStringVar4, speed, NULL, TEXT_COLOR_DARK_GRAY, SID_CUSTOM_MESSAGEBOX_BACKGROUND, TEXT_COLOR_LIGHT_GRAY);
 }
 
 void LoadMessageBoxAndBorderGfx(void)
@@ -334,7 +335,7 @@ static inline void *GetWindowFunc_DialogueFrame(void)
 void DrawDialogueFrame(u8 windowId, bool8 copyToVram)
 {
     CallWindowFunction(windowId, GetWindowFunc_DialogueFrame());
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND));
     PutWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_FULL);
@@ -405,7 +406,7 @@ void RedrawDialogueFrame(void)
 void DrawStdWindowFrame(u8 windowId, bool8 copyToVram)
 {
     CallWindowFunction(windowId, WindowFunc_DrawStandardFrame);
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND));
     PutWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_FULL);
@@ -414,7 +415,7 @@ void DrawStdWindowFrame(u8 windowId, bool8 copyToVram)
 void ClearDialogWindowAndFrame(u8 windowId, bool8 copyToVram)
 {
     CallWindowFunction(windowId, WindowFunc_ClearDialogWindowAndFrame);
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND));
     ClearWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_FULL);
@@ -571,24 +572,24 @@ void LoadMessageBoxAndFrameGfx(u8 windowId, bool8 copyToVram)
 
 void Menu_LoadStdPal(void)
 {
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(STD_WINDOW_PALETTE_NUM), STD_WINDOW_PALETTE_SIZE);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(STD_WINDOW_PALETTE_NUM), STD_WINDOW_PALETTE_SIZE);
 }
 
 void Menu_LoadStdPalAt(u16 offset)
 {
-    LoadPalette(gStandardMenuPalette, offset, STD_WINDOW_PALETTE_SIZE);
+    LoadPalette(GetVagUiTextsPalette(), offset, STD_WINDOW_PALETTE_SIZE);
 }
 
 static UNUSED const u16* Menu_GetStdPal(void)
 {
-    return gStandardMenuPalette;
+    return GetVagUiTextsPalette();
 }
 
 static u16 UNUSED Menu_GetStdPalColor(u8 colorNum)
 {
     if (colorNum > 15)
         colorNum = 0;
-    return gStandardMenuPalette[colorNum];
+    return GetVagUiTextsPalette()[colorNum];
 }
 
 void DisplayItemMessageOnField(u8 taskId, const u8 *string, TaskFunc callback)
@@ -683,7 +684,7 @@ void DrawDialogFrameWithCustomTileAndPalette(u8 windowId, bool8 copyToVram, u16 
     sTileNum = tileNum;
     sPaletteNum = paletteNum;
     CallWindowFunction(windowId, WindowFunc_DrawDialogFrameWithCustomTileAndPalette);
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND));
     PutWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_FULL);
@@ -694,7 +695,7 @@ static void UNUSED DrawDialogFrameWithCustomTile(u8 windowId, bool8 copyToVram, 
     sTileNum = tileNum;
     sPaletteNum = GetWindowAttribute(windowId, WINDOW_PALETTE_NUM);
     CallWindowFunction(windowId, WindowFunc_DrawDialogFrameWithCustomTileAndPalette);
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND));
     PutWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_FULL);
@@ -712,31 +713,31 @@ static void WindowFunc_DrawDialogFrameWithCustomTileAndPalette(u8 bg, u8 l, u8 t
     #define VS 2
     #define SCND_TO_LAST_ROW t + 3
     #define LAST_ROW t + 4
-    // first row            bg, tile num                       x pos,                y pos             w,   h,  palette num
+    // first row            bg, tile num       x pos,                y pos             w,   h,  palette num
     FillBgTilemapBufferRect(bg, sTileNum + 0,  FIRST_COLUMN,         FIRST_ROW,        1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 1,  SECOND_COLUMN,        FIRST_ROW,        1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 2,  SECOND_COLUMN + 1,    FIRST_ROW,        HS,  1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 5,  SCND_TO_LAST_COLUMN,  FIRST_ROW,        1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 6,  LAST_COLUMN,          FIRST_ROW,        1,   1,  paletteNum);
-    // second row            bg, tile num                      x pos,                y pos             w,   h,  palette num
+    // second row            bg, tile num      x pos,                y pos             w,   h,  palette num
     FillBgTilemapBufferRect(bg, sTileNum + 10, FIRST_COLUMN,         SECOND_ROW,       1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 11, SECOND_COLUMN,        SECOND_ROW,       1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SECOND_COLUMN + 1,    SECOND_ROW,       HS,  1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SCND_TO_LAST_COLUMN,  SECOND_ROW,       1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 16, LAST_COLUMN,          SECOND_ROW,       1,   1,  paletteNum);
-    // middle rows          bg, tile num                       x pos,                y pos             w,   h,   palette num
+    // middle rows          bg, tile num       x pos,                y pos             w,   h,   palette num
     FillBgTilemapBufferRect(bg, sTileNum + 9,  FIRST_COLUMN,         SECOND_ROW + 1,   1,   VS,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SECOND_COLUMN,        SECOND_ROW + 1,   1,   VS,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SECOND_COLUMN + 1,    SECOND_ROW + 1,   HS,  VS,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SCND_TO_LAST_COLUMN,  SECOND_ROW + 1,   1,   VS,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 19, LAST_COLUMN,          SECOND_ROW + 1,   1,   VS,  paletteNum);
-    // second to last row   bg, tile num                       x pos,                y pos             w,   h,  palette num
+    // second to last row   bg, tile num       x pos,                y pos             w,   h,  palette num
     FillBgTilemapBufferRect(bg, sTileNum + 7,  FIRST_COLUMN,         SCND_TO_LAST_ROW, 1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SECOND_COLUMN,        SCND_TO_LAST_ROW, 1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 12, SECOND_COLUMN + 1,    SCND_TO_LAST_ROW, HS,  1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 3,  SCND_TO_LAST_COLUMN,  SCND_TO_LAST_ROW, 1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 4,  LAST_COLUMN,          SCND_TO_LAST_ROW, 1,   1,  paletteNum);
-    // last row             bg, tile num                       x pos,                y pos             w,   h,  palette num
+    // last row             bg, tile num       x pos,                y pos             w,   h,  palette num
     FillBgTilemapBufferRect(bg, sTileNum + 17, FIRST_COLUMN,         LAST_ROW,         1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 18, SECOND_COLUMN,        LAST_ROW,         1,   1,  paletteNum);
     FillBgTilemapBufferRect(bg, sTileNum + 8,  SECOND_COLUMN + 1,    LAST_ROW,         HS,  1,  paletteNum);
@@ -773,7 +774,7 @@ void DrawStdFrameWithCustomTileAndPalette(u8 windowId, bool8 copyToVram, u16 bas
     sTileNum = baseTileNum;
     sPaletteNum = paletteNum;
     CallWindowFunction(windowId, WindowFunc_DrawStdFrameWithCustomTileAndPalette);
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND));
     PutWindowTilemap(windowId);
     if (copyToVram == TRUE)
         CopyWindowToVram(windowId, COPYWIN_FULL);
@@ -1025,8 +1026,8 @@ void RedrawMenuCursor(u8 oldPos, u8 newPos)
 
     width = GetMenuCursorDimensionByFont(sMenu.fontId, 0);
     height = GetMenuCursorDimensionByFont(sMenu.fontId, 1);
-    FillWindowPixelRect(sMenu.windowId, PIXEL_FILL(1), sMenu.left, sMenu.optionHeight * oldPos + sMenu.top, width, height);
-    AddTextPrinterParameterized(sMenu.windowId, sMenu.fontId, gText_SelectorArrow3, sMenu.left, sMenu.optionHeight * newPos + sMenu.top, 0, 0);
+    FillWindowPixelRect(sMenu.windowId, PIXEL_FILL(SID_CUSTOM_MESSAGEBOX_BACKGROUND), sMenu.left, sMenu.optionHeight * oldPos + sMenu.top, width, height);
+    AddTextPrinterParameterizedWithNewBackground(sMenu.windowId, sMenu.fontId, gText_SelectorArrow3, sMenu.left, sMenu.optionHeight * newPos + sMenu.top, 0, 0);
 }
 
 u8 Menu_MoveCursor(s8 cursorDelta)
@@ -1719,7 +1720,8 @@ void CreateYesNoMenu(const struct WindowTemplate *window, u16 baseTileNum, u8 pa
     printer.currentX = printer.x;
     printer.currentY = printer.y;
     printer.fgColor = GetFontAttribute(FONT_NORMAL, FONTATTR_COLOR_FOREGROUND);
-    printer.bgColor = GetFontAttribute(FONT_NORMAL, FONTATTR_COLOR_BACKGROUND);
+    // printer.bgColor = GetFontAttribute(FONT_NORMAL, FONTATTR_COLOR_BACKGROUND);
+    printer.bgColor = SID_CUSTOM_MESSAGEBOX_BACKGROUND;
     printer.shadowColor = GetFontAttribute(FONT_NORMAL, FONTATTR_COLOR_SHADOW);
     printer.unk = GetFontAttribute(FONT_NORMAL, FONTATTR_UNKNOWN);
     printer.letterSpacing = 0;
@@ -2068,6 +2070,17 @@ void PrintPlayerNameOnWindow(u8 windowId, const u8 *src, u16 x, u16 y)
     StringExpandPlaceholders(gStringVar4, src);
 
     AddTextPrinterParameterized(windowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, 0);
+}
+
+void PrintPlayerNameOnWindowWithNewBackground(u8 windowId, const u8 *src, u16 x, u16 y)
+{
+    int count = 0;
+    while (gSaveBlock2Ptr->playerName[count] != EOS)
+        count++;
+
+    StringExpandPlaceholders(gStringVar4, src);
+
+    AddTextPrinterParameterizedWithNewBackground(windowId, FONT_NORMAL, gStringVar4, x, y, TEXT_SKIP_DRAW, 0);
 }
 
 static void UNUSED UnusedBlitBitmapRect(const struct Bitmap *src, struct Bitmap *dst, u16 srcX, u16 srcY, u16 dstX, u16 dstY, u16 width, u16 height)

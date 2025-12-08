@@ -12,6 +12,7 @@
 #include "string_util.h"
 #include "text.h"
 #include "overworld.h"
+#include "vag_ui_palettes.h"
 #include "menu.h"
 #include "pokedex.h"
 #include "constants/rgb.h"
@@ -196,7 +197,7 @@ static void InitDiplomaWindow(void)
 {
     InitWindows(sDiplomaWinTemplates);
     DeactivateAllTextPrinters();
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
     FillWindowPixelBuffer(0, PIXEL_FILL(0));
     PutWindowTilemap(0);
 }

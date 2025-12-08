@@ -1,6 +1,5 @@
 #include "option_menu.h"
 #include "heat_select_menu.h"
-#include "heat_menu_palettes.h"
 #include "global.h"
 #include "battle_pike.h"
 #include "battle_pyramid.h"
@@ -37,6 +36,7 @@
 #include "party_menu.h"
 #include "pokedex.h"
 #include "pokevial.h"
+#include "vag_ui_palettes.h"
 #include "pokenav.h"
 #include "region_map.h"
 #include "safari_zone.h"
@@ -609,7 +609,7 @@ static void HSelM_Handle_STARTBUTTON(u8 taskId){
 ///// ======================================================================================================================================
 
 // tiles 
-static const u32 sHSelMTiles[] = INCBIN_U32("graphics/heat_select_menu/new_tiles.4bpp.lz"); 
+static const u32 sHSelMTiles[] = INCBIN_U32("graphics/heat_select_menu/hselm_tiles.4bpp.lz"); 
 
 // tilemaps for every possible state of top, L, R, Select, and Start boxes (on/off for each of them so 32 total, encoded as 5 bits)
 // we will swap the tilemap based on which boxes are toggled on or off 
@@ -680,7 +680,8 @@ static void HSelM_LoadBackground(void)
 
     DecompressDataWithHeaderWram(HSelM_GetCurrentTilemap(), buf);
 
-    HeatMenus_LoadPalettes();
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiPalette(), BG_PLTT_ID(14), PLTT_SIZE_4BPP);
 
     ScheduleBgCopyTilemapToVram(0);
 }
@@ -1100,6 +1101,7 @@ static void HSelM_CreateSprites(void)
 ////// ================== TEXT WINDOWS =====================================================================================================
 ////// =====================================================================================================================================
 
+#define HSELM_TEXT_WINDOWS_BASE_BLOCK 0x37 // found by trial and error to not overlap with the background tiles
 static const struct WindowTemplate sWindowTemplate_L = {
     .bg = 0,
     .tilemapLeft = 5,
@@ -1107,7 +1109,7 @@ static const struct WindowTemplate sWindowTemplate_L = {
     .width = 5,
     .height = 2,
     .paletteNum = 14, // palette 14 as it's on top of the menu BG not inside a white box like the top text window
-    .baseBlock = 0x30};
+    .baseBlock = HSELM_TEXT_WINDOWS_BASE_BLOCK};
 
 static const struct WindowTemplate sWindowTemplate_R = {
     .bg = 0,
@@ -1116,7 +1118,7 @@ static const struct WindowTemplate sWindowTemplate_R = {
     .width = 5,
     .height = 2,
     .paletteNum = 14,
-    .baseBlock = 0x30 + (5 * 2 * 1)};
+    .baseBlock = HSELM_TEXT_WINDOWS_BASE_BLOCK + (5 * 2 * 1)};
 
 static const struct WindowTemplate sWindowTemplate_Select = {
     .bg = 0,
@@ -1125,7 +1127,7 @@ static const struct WindowTemplate sWindowTemplate_Select = {
     .width = 5,
     .height = 2,
     .paletteNum = 14,
-    .baseBlock = 0x30 + (5 * 2 * 2)};
+    .baseBlock = HSELM_TEXT_WINDOWS_BASE_BLOCK + (5 * 2 * 2)};
 
 static const struct WindowTemplate sWindowTemplate_Start = {
     .bg = 0,
@@ -1134,7 +1136,7 @@ static const struct WindowTemplate sWindowTemplate_Start = {
     .width = 5,
     .height = 2,
     .paletteNum = 14,
-    .baseBlock = 0x30 + (5 * 2 * 3)};
+    .baseBlock = HSELM_TEXT_WINDOWS_BASE_BLOCK + (5 * 2 * 3)};
 
 static const struct WindowTemplate sWindowTemplate_TopItems = {
     .bg = 0,
@@ -1142,16 +1144,17 @@ static const struct WindowTemplate sWindowTemplate_TopItems = {
     .tilemapTop = 1,
     .width = 14,
     .height = 2,
-    .paletteNum = 15, // the top section has a white box around this text window so we use the standard text palette
-    .baseBlock = 0x30 + (5 * 2 * 4)};
+    .paletteNum = 14, 
+    .baseBlock = HSELM_TEXT_WINDOWS_BASE_BLOCK + (5 * 2 * 4)};
 static const struct WindowTemplate sWindowTemplate_TopEmpty = {
     .bg = 0,
     .tilemapLeft = 7,
     .tilemapTop = 1,
     .width = 16,
     .height = 2,
-    .paletteNum = 15, 
-    .baseBlock = 0x30 + (5 * 2 * 4)};
+    .paletteNum = 14, 
+    .baseBlock = HSELM_TEXT_WINDOWS_BASE_BLOCK + (5 * 2 * 4)};
+#undef HSELM_TEXT_WINDOWS_BASE_BLOCK 
 
 static void HSelM_CreateTextWindows(void)
 {
@@ -1182,14 +1185,14 @@ static const struct WindowTemplate *HSelM_GetTopWindowTemplate(void)
 // white windows use the standard text palette (slot 15)
 static void HSelM_CleanWhiteWindow(u32 windowId)
 {
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(10));
     PutWindowTilemap(windowId);
 }
 
 // background windows use palette 14, the same as the menu background
 static void HSelM_CleanBackgroundWindow(u32 windowId, bool8 state)
 {
-    FillWindowPixelBuffer(windowId, PIXEL_FILL(state ? 6 : 2)); // darker gray background
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(state ? 11 : 1)); // darker gray background
     PutWindowTilemap(windowId);
 }
 
@@ -1197,27 +1200,21 @@ static void HSelM_CleanBackgroundWindow(u32 windowId, bool8 state)
 // windowId    - window to print into
 // fontId      - font enum (e.g. FONT_SMALL, FONT_NORMAL)
 // windowTiles - width in tiles
+
+static const u8 colorsOnSurface[3] = {0, 2, 7};
 static void HSelM_PrintCenteredStringVar4(u8 windowId, u32 fontId, u16 windowTiles)
 {
     u8 x = GetStringCenterAlignXOffset(fontId, gStringVar4, windowTiles * 8);
-    AddTextPrinterParameterized(windowId, fontId, gStringVar4, x, 0, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized3(windowId, fontId, x, 0, colorsOnSurface, TEXT_SKIP_DRAW, gStringVar4);
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 
+static const u8 colorsOnPrimaryOn[3] = {0, 2, 7};
+static const u8 colorsOnPrimaryOff[3] = {0, 2, 0};
 static void HSelM_PrintCenteredStringVar4Background(u8 windowId, u32 fontId, u16 windowTiles, bool8 state)
 {
-    u8 color[3];
-    if(state){
-        color[0] = 6; // bg
-        color[1] = 5; // fg
-        color[2] = 6; // shadow
-    } else {
-        color[0] = 2; // bg
-        color[1] = 1; // fg
-        color[2] = 2; // shadow
-    }
     u8 x = GetStringCenterAlignXOffset(fontId, gStringVar4, windowTiles * 8);
-    AddTextPrinterParameterized4(windowId, fontId, x, 0, 0, 0, color, TEXT_SKIP_DRAW, gStringVar4);
+    AddTextPrinterParameterized4(windowId, fontId, x, 0, 0, 0, state ? colorsOnPrimaryOn : colorsOnPrimaryOff, TEXT_SKIP_DRAW, gStringVar4);
     CopyWindowToVram(windowId, COPYWIN_GFX);
 }
 

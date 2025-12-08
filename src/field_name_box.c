@@ -168,8 +168,8 @@ void ClearNamebox(u32 windowId, bool32 copyToVram)
 static void WindowFunc_DrawNamebox(u32 bg, u32 L, u32 T, u32 w, u32 h, u32 p, u32 tileNum)
 {
     // left-most
-    FillBgTilemapBufferRect(bg, tileNum,     L - 1, T,     1, 1, p);
-    FillBgTilemapBufferRect(bg, tileNum + 5, L - 1, T + 1, 1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum,     L - 1,     T,     1, 1, p);
+    FillBgTilemapBufferRect(bg, tileNum + 5, L - 1,     T + 1, 1, 1, p);
 
     // right-most
     FillBgTilemapBufferRect(bg, tileNum + 3, L + w,     T,     1, 1, p);

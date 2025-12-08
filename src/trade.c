@@ -11,6 +11,7 @@
 #include "event_data.h"
 #include "evolution_scene.h"
 #include "field_screen_effect.h"
+#include "vag_ui_palettes.h"
 #include "gpu_regs.h"
 #include "graphics.h"
 #include "international_string_util.h"
@@ -403,8 +404,8 @@ static void InitTradeMenu(void)
     gPaletteFade.bufferTransferDisabled = TRUE;
 
     SetVBlankCallback(VBlankCB_TradeMenu);
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZEOF(10));
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(13), PLTT_SIZEOF(10));
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZEOF(10));
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(13), PLTT_SIZEOF(10));
     ResetBgsAndClearDma3BusyFlags(0);
     InitBgsFromTemplates(0, sBgTemplates, ARRAY_COUNT(sBgTemplates));
     SetBgTilemapBuffer(1, sTradeMenu->tilemapBuffer);

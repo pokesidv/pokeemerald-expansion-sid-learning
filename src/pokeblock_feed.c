@@ -11,6 +11,7 @@
 #include "main.h"
 #include "menu.h"
 #include "menu_helpers.h"
+#include "vag_ui_palettes.h"
 #include "m4a.h"
 #include "palette.h"
 #include "party_menu.h"
@@ -715,7 +716,7 @@ static void HandleInitWindows(void)
     InitWindows(sWindowTemplates);
     DeactivateAllTextPrinters();
     LoadUserWindowBorderGfx(0, 1, BG_PLTT_ID(14));
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
     FillWindowPixelBuffer(0, PIXEL_FILL(0));
     PutWindowTilemap(0);
     ScheduleBgCopyTilemapToVram(0);

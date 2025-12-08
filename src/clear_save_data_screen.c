@@ -8,6 +8,7 @@
 #include "palette.h"
 #include "gpu_regs.h"
 #include "bg.h"
+#include "vag_ui_palettes.h"
 #include "text_window.h"
 #include "constants/songs.h"
 #include "constants/rgb.h"
@@ -205,5 +206,5 @@ static void InitClearSaveDataScreenWindows(void)
     DeactivateAllTextPrinters();
     FillWindowPixelBuffer(0, PIXEL_FILL(0));
     LoadWindowGfx(0, 0, 2, BG_PLTT_ID(14));
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
 }

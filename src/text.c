@@ -398,6 +398,26 @@ u16 AddTextPrinterParameterized(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 
     return AddTextPrinter(&printerTemplate, speed, callback);
 }
 
+u16 AddTextPrinterParameterizedWithNewBackground(u8 windowId, u8 fontId, const u8 *str, u8 x, u8 y, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
+{
+    struct TextPrinterTemplate printerTemplate;
+
+    printerTemplate.currentChar = str;
+    printerTemplate.windowId = windowId;
+    printerTemplate.fontId = fontId;
+    printerTemplate.x = x;
+    printerTemplate.y = y;
+    printerTemplate.currentX = x;
+    printerTemplate.currentY = y;
+    printerTemplate.letterSpacing = gFonts[fontId].letterSpacing;
+    printerTemplate.lineSpacing = gFonts[fontId].lineSpacing;
+    printerTemplate.unk = gFonts[fontId].unk;
+    printerTemplate.fgColor = gFonts[fontId].fgColor;
+    printerTemplate.bgColor = SID_CUSTOM_MESSAGEBOX_BACKGROUND;
+    printerTemplate.shadowColor = gFonts[fontId].shadowColor;
+    return AddTextPrinter(&printerTemplate, speed, callback);
+}
+
 bool32 AddTextPrinter(struct TextPrinterTemplate *printerTemplate, u8 speed, void (*callback)(struct TextPrinterTemplate *, u16))
 {
     int i;

@@ -17,6 +17,7 @@
 #include "graphics.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
+#include "vag_ui_palettes.h"
 #include "item.h"
 #include "item_menu_icons.h"
 #include "item_use.h"
@@ -2779,7 +2780,7 @@ static void LoadBagMenuTextWindows(void)
     LoadUserWindowBorderGfx(0, 1, BG_PLTT_ID(14));
     LoadMessageBoxGfx(0, 10, BG_PLTT_ID(13));
     ListMenuLoadStdPalAt(BG_PLTT_ID(12), 1);
-    LoadPalette(&gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
     for (i = 0; i <= WIN_POCKET_NAME; i++)
     {
         FillWindowPixelBuffer(i, PIXEL_FILL(0));

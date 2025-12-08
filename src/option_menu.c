@@ -5,7 +5,6 @@
 #include "international_string_util.h"
 #include "config/heat_menus.h"
 #if HEAT_MENUS_SAVEBLOCK_PALETTES
-#include "heat_menu_palettes.h"
 #include "string_util.h"
 #include "heat_start_menu.h"
 #endif
@@ -949,7 +948,9 @@ static void DrawOptionMenuTexts(void)
         AddTextPrinterParameterized(WIN_OPTIONS, FONT_NORMAL, menu[i], 8, (i * 16) + 1, TEXT_SKIP_DRAW, NULL);
     CopyWindowToVram(WIN_OPTIONS, COPYWIN_FULL);
     #else
-    u8 i;
+    u8 i, items;
+    items = MENUITEM_COUNT;
+    const u8* const* menu = sOptionMenuItemsNames;
 
     FillWindowPixelBuffer(WIN_OPTIONS, PIXEL_FILL(1));
     for (i = 0; i < items; i++)

@@ -6,6 +6,7 @@
 #include "dynamic_placeholder_text_util.h"
 #include "gpu_regs.h"
 #include "graphics.h"
+#include "vag_ui_palettes.h"
 #include "link.h"
 #include "link_rfu.h"
 #include "load_save.h"
@@ -3138,7 +3139,7 @@ static void LoadKeyboardSwapWindow(void)
     FillWindowPixelBuffer(WIN_SWAP_MENU, PIXEL_FILL(1));
     LoadUserWindowBorderGfx(WIN_SWAP_MENU, 1, BG_PLTT_ID(13));
     LoadUserWindowBorderGfx_(WIN_SWAP_MENU, 0xA, BG_PLTT_ID(2));
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(14), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(14), PLTT_SIZE_4BPP);
 }
 
 static void InitScanlineEffect(void)

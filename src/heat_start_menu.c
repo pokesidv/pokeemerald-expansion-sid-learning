@@ -1,6 +1,5 @@
 #include "option_menu.h"
 #include "heat_start_menu.h"
-#include "heat_menu_palettes.h"
 #include "global.h"
 #include "debug.h"
 #include "battle_pike.h"
@@ -14,6 +13,7 @@
 #include "event_scripts.h"
 #include "io_reg.h"
 #include "fieldmap.h"
+#include "money.h"
 #include "field_effect.h"
 #include "field_player_avatar.h"
 #include "field_specials.h"
@@ -23,6 +23,7 @@
 #include "frontier_util.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
+#include "vag_ui_palettes.h"
 #include "item_menu.h"
 #include "link.h"
 #include "load_save.h"
@@ -85,7 +86,9 @@ static void HeatStartMenu_CreateSprites(void);
 static void HeatStartMenu_CreateSprite(u8 menu, u32 x, u32 y, bool8 flash);
 static void HeatStartMenu_CreateStaticSprite(u8 menu, u32 x, u32 y, bool8 flash);
 static void HeatStartMenu_LoadBgGfx(void);
+static void HeatStartMenu_LoadTileMap(void);
 static void HeatStartMenu_ShowTimeWindow(void);
+static void HeatStartMenu_ShowTopLeftValueWindow(void);
 static void HeatStartMenu_UpdateClockDisplay(void);
 static void HeatStartMenu_ShowMapNameWindow(void);
 static void HeatStartMenu_UpdateMenuName(void);
@@ -154,12 +157,12 @@ struct HeatStartMenu
 {
   MainCallback savedCallback;
   u32 loadState;
-  u32 inputDelay;              // input delay to prevent the button that opened the menu from being processed immediately
-  u32 sDayWindowId;
-  u32 sTimeWindowId;
-  u32 sMapNameWindowId;
+  u32 inputDelay;               // input delay to prevent the button that opened the menu from being processed immediately
+  u32 sBottomLeftWindowId;      // day     
+  u32 sBottomLeftValueWindowId; // time
+  u32 sTopLeftWindowId;         // map name or safari balls label
+  u32 sTopLeftValueWindowId;    // money or safari balls count
   u32 sMenuNameWindowId;
-  u32 sSafariBallsWindowId;
   u32 flag; // some u32 holding values for controlling the sprite anims and lifetime
 
   u32 spriteIdPoketch;
@@ -188,37 +191,40 @@ static EWRAM_DATA u8 sSaveDialogTimer = 0;
 static EWRAM_DATA u8 sSaveInfoWindowId = 0;
 
 // --BG-GFX--
-static const u32 sStartMenuTiles[] = INCBIN_U32("graphics/heat_start_menu/bg.4bpp.lz");
+static const u32 sStartMenuTiles[] = INCBIN_U32("graphics/heat_start_menu/hstm_tiles.4bpp");
 
-static const u32 sStartMenuTilemap2[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_2slots.bin.lz");
-static const u32 sStartMenuTilemap3[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_3slots.bin.lz");
-static const u32 sStartMenuTilemap4[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_4slots.bin.lz");
-static const u32 sStartMenuTilemap5[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_5slots.bin.lz");
-static const u32 sStartMenuTilemap6[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_6slots.bin.lz");
-static const u32 sStartMenuTilemap7[] = INCBIN_U32("graphics/heat_start_menu/bg_reg_7slots.bin.lz");
-static const u32 sStartMenuTilemapSafari2[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_2slots.bin.lz");
-static const u32 sStartMenuTilemapSafari3[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_2slots.bin.lz");
-static const u32 sStartMenuTilemapSafari4[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_4slots.bin.lz");
-static const u32 sStartMenuTilemapSafari5[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_5slots.bin.lz");
-static const u32 sStartMenuTilemapSafari6[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_6slots.bin.lz");
-static const u32 sStartMenuTilemapSafari7[] = INCBIN_U32("graphics/heat_start_menu/bg_safari_7slots.bin.lz");
-static const u32 sStartMenuTilemapL2[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_2slots.bin.lz");
-static const u32 sStartMenuTilemapL3[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_3slots.bin.lz");
-static const u32 sStartMenuTilemapL4[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_4slots.bin.lz");
-static const u32 sStartMenuTilemapL5[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_5slots.bin.lz");
-static const u32 sStartMenuTilemapL6[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_6slots.bin.lz");
-static const u32 sStartMenuTilemapL7[] = INCBIN_U32("graphics/heat_start_menu/bg_L_reg_7slots.bin.lz");
-static const u32 sStartMenuTilemapLSafari2[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_2slots.bin.lz");
-static const u32 sStartMenuTilemapLSafari3[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_2slots.bin.lz");
-static const u32 sStartMenuTilemapLSafari4[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_4slots.bin.lz");
-static const u32 sStartMenuTilemapLSafari5[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_5slots.bin.lz");
-static const u32 sStartMenuTilemapLSafari6[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_6slots.bin.lz");
-static const u32 sStartMenuTilemapLSafari7[] = INCBIN_U32("graphics/heat_start_menu/bg_L_safari_7slots.bin.lz");
+// static const u32 sStartMenuTilemap21[] = INCBIN_U32("graphics/heat_start_menu/hstm_2_1.bin.lz");
+// static const u32 sStartMenuTilemap22[] = INCBIN_U32("graphics/heat_start_menu/hstm_2_2.bin.lz");
+// static const u32 sStartMenuTilemap31[] = INCBIN_U32("graphics/heat_start_menu/hstm_3_1.bin.lz");
+// static const u32 sStartMenuTilemap32[] = INCBIN_U32("graphics/heat_start_menu/hstm_3_2.bin.lz");
+// static const u32 sStartMenuTilemap33[] = INCBIN_U32("graphics/heat_start_menu/hstm_3_3.bin.lz");
+// static const u32 sStartMenuTilemap41[] = INCBIN_U32("graphics/heat_start_menu/hstm_4_1.bin.lz");
+// static const u32 sStartMenuTilemap42[] = INCBIN_U32("graphics/heat_start_menu/hstm_4_2.bin.lz");
+// static const u32 sStartMenuTilemap43[] = INCBIN_U32("graphics/heat_start_menu/hstm_4_3.bin.lz");
+// static const u32 sStartMenuTilemap44[] = INCBIN_U32("graphics/heat_start_menu/hstm_4_4.bin.lz");
+// static const u32 sStartMenuTilemap51[] = INCBIN_U32("graphics/heat_start_menu/hstm_5_1.bin.lz");
+// static const u32 sStartMenuTilemap52[] = INCBIN_U32("graphics/heat_start_menu/hstm_5_2.bin.lz");
+// static const u32 sStartMenuTilemap53[] = INCBIN_U32("graphics/heat_start_menu/hstm_5_3.bin.lz");
+// static const u32 sStartMenuTilemap54[] = INCBIN_U32("graphics/heat_start_menu/hstm_5_4.bin.lz");
+// static const u32 sStartMenuTilemap55[] = INCBIN_U32("graphics/heat_start_menu/hstm_5_5.bin.lz");
+// static const u32 sStartMenuTilemap61[] = INCBIN_U32("graphics/heat_start_menu/hstm_6_1.bin.lz");
+// static const u32 sStartMenuTilemap62[] = INCBIN_U32("graphics/heat_start_menu/hstm_6_2.bin.lz");
+// static const u32 sStartMenuTilemap63[] = INCBIN_U32("graphics/heat_start_menu/hstm_6_3.bin.lz");
+// static const u32 sStartMenuTilemap64[] = INCBIN_U32("graphics/heat_start_menu/hstm_6_4.bin.lz");
+// static const u32 sStartMenuTilemap65[] = INCBIN_U32("graphics/heat_start_menu/hstm_6_5.bin.lz");
+// static const u32 sStartMenuTilemap66[] = INCBIN_U32("graphics/heat_start_menu/hstm_6_6.bin.lz");
+static const u32 sStartMenuTilemap2[] = INCBIN_U32("graphics/heat_start_menu/hstm_2.bin.lz");
+static const u32 sStartMenuTilemap3[] = INCBIN_U32("graphics/heat_start_menu/hstm_3.bin.lz");
+static const u32 sStartMenuTilemap4[] = INCBIN_U32("graphics/heat_start_menu/hstm_4.bin.lz");
+static const u32 sStartMenuTilemap5[] = INCBIN_U32("graphics/heat_start_menu/hstm_5.bin.lz");
+static const u32 sStartMenuTilemap6[] = INCBIN_U32("graphics/heat_start_menu/hstm_6.bin.lz");
+static const u32 sStartMenuTilemap7[] = INCBIN_U32("graphics/heat_start_menu/hstm_7.bin.lz");
 
 ///// =====================================================================================
 ///// ============== Text window templates ================================================
 ///// =====================================================================================
 
+#define HSTM_TEXT_WINDOWS_BASE_BLOCK 0x55 // found by trial and error to not overlap with the background tiles
 static const struct WindowTemplate sSaveInfoWindowTemplate = {
     .bg = 0,
     .tilemapLeft = 1,
@@ -230,51 +236,52 @@ static const struct WindowTemplate sSaveInfoWindowTemplate = {
 
 static const struct WindowTemplate sWindowTemplate_MenuName = {
     .bg = 0,
-    .tilemapLeft = 17,
+    .tilemapLeft = 18,
     .tilemapTop = 17,
     .width = 7,
     .height = 2,
-    .paletteNum = 15,
-    .baseBlock = 0x30};
-    
-static const struct WindowTemplate sWindowTemplate_MapName = {
+    .paletteNum = 14,
+    .baseBlock = HSTM_TEXT_WINDOWS_BASE_BLOCK};
+
+static const struct WindowTemplate sWindowTemplate_BottomLeftValue = {
+    .bg = 0,
+    .tilemapLeft = 1,
+    .tilemapTop = 15,
+    .width = 5, 
+    .height = 2,
+    .paletteNum = 14,
+    .baseBlock = HSTM_TEXT_WINDOWS_BASE_BLOCK + (7 * 2)};
+
+static const struct WindowTemplate sWidowTemplate_BottomLeft = {
     .bg = 0,
     .tilemapLeft = 1,
     .tilemapTop = 17,
     .width = 14, 
     .height = 2,
-    .paletteNum = 15,
-    .baseBlock = 0x30 + (7 * 2)};
+    .paletteNum = 14,
+    .baseBlock = HSTM_TEXT_WINDOWS_BASE_BLOCK + (7 * 2) + (5 * 2)};
 
-static const struct WindowTemplate sWindowTemplate_StartClock = {
-    .bg = 0,
-    .tilemapLeft = 14, 
-    .tilemapTop = 1, 
-    .width = 5, 
-    .height = 2,
-    .paletteNum = 15,
-    .baseBlock = 0x30 + (7 * 2) + (14 * 2)};
-
-static const struct WindowTemplate sWindowTemplate_StartDay = {
+static const struct WindowTemplate sWindowTemplate_TopLeft = { // map name or safari balls label
     .bg = 0,
     .tilemapLeft = 1, 
     .tilemapTop = 1, 
-    .width = 11, // If you want to shorten the dates to Sat., Sun., etc., change this to 8?
+    .width = 18,
     .height = 2,
-    .paletteNum = 15,
-    .baseBlock = 0x30 + (7 * 2) + (14 * 2) + (5 * 2)};
+    .paletteNum = 14,
+    .baseBlock = HSTM_TEXT_WINDOWS_BASE_BLOCK + (7 * 2) + (5 * 2) + (14 * 2)};
 
-static const struct WindowTemplate sWindowTemplate_SafariBalls = {
+static const struct WindowTemplate sWindowTemplate_TopLeftValue = { // money or safari balls count
     .bg = 0,
-    .tilemapLeft = 2,
-    .tilemapTop = 1,
-    .width = 7,
-    .height = 4,
-    .paletteNum = 15,
-    .baseBlock = 0x30 + (7 * 2) + (14 * 2)};
+    .tilemapLeft = 11, 
+    .tilemapTop = 3, 
+    .width = 8,
+    .height = 2,
+    .paletteNum = 14,
+    .baseBlock = HSTM_TEXT_WINDOWS_BASE_BLOCK + (7 * 2) + (5 * 2) + (14 * 2) + (18 * 2)};
+#undef HSTM_TEXT_WINDOWS_BASE_BLOCK
 
-    
-
+static const u8 saveColors[3] = {TEXT_COLOR_TRANSPARENT, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_LIGHT_GRAY};
+static const u8 colors[3] = {0, 2, 7};
 
 ///// =====================================================================================
 ///// ============== Sprite data ==========================================================
@@ -737,9 +744,10 @@ void HeatStartMenu_Init(void)
   sHeatStartMenu->savedCallback = CB2_ReturnToFieldWithOpenMenu;
   sHeatStartMenu->inputDelay = 1;
   sHeatStartMenu->loadState = 0;
-  sHeatStartMenu->sDayWindowId = 0;
-  sHeatStartMenu->sTimeWindowId = 0;
-  sHeatStartMenu->sMapNameWindowId = 0;
+  sHeatStartMenu->sBottomLeftWindowId = 0;
+  sHeatStartMenu->sBottomLeftValueWindowId = 0;
+  sHeatStartMenu->sTopLeftWindowId = 0;
+  sHeatStartMenu->sTopLeftValueWindowId = 0;
   sHeatStartMenu->flag = 0;
   
   SetInitialSelectedOption();
@@ -752,9 +760,10 @@ void HeatStartMenu_Init(void)
   }
   else
   {
-    HeatStartMenu_ShowTimeWindow();
+    HeatStartMenu_ShowMapNameWindow();
   }
-  HeatStartMenu_ShowMapNameWindow();
+  HeatStartMenu_ShowTimeWindow();
+  HeatStartMenu_ShowTopLeftValueWindow();
   sHeatStartMenu->sMenuNameWindowId = AddWindow(&sWindowTemplate_MenuName);
   HeatStartMenu_UpdateMenuName();
   CreateTask(Task_HeatStartMenu_HandleMainInput, 0);
@@ -906,116 +915,99 @@ static u8 ShownOptionToIndex(u8 option)
 ///// ============== Background and sprites ===============================================
 ///// =====================================================================================
 
+static const u32* GetStartMenuTilemap()
+{
+  switch (HowManyOptionsShown())
+  {
+    case 2: return sStartMenuTilemap2;
+    case 3: return sStartMenuTilemap3;
+    case 4: return sStartMenuTilemap4;
+    case 5: return sStartMenuTilemap5;
+    case 6: return sStartMenuTilemap6;
+    default: return sStartMenuTilemap7;
+  }
+  return sStartMenuTilemap7;
+  
+    // u32 i = menuSelected;
+    // // For n < 2 or n > 6, use tilemap 7
+    // if (n < 2 || n > 6)
+    //     return sStartMenuTilemap7;
+    
+    // // For valid n (2-6), calculate which tilemap to use
+    // // Format: hstm_N_I where N is number of options, I is selected option (1-indexed)
+    // switch (n)
+    // {
+    // case 2:
+    //     switch (i)
+    //     {
+    //     case 0: return sStartMenuTilemap21;
+    //     case 1: return sStartMenuTilemap22;
+    //     }
+    //     break;
+    // case 3:
+    //     switch (i)
+    //     {
+    //     case 0: return sStartMenuTilemap31;
+    //     case 1: return sStartMenuTilemap32;
+    //     case 2: return sStartMenuTilemap33;
+    //     }
+    //     break;
+    // case 4:
+    //     switch (i)
+    //     {
+    //     case 0: return sStartMenuTilemap41;
+    //     case 1: return sStartMenuTilemap42;
+    //     case 2: return sStartMenuTilemap43;
+    //     case 3: return sStartMenuTilemap44;
+    //     }
+    //     break;
+    // case 5:
+    //     switch (i)
+    //     {
+    //     case 0: return sStartMenuTilemap51;
+    //     case 1: return sStartMenuTilemap52;
+    //     case 2: return sStartMenuTilemap53;
+    //     case 3: return sStartMenuTilemap54;
+    //     case 4: return sStartMenuTilemap55;
+    //     }
+    //     break;
+    // case 6:
+    //     switch (i)
+    //     {
+    //     case 0: return sStartMenuTilemap61;
+    //     case 1: return sStartMenuTilemap62;
+    //     case 2: return sStartMenuTilemap63;
+    //     case 3: return sStartMenuTilemap64;
+    //     case 4: return sStartMenuTilemap65;
+    //     case 5: return sStartMenuTilemap66;
+    //     }
+    //     break;
+    // }
+    
+    // // Fallback to tilemap 7 if index out of bounds
+    // return sStartMenuTilemap7;
+}
+
+static void HeatStartMenu_LoadTileMap(void) {
+  u8 *buf = GetBgTilemapBuffer(0);
+  DecompressDataWithHeaderWram(GetStartMenuTilemap(), buf);
+}
+
 static void HeatStartMenu_LoadBgGfx(void)
 {
-  u8 *buf = GetBgTilemapBuffer(0);
   LoadBgTilemap(0, 0, 0, 0);
-  DecompressAndCopyTileDataToVram(0, sStartMenuTiles, 0, 0, 0); // Keep as sStartMenuTiles (u32)
+  // DecompressAndCopyTileDataToVram(0, sStartMenuTiles, 0, 0, 0); // Keep as sStartMenuTiles (u32)
+  u32 size = TILE_OFFSET_4BPP(84); // 84 tiles in the tileset
+  LoadBgTiles(0, sStartMenuTiles, size, 0);
 
-  if (IsLShortcutEnabledInGame() == FALSE)
-  {
-    if (GetSafariZoneFlag())
-    {
-      switch (HowManyOptionsShown())
-      {
-      case 2:
-        DecompressDataWithHeaderWram(sStartMenuTilemapSafari2, buf);
-        break;
-      case 3:
-        DecompressDataWithHeaderWram(sStartMenuTilemapSafari3, buf);
-        break;
-      case 4:
-        DecompressDataWithHeaderWram(sStartMenuTilemapSafari4, buf);
-        break;
-      case 5:
-        DecompressDataWithHeaderWram(sStartMenuTilemapSafari5, buf);
-        break;
-      case 6:
-        DecompressDataWithHeaderWram(sStartMenuTilemapSafari6, buf);
-        break;
-      default:
-        DecompressDataWithHeaderWram(sStartMenuTilemapSafari7, buf);
-        break;
-      }
-    }
-    else
-    {
-      switch (HowManyOptionsShown())
-      {
-      case 2:
-        DecompressDataWithHeaderWram(sStartMenuTilemap2, buf);
-        break;
-      case 3:
-        DecompressDataWithHeaderWram(sStartMenuTilemap3, buf);
-        break;
-      case 4:
-        DecompressDataWithHeaderWram(sStartMenuTilemap4, buf);
-        break;
-      case 5:
-        DecompressDataWithHeaderWram(sStartMenuTilemap5, buf);
-        break;
-      case 6:
-        DecompressDataWithHeaderWram(sStartMenuTilemap6, buf);
-        break;
-      default:
-        DecompressDataWithHeaderWram(sStartMenuTilemap7, buf);
-        break;
-      }
-    }
-  }
-  else
-  {
-    if (GetSafariZoneFlag())
-    {
-      switch (HowManyOptionsShown())
-      {
-      case 2:
-        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari2, buf);
-        break;
-      case 3:
-        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari3, buf);
-        break;
-      case 4:
-        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari4, buf);
-        break;
-      case 5:
-        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari5, buf);
-        break;
-      case 6:
-        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari6, buf);
-        break;
-      default:
-        DecompressDataWithHeaderWram(sStartMenuTilemapLSafari7, buf);
-        break;
-      }
-    }
-    else
-    {
-      switch (HowManyOptionsShown())
-      {
-      case 2:
-        DecompressDataWithHeaderWram(sStartMenuTilemapL2, buf);
-        break;
-      case 3:
-        DecompressDataWithHeaderWram(sStartMenuTilemapL3, buf);
-        break;
-      case 4:
-        DecompressDataWithHeaderWram(sStartMenuTilemapL4, buf);
-        break;
-      case 5:
-        DecompressDataWithHeaderWram(sStartMenuTilemapL5, buf);
-        break;
-      case 6:
-        DecompressDataWithHeaderWram(sStartMenuTilemapL6, buf);
-        break;
-      default:
-        DecompressDataWithHeaderWram(sStartMenuTilemapL7, buf);
-        break;
-      }
-    }
+  HeatStartMenu_LoadTileMap();
+  if(!IsLShortcutEnabledInGame()){
+    //                     bg, tile, left, top, width, height, tile
+    FillBgTilemapBufferRect(0, 0,    0,   6,    6, 7, 14);
   }
 
-  HeatMenus_LoadPalettes();
+  LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+  LoadPalette(GetVagUiPalette(), BG_PLTT_ID(14), PLTT_SIZE_4BPP);
 
   ScheduleBgCopyTilemapToVram(0);
 }
@@ -1082,7 +1074,7 @@ static void HeatStartMenu_CreateSprites(void)
 
   if(IsLShortcutEnabledInGame())
   {
-    HeatStartMenu_CreateStaticSprite(HSM_CONFIG_L_SHORTCUT, 2*8, 8*8, handleFlash);
+    HeatStartMenu_CreateStaticSprite(HSM_CONFIG_L_SHORTCUT, 3*8, 9*8, handleFlash);
   }
 
 }
@@ -1238,13 +1230,12 @@ static void HeatStartMenu_CreateStaticSprite(u8 menu, u32 x, u32 y, bool8 flash)
 
 static void ShowSafariBallsWindow(void)
 {
-  sHeatStartMenu->sSafariBallsWindowId = AddWindow(&sWindowTemplate_SafariBalls);
-  FillWindowPixelBuffer(sHeatStartMenu->sSafariBallsWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-  PutWindowTilemap(sHeatStartMenu->sSafariBallsWindowId);
-  ConvertIntToDecimalStringN(gStringVar1, gNumSafariBalls, STR_CONV_MODE_RIGHT_ALIGN, 2);
+  sHeatStartMenu->sTopLeftWindowId = AddWindow(&sWindowTemplate_TopLeft);
+  FillWindowPixelBuffer(sHeatStartMenu->sTopLeftWindowId, PIXEL_FILL(10));
+  PutWindowTilemap(sHeatStartMenu->sTopLeftWindowId);
   StringExpandPlaceholders(gStringVar4, gText_SafariBallStock);
-  AddTextPrinterParameterized(sHeatStartMenu->sSafariBallsWindowId, FONT_NARROW, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
-  CopyWindowToVram(sHeatStartMenu->sSafariBallsWindowId, COPYWIN_GFX);
+  AddTextPrinterParameterized3(sHeatStartMenu->sTopLeftWindowId, FONT_NORMAL, 0, 1, colors, TEXT_SKIP_DRAW, gStringVar4);
+  CopyWindowToVram(sHeatStartMenu->sTopLeftWindowId, COPYWIN_GFX);
 }
 
 static const u8 gText_Friday[]    = _("Friday");
@@ -1275,6 +1266,83 @@ static const u8 *const gTimeOfDayStringsTable[TIMES_OF_DAY_COUNT] = {
 static const u8 gText_CurrentTime[] = _("{STR_VAR_1}");
 static const u8 gText_CurrentDay[] = _("{STR_VAR_3}{STR_VAR_2}");
 
+
+static void FillClockBox(void)
+{
+    u32 winSize = 5;
+    const u32 *gfx = sStartMenuTiles;
+
+    for (u32 i = 0; i < winSize; i++)
+    {
+        #define TILE(x) (8 * x)
+        if(i==0){ // the first two fill tiles are different than the rest
+            CopyToWindowPixelBuffer(sHeatStartMenu->sBottomLeftValueWindowId, &gfx[TILE(79)], TILE_SIZE_4BPP, i);
+            CopyToWindowPixelBuffer(sHeatStartMenu->sBottomLeftValueWindowId, &gfx[TILE(82)], TILE_SIZE_4BPP, i + winSize);
+        } else if(i==winSize-1){ // the last two fill tiles are different than the rest as well
+            CopyToWindowPixelBuffer(sHeatStartMenu->sBottomLeftValueWindowId, &gfx[TILE(81)], TILE_SIZE_4BPP, i);
+            CopyToWindowPixelBuffer(sHeatStartMenu->sBottomLeftValueWindowId, &gfx[TILE(83)], TILE_SIZE_4BPP, i + winSize);
+        } else { 
+            CopyToWindowPixelBuffer(sHeatStartMenu->sBottomLeftValueWindowId, &gfx[TILE(80)], TILE_SIZE_4BPP, i);
+            CopyToWindowPixelBuffer(sHeatStartMenu->sBottomLeftValueWindowId, &gfx[TILE(83)], TILE_SIZE_4BPP, i + winSize);
+        }
+        #undef TILE
+    }
+}
+
+
+static void FillTopLeftValueBox(u32 winSize)
+{
+  const u32 *gfx = sStartMenuTiles;
+  #define TILE(x) (8 * x)
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x11)], TILE_SIZE_4BPP, 0);
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x15)], TILE_SIZE_4BPP, 0 + winSize);
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x12)], TILE_SIZE_4BPP, 1);
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x16)], TILE_SIZE_4BPP, 1 + winSize);
+  for (u32 i = 2; i < winSize-2; i++)
+  {
+    CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x12)], TILE_SIZE_4BPP, i);
+    CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x17)], TILE_SIZE_4BPP, i + winSize);
+  }
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x13)], TILE_SIZE_4BPP, winSize-2);
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x18)], TILE_SIZE_4BPP, winSize-2 + winSize);
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x14)], TILE_SIZE_4BPP, winSize-1);
+  CopyToWindowPixelBuffer(sHeatStartMenu->sTopLeftValueWindowId, &gfx[TILE(0x19)], TILE_SIZE_4BPP, winSize-1 + winSize);
+  #undef TILE
+}
+
+
+static void HeatStartMenu_ShowTopLeftValueWindow(void)
+{
+  if(GetSafariZoneFlag()){
+    ConvertIntToDecimalStringN(gStringVar4, gNumSafariBalls, STR_CONV_MODE_LEFT_ALIGN, 2);
+  } else {
+    ConvertIntToDecimalStringN(gStringVar1, GetMoney(&gSaveBlock1Ptr->money), STR_CONV_MODE_LEFT_ALIGN, MAX_MONEY_DIGITS);
+    StringExpandPlaceholders(gStringVar4, gText_PokedollarVar1);
+  }
+  
+  u32 moneyStringPixelsWidth = GetStringWidth(FONT_SMALL, gStringVar4, 0);
+  u32 targetNumberOfTiles = 3;
+  while ((targetNumberOfTiles-3) * 8 < moneyStringPixelsWidth)
+  {
+    targetNumberOfTiles++;
+  }
+  if(targetNumberOfTiles > 16) {
+    targetNumberOfTiles = 16;
+  }
+  u32 xOffset = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, (targetNumberOfTiles-2)*8) + 8;
+
+  // create windows
+  struct WindowTemplate windowTemplate = sWindowTemplate_TopLeftValue;
+  windowTemplate.width = targetNumberOfTiles;
+  windowTemplate.tilemapLeft = 20 - targetNumberOfTiles;
+  sHeatStartMenu->sTopLeftValueWindowId = AddWindow(&windowTemplate);
+
+  FillTopLeftValueBox(targetNumberOfTiles);
+  PutWindowTilemap(sHeatStartMenu->sTopLeftValueWindowId);
+  AddTextPrinterParameterized3(sHeatStartMenu->sTopLeftValueWindowId, FONT_SMALL, xOffset, 0, colors, 0xFF, gStringVar4);
+  CopyWindowToVram(sHeatStartMenu->sTopLeftValueWindowId, COPYWIN_GFX);
+}
+
 static void HeatStartMenu_ShowTimeWindow(void)
 {
   // get time
@@ -1298,12 +1366,12 @@ static void HeatStartMenu_ShowTimeWindow(void)
   }
   
   // create windows
-  sHeatStartMenu->sDayWindowId = AddWindow(&sWindowTemplate_StartDay);
-  FillWindowPixelBuffer(sHeatStartMenu->sDayWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-  PutWindowTilemap(sHeatStartMenu->sDayWindowId);
-  sHeatStartMenu->sTimeWindowId = AddWindow(&sWindowTemplate_StartClock);
-  FillWindowPixelBuffer(sHeatStartMenu->sTimeWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-  PutWindowTilemap(sHeatStartMenu->sTimeWindowId);
+  sHeatStartMenu->sBottomLeftWindowId = AddWindow(&sWidowTemplate_BottomLeft);
+  FillWindowPixelBuffer(sHeatStartMenu->sBottomLeftWindowId, PIXEL_FILL(10));
+  PutWindowTilemap(sHeatStartMenu->sBottomLeftWindowId);
+  sHeatStartMenu->sBottomLeftValueWindowId = AddWindow(&sWindowTemplate_BottomLeftValue);
+  FillClockBox();
+  PutWindowTilemap(sHeatStartMenu->sBottomLeftValueWindowId);
   FlagSet(FLAG_TEMP_5);
 
 
@@ -1315,9 +1383,9 @@ static void HeatStartMenu_ShowTimeWindow(void)
   // display text
   StringExpandPlaceholders(gStringVar4, gText_CurrentDay);
   u8 x;
-  x = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, 11*8);
-  AddTextPrinterParameterized(sHeatStartMenu->sDayWindowId, FONT_SMALL, gStringVar4, x, 0, 0xFF, NULL);
-  CopyWindowToVram(sHeatStartMenu->sDayWindowId, COPYWIN_GFX);
+  x = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, 14*8);
+  AddTextPrinterParameterized3(sHeatStartMenu->sBottomLeftWindowId, FONT_SMALL, x, 0, colors, 0xFF, gStringVar4);
+  CopyWindowToVram(sHeatStartMenu->sBottomLeftWindowId, COPYWIN_GFX);
   
   // time
   u8* ptr;
@@ -1327,8 +1395,8 @@ static void HeatStartMenu_ShowTimeWindow(void)
   // display text
   StringExpandPlaceholders(gStringVar4, gText_CurrentTime);
   x = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, 5*8);
-  AddTextPrinterParameterized(sHeatStartMenu->sTimeWindowId, FONT_SMALL, gStringVar4, x, 0, 0xFF, NULL);
-  CopyWindowToVram(sHeatStartMenu->sTimeWindowId, COPYWIN_GFX);
+  AddTextPrinterParameterized3(sHeatStartMenu->sBottomLeftValueWindowId, FONT_SMALL, x, 0, colors, 0xFF, gStringVar4);
+  CopyWindowToVram(sHeatStartMenu->sBottomLeftValueWindowId, COPYWIN_GFX);
 }
 
 static void HeatStartMenu_UpdateClockDisplay(void)
@@ -1363,10 +1431,10 @@ static void HeatStartMenu_UpdateClockDisplay(void)
   }
   
   // clean the text windows first
-  FillWindowPixelBuffer(sHeatStartMenu->sDayWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-  PutWindowTilemap(sHeatStartMenu->sDayWindowId);
-  FillWindowPixelBuffer(sHeatStartMenu->sTimeWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-  PutWindowTilemap(sHeatStartMenu->sTimeWindowId);
+  FillWindowPixelBuffer(sHeatStartMenu->sBottomLeftWindowId, PIXEL_FILL(10));
+  PutWindowTilemap(sHeatStartMenu->sBottomLeftWindowId);
+  FillClockBox();
+  PutWindowTilemap(sHeatStartMenu->sBottomLeftValueWindowId);
   
   // day
   StringCopy(gStringVar3, gDayNameStringsTable[(day % 7)]);
@@ -1376,9 +1444,9 @@ static void HeatStartMenu_UpdateClockDisplay(void)
   // display text
   StringExpandPlaceholders(gStringVar4, gText_CurrentDay);
   u8 x;
-  x = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, 11*8);
-  AddTextPrinterParameterized(sHeatStartMenu->sDayWindowId, FONT_SMALL, gStringVar4, x, 0, 0xFF, NULL);
-  CopyWindowToVram(sHeatStartMenu->sDayWindowId, COPYWIN_GFX);
+  x = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, 14*8);
+  AddTextPrinterParameterized3(sHeatStartMenu->sBottomLeftWindowId, FONT_SMALL, x, 0, colors, 0xFF, gStringVar4);
+  CopyWindowToVram(sHeatStartMenu->sBottomLeftWindowId, COPYWIN_GFX);
   
   // time
   u8* ptr;
@@ -1393,8 +1461,8 @@ static void HeatStartMenu_UpdateClockDisplay(void)
   // display text
   StringExpandPlaceholders(gStringVar4, gText_CurrentTime);
   x = GetStringCenterAlignXOffset(FONT_SMALL, gStringVar4, 5*8);
-  AddTextPrinterParameterized(sHeatStartMenu->sTimeWindowId, FONT_SMALL, gStringVar4, x, 0, 0xFF, NULL);
-  CopyWindowToVram(sHeatStartMenu->sTimeWindowId, COPYWIN_GFX);
+  AddTextPrinterParameterized3(sHeatStartMenu->sBottomLeftValueWindowId, FONT_SMALL, x, 0, colors, 0xFF, gStringVar4);
+  CopyWindowToVram(sHeatStartMenu->sBottomLeftValueWindowId, COPYWIN_GFX);
 }
 
 static const u8 sText_PyramidFloor1[] = _("PYRAMID FLOOR 1");
@@ -1445,18 +1513,18 @@ static void HeatStartMenu_ShowMapNameWindow(void)
         GetMapName(withoutPrefixPtr, gMapHeader.regionMapSectionId, 0);
     }
     
-    sHeatStartMenu->sMapNameWindowId = AddWindow(&sWindowTemplate_MapName);
-    FillWindowPixelBuffer(sHeatStartMenu->sMapNameWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
-    PutWindowTilemap(sHeatStartMenu->sMapNameWindowId);
+    sHeatStartMenu->sTopLeftWindowId = AddWindow(&sWindowTemplate_TopLeft);
+    FillWindowPixelBuffer(sHeatStartMenu->sTopLeftWindowId, PIXEL_FILL(10));
+    PutWindowTilemap(sHeatStartMenu->sTopLeftWindowId);
 
     mapDisplayHeader[0] = EXT_CTRL_CODE_BEGIN;
     mapDisplayHeader[1] = EXT_CTRL_CODE_HIGHLIGHT;
     mapDisplayHeader[2] = TEXT_COLOR_TRANSPARENT;
 
-    u32 font = GetFontIdToFit(withoutPrefixPtr, FONT_NORMAL, 0, 14*8);
-    x = GetStringCenterAlignXOffset(font, withoutPrefixPtr, 14*8);
-    AddTextPrinterParameterized(sHeatStartMenu->sMapNameWindowId, font, mapDisplayHeader, x, 0, TEXT_SKIP_DRAW, NULL);
-    CopyWindowToVram(sHeatStartMenu->sMapNameWindowId, COPYWIN_GFX);
+    u32 font = GetFontIdToFit(withoutPrefixPtr, FONT_NORMAL, 0, 18*8);
+    x = GetStringCenterAlignXOffset(font, withoutPrefixPtr, 18*8);
+    AddTextPrinterParameterized3(sHeatStartMenu->sTopLeftWindowId, font, x, 0, colors, TEXT_SKIP_DRAW, mapDisplayHeader);
+    CopyWindowToVram(sHeatStartMenu->sTopLeftWindowId, COPYWIN_GFX);
 }
 
 static const u8 gText_Poketch[] = _("PokeNav");
@@ -1472,7 +1540,7 @@ static void HeatStartMenu_UpdateMenuName(void)
 {
   u8 x;
 
-  FillWindowPixelBuffer(sHeatStartMenu->sMenuNameWindowId, PIXEL_FILL(TEXT_COLOR_WHITE));
+  FillWindowPixelBuffer(sHeatStartMenu->sMenuNameWindowId, PIXEL_FILL(10));
   PutWindowTilemap(sHeatStartMenu->sMenuNameWindowId);
 
   const u8 *menuNameString;
@@ -1510,7 +1578,7 @@ static void HeatStartMenu_UpdateMenuName(void)
   
   u32 font = GetFontIdToFit(menuNameString, FONT_NORMAL, 0, 7*8);
   x = GetStringCenterAlignXOffset(font, menuNameString, 7*8);
-  AddTextPrinterParameterized(sHeatStartMenu->sMenuNameWindowId, font, menuNameString, x, 0, 0xFF, NULL);
+  AddTextPrinterParameterized3(sHeatStartMenu->sMenuNameWindowId, font, x, 0, colors, 0xFF, menuNameString);
   CopyWindowToVram(sHeatStartMenu->sMenuNameWindowId, COPYWIN_GFX);
 }
 
@@ -1574,10 +1642,7 @@ static void Task_HeatStartMenu_HandleMainInput(u8 taskId)
       sHeatStartMenu->inputDelay--;
       return;
   }
-
-  if(GetSafariZoneFlag() == FALSE){
-    HeatStartMenu_UpdateClockDisplay();
-  }
+  HeatStartMenu_UpdateClockDisplay();
   if (JOY_NEW(A_BUTTON))
   {
     PlaySE(SE_SELECT);
@@ -1937,39 +2002,39 @@ static void ShowSaveInfoWindow(void)
 
   // Print region name
   yOffset = 1;
+  AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, 0, yOffset, saveColors,  TEXT_SKIP_DRAW, gStringVar4);
   BufferSaveMenuText(SAVE_MENU_LOCATION, gStringVar4, TEXT_COLOR_GREEN);
-  AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gStringVar4, 0, yOffset, TEXT_SKIP_DRAW, NULL);
 
   // Print player name
   yOffset += 16;
-  AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gText_SavingPlayer, 0, yOffset, TEXT_SKIP_DRAW, NULL);
+  AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, 0, yOffset, saveColors, TEXT_SKIP_DRAW, gText_SavingPlayer);
   BufferSaveMenuText(SAVE_MENU_NAME, gStringVar4, color);
   xOffset = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 0x70);
-  PrintPlayerNameOnWindow(sSaveInfoWindowId, gStringVar4, xOffset, yOffset);
+  PrintPlayerNameOnWindowWithNewBackground(sSaveInfoWindowId, gStringVar4, xOffset, yOffset);
 
   // Print badge count
   yOffset += 16;
-  AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gText_SavingBadges, 0, yOffset, TEXT_SKIP_DRAW, NULL);
+  AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, 0, yOffset, saveColors, TEXT_SKIP_DRAW, gText_SavingBadges);
   BufferSaveMenuText(SAVE_MENU_BADGES, gStringVar4, color);
   xOffset = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 0x70);
-  AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gStringVar4, xOffset, yOffset, TEXT_SKIP_DRAW, NULL);
+  AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, xOffset, yOffset, saveColors, TEXT_SKIP_DRAW, gStringVar4);
 
   if (FlagGet(FLAG_SYS_POKEDEX_GET) == TRUE)
   {
     // Print pokedex count
     yOffset += 16;
-    AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gText_SavingPokedex, 0, yOffset, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, 0, yOffset, saveColors, TEXT_SKIP_DRAW, gText_SavingPokedex);
     BufferSaveMenuText(SAVE_MENU_CAUGHT, gStringVar4, color);
     xOffset = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 0x70);
-    AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gStringVar4, xOffset, yOffset, TEXT_SKIP_DRAW, NULL);
+    AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, xOffset, yOffset, saveColors, TEXT_SKIP_DRAW, gStringVar4);
   }
 
   // Print play time
   yOffset += 16;
-  AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gText_SavingTime, 0, yOffset, TEXT_SKIP_DRAW, NULL);
+  AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, 0, yOffset, saveColors, TEXT_SKIP_DRAW, gText_SavingTime);
   BufferSaveMenuText(SAVE_MENU_PLAY_TIME, gStringVar4, color);
   xOffset = GetStringRightAlignXOffset(FONT_NORMAL, gStringVar4, 0x70);
-  AddTextPrinterParameterized(sSaveInfoWindowId, FONT_NORMAL, gStringVar4, xOffset, yOffset, TEXT_SKIP_DRAW, NULL);
+  AddTextPrinterParameterized3(sSaveInfoWindowId, FONT_NORMAL, xOffset, yOffset, saveColors, TEXT_SKIP_DRAW, gStringVar4);
 
   CopyWindowToVram(sSaveInfoWindowId, COPYWIN_GFX);
 }
@@ -2085,15 +2150,11 @@ static void HeatStartMenu_ExitAndClearTilemap(bool8 enableMovement)
 
   // remove text windows
   HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sMenuNameWindowId);
-  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sMapNameWindowId);
+  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sTopLeftWindowId);
+  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sTopLeftValueWindowId);
 
-  if (GetSafariZoneFlag() == TRUE)
-  {
-    HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sSafariBallsWindowId);
-  } else {
-    HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sDayWindowId);
-    HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sTimeWindowId);
-  }
+  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sBottomLeftWindowId);
+  HeatStartMenu_CleanupTextWindow(sHeatStartMenu->sBottomLeftValueWindowId);
 
   // clear tilemap
   for (i = 0; i < 2048; i++)

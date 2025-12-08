@@ -21,6 +21,7 @@
 #include "menu_helpers.h"
 #include "overworld.h"
 #include "palette.h"
+#include "vag_ui_palettes.h"
 #include "party_menu.h"
 #include "task.h"
 #include "text_window.h"
@@ -1463,7 +1464,7 @@ static void InitPyramidBagWindows(void)
     DeactivateAllTextPrinters();
     LoadUserWindowBorderGfx(0, 0x1, BG_PLTT_ID(14));
     LoadMessageBoxGfx(0, 0xA, BG_PLTT_ID(13));
-    LoadPalette(gStandardMenuPalette, BG_PLTT_ID(15), PLTT_SIZE_4BPP);
+    LoadPalette(GetVagUiTextsPalette(), BG_PLTT_ID(15), PLTT_SIZE_4BPP);
 
     for (i = 0; i < ARRAY_COUNT(sWindowTemplates); i++)
         FillWindowPixelBuffer(i, PIXEL_FILL(0));

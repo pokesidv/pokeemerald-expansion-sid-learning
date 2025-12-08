@@ -7,6 +7,7 @@
 #include "event_data.h"
 #include "gpu_regs.h"
 #include "international_string_util.h"
+#include "vag_ui_palettes.h"
 #include "item.h"
 #include "link.h"
 #include "link_rfu.h"
@@ -4437,7 +4438,11 @@ static void ResetBerryAndStatusBarSprites(void)
 static void LoadWindowFrameGfx(u8 frameId)
 {
     LoadBgTiles(BG_INTERFACE, GetWindowFrameTilesPal(frameId)->tiles, 0x120, 1);
-    LoadPalette(GetWindowFrameTilesPal(frameId)->pal, BG_PLTT_ID(10), PLTT_SIZE_4BPP);
+    if(frameId == 20){
+        LoadPalette(GetVagUiPalette(), BG_PLTT_ID(10), PLTT_SIZE_4BPP);
+    } else {
+        LoadPalette(GetWindowFrameTilesPal(frameId)->pal, BG_PLTT_ID(10), PLTT_SIZE_4BPP);
+    }
 }
 
 static void LoadUserWindowFrameGfx(void)

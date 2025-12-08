@@ -161,7 +161,7 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
 // If you want to shorten the dates to Sat., Sun., etc., change this to 10 or something
 #define CLOCK_WINDOW_TILE_WIDTH 14
 
-static const struct WindowTemplate sWindowTemplate_StartClock = {
+static const struct WindowTemplate sWindowTemplate_BottomLeftValue = {
     .bg = 0, 
     .tilemapLeft = 1, 
     .tilemapTop = 1, 
@@ -528,7 +528,7 @@ static void ShowTimeWindow(void)
     u8* ptr; // pointer to add the hour / minute separator
 
     // print window
-    sStartClockWindowId = AddWindow(&sWindowTemplate_StartClock);
+    sStartClockWindowId = AddWindow(&sWindowTemplate_BottomLeftValue);
     PutWindowTilemap(sStartClockWindowId);
     DrawStdWindowFrame(sStartClockWindowId, FALSE);
     

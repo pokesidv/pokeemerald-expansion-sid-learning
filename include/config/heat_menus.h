@@ -1,5 +1,5 @@
 #define ENABLE_HEAT_START_MENU           TRUE    // If TRUE, enables the heat start menu feature
-#define HEAT_MENUS_SAVEBLOCK_PALETTES    TRUE   // If TRUE, start menu palette setting is saved to SaveBlock2. If FALSE, always uses default palette. In heat_menu_palettes.c you can change the logic that loads the right palette
+#define HEAT_MENUS_SAVEBLOCK_PALETTES    FALSE   // If TRUE, start menu palette setting is saved to SaveBlock2. If FALSE, always uses default palette. In heat_menu_palettes.c you can change the logic that loads the right palette
 
 // change these configs to toggle showing/hiding certain menu options
 // note that some options are also dependent on flags or other conditions

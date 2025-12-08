@@ -249,9 +249,9 @@
 #define TEXT_DYNAMIC_COLOR_3    0xC // Usually white
 #define TEXT_DYNAMIC_COLOR_4    0xD // Usually aquamarine
 #define TEXT_DYNAMIC_COLOR_5    0xE // Usually blue-green
-#define TEXT_DYNAMIC_COLOR_6    0xF // Usually cerulean
+#define TEXT_DYNAMIC_COLOR_6    0xF // Usually cerulean // used for message box background
 
-#define SID_CUSTOM_MESSAGEBOX_BACKGROUND    0xB // same as TEXT_DYNAMIC_COLOR_2
+#define SID_CUSTOM_MESSAGEBOX_BACKGROUND    0xF // same as TEXT_DYNAMIC_COLOR_6
 
 #define PLACEHOLDER_ID_UNKNOWN       0x0
 #define PLACEHOLDER_ID_PLAYER        0x1

@@ -8,6 +8,7 @@
 #include "constants/songs.h"
 #include "sound.h"
 #include "sprite.h"
+#include "vag_ui_palettes.h"
 #include "text_window.h"
 
 #define ANIM_CURSOR (NUM_MON_MARKINGS * 2)
@@ -296,7 +297,11 @@ static void BufferMenuWindowTiles(void)
 {
     const struct TilesPal *frame = GetWindowFrameTilesPal(gSaveBlock2Ptr->optionsWindowFrameType);
     sMenu->frameTiles = frame->tiles;
-    sMenu->framePalette = frame->pal;
+    if(gSaveBlock2Ptr->optionsWindowFrameType == 20){
+        sMenu->framePalette = GetVagUiPalette();
+    } else {
+        sMenu->framePalette = frame->pal;
+    }
     sMenu->tileLoadState = 0;
     CpuFill16(0, sMenu->windowSpriteTiles, sizeof(sMenu->windowSpriteTiles));
 }

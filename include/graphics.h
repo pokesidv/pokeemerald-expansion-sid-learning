@@ -4,7 +4,6 @@
 // overworld
 extern const u8 gSignpostWindow_Gfx[];
 extern const u32 gMessageBox_Gfx[];
-extern const u16 gMessageBox_Pal[];
 
 // pokeballs
 extern const u32 gBallGfx_Strange[];
